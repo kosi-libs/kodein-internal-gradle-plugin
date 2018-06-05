@@ -1,6 +1,7 @@
 package org.kodein.internal.gradle
 
 import com.jfrog.bintray.gradle.BintrayExtension
+import com.jfrog.bintray.gradle.BintrayUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
@@ -8,7 +9,8 @@ import org.gradle.kotlin.dsl.*
 data class KodeinPublicationExtension(
     var name: String = "",
     var description: String = "",
-    var repo: String = ""
+    var repo: String = "",
+    var publications: () -> Array<Any> = { arrayOf("Kodein") }
 )
 
 class KodeinPublicationUpload : Plugin<Project> {
@@ -47,9 +49,13 @@ class KodeinPublicationUpload : Plugin<Project> {
                     vcsUrl = "https://github.com/Kodein-Framework/${extension.repo}.git"
                     desc = extension.description
 
-                    setPublications("Kodein")
+//                    setPublications(*extension.publications())
                 })
             }
+        }
+
+        (tasks["bintrayUpload"] as BintrayUploadTask).doFirst {
+            (this as BintrayUploadTask).setPublications(*extension.publications())
         }
     }
 

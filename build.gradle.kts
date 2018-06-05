@@ -12,7 +12,6 @@ object KodeinVersions {
 
     const val kotlin = "1.2.41"
 
-//    const val konan = "0.7"
     const val konan = "0.8-dev-2179"
 
 }
@@ -37,8 +36,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-native-gradle-plugin:${KodeinVersions.konan}")
 
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.16")
-    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0")
-//    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1-SNAPSHOT")
+    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
     api("com.android.tools.build:gradle:3.1.2")
     api("digital.wup:android-maven-publish:3.3.0")
 
