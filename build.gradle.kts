@@ -6,6 +6,7 @@ plugins {
     `kotlin-dsl`
     `java-library`
     kotlin("jvm") version "1.2.41"
+    id("com.jfrog.bintray") version "1.8.0"
 }
 
 object KodeinVersions {
@@ -40,10 +41,11 @@ dependencies {
     api("com.android.tools.build:gradle:3.1.2")
     api("digital.wup:android-maven-publish:3.3.0")
 
-    val kmpVer = "1.0.0"
+    val kmpVer = "1.0.1"
     api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
     api("com.github.salomonbrys.gradle:js-tests:$kmpVer")
     api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")
+    api("com.github.salomonbrys.gradle:konan-tests:$kmpVer")
 }
 
 val sourcesJar = task<Jar>("sourcesJar") {

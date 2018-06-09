@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle
 
+import com.github.salomonbrys.gradle.konanartifacts.KonanTestsPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.plugin
@@ -12,6 +13,7 @@ class KodeinPlatformNative : Plugin<Project> {
             plugin("maven-publish")
             plugin<KodeinPublicationUpload>()
             plugin<KodeinVersionsPlugin>()
+            plugin<KonanTestsPlugin>()
         }
 
         extensions.add("kodeinNative", KodeinNativeExtension())
