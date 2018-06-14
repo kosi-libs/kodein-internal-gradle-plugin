@@ -1,5 +1,7 @@
+import com.jfrog.bintray.gradle.BintrayExtension
+
 group = "org.kodein.internal.gradle"
-version = "1.0.0"
+version = "1.0.1"
 
 plugins {
     `maven-publish`
@@ -41,7 +43,7 @@ dependencies {
     api("com.android.tools.build:gradle:3.1.2")
     api("digital.wup:android-maven-publish:3.3.0")
 
-    val kmpVer = "1.0.1"
+    val kmpVer = "1.0.2"
     api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
     api("com.github.salomonbrys.gradle:js-tests:$kmpVer")
     api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")
@@ -62,5 +64,28 @@ publishing {
                 classifier = "sources"
             }
         }
+    }
+}
+
+if (hasProperty("bintrayUsername") && hasProperty("bintrayApiKey")) {
+    val bintrayUsername: String by project
+    val bintrayApiKey: String by project
+
+    bintray {
+        user = bintrayUsername
+        key = bintrayApiKey
+
+        pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+            userOrg = "kodein-framework"
+            repo = "Kodein-Internal-Gradle"
+            name = project.name
+            setLicenses("MIT")
+            websiteUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin"
+            issueTrackerUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues"
+            vcsUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git"
+
+            setPublications("Kodein")
+        })
+
     }
 }
