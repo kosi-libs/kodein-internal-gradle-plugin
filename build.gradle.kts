@@ -1,7 +1,7 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.0.1"
+version = "1.1.0"
 
 plugins {
     `maven-publish`
