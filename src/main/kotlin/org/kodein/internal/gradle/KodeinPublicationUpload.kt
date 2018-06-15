@@ -4,6 +4,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.*
 
 
@@ -17,21 +19,45 @@ class KodeinPublicationExtension(val project: Project) {
         var repo: String = ""
     }
 
+    @Suppress("unused")
     fun upload(block: UploadData.() -> Unit) = project.run {
+        val data = UploadData().also(block)
+
+        if (data.repo.isEmpty()) {
+            logger.warn("$project: Cannot configure publication because upload repo has not been configured (empty repo).")
+            return
+        }
+
+        extensions.configure<PublishingExtension>("publishing") {
+            repositories {
+                maven {
+                    url = uri("https://dl.bintray.com/kodein-framework/${data.repo}")
+                }
+            }
+
+           (publications) {
+                "Kodein"(MavenPublication::class) {
+                    if (components.findByName("java") != null)
+                        from(components["java"])
+                    else if (components.findByName("android") != null)
+                        from(components["android"])
+                    tasks.findByName("sourcesJar")?.let { artifact(it) }
+                }
+            }
+        }
+
+        if (data.name.isEmpty() || data.description.isEmpty()) {
+            logger.warn("$project: Cannot configure bintrayUpload because upload data has not been configured (empty name and/or description).")
+            return
+        }
+
         if (!hasProperty("bintrayUsername") || !hasProperty("bintrayApiKey")) {
             logger.warn("$project: Ignoring bintrayUpload in because bintrayUsername and/or bintrayApiKey is not set in gradle.properties.")
             return
         }
 
-        val data = UploadData().also(block)
-
         val bintrayUsername: String by project
         val bintrayApiKey: String by project
-
-        if (data.name.isEmpty() || data.description.isEmpty() || data.repo.isEmpty()) {
-            logger.warn("$project: Cannot configure bintrayUpload because upload data has not been configured (empty name, description and/or repo).")
-            return
-        }
 
         extensions.configure<BintrayExtension>("bintray") {
             user = bintrayUsername
@@ -46,8 +72,6 @@ class KodeinPublicationExtension(val project: Project) {
                 issueTrackerUrl = "https://github.com/Kodein-Framework/${data.repo}/issues"
                 vcsUrl = "https://github.com/Kodein-Framework/${data.repo}.git"
                 desc = data.description
-
-//                setPublications(*extension.publications())
             })
         }
 

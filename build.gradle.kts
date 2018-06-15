@@ -1,7 +1,7 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.1.0"
+version = "1.1.1"
 
 plugins {
     `maven-publish`
@@ -25,6 +25,7 @@ repositories {
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
     maven(url = "https://dl.bintray.com/salomonbrys/KMP-Gradle-Utils")
+    maven(url = "https://dl.bintray.com/salomonbrys/wup-digital-maven")
 
     mavenLocal()
 }
@@ -38,12 +39,12 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("org.jetbrains.kotlin:kotlin-native-gradle-plugin:${KodeinVersions.konan}")
 
-    api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.16")
+    api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
     api("com.android.tools.build:gradle:3.1.2")
-    api("digital.wup:android-maven-publish:3.3.0")
+    api("digital.wup:android-maven-publish:3.5.1-PR21")
 
-    val kmpVer = "1.0.2"
+    val kmpVer = "1.0.3"
     api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
     api("com.github.salomonbrys.gradle:js-tests:$kmpVer")
     api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")

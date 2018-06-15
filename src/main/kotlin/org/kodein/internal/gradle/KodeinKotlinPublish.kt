@@ -17,20 +17,6 @@ class KodeinKotlinPublish : Plugin<Project> {
             plugin<AllSourcesJarPlugin>()
         }
 
-        extensions.configure<PublishingExtension>("publishing") {
-            (publications) {
-                "Kodein"(MavenPublication::class) {
-                    if (components.findByName("java") != null)
-                        from(components["java"])
-                    else if (components.findByName("android") != null)
-                        from(components["android"])
-                    else
-                        throw IllegalStateException("${project.name}: Could not find component to publish")
-                    artifact(tasks["sourcesJar"])
-                }
-            }
-        }
-
     }
 
     override fun apply(project: Project) = project.applyPlugin()
