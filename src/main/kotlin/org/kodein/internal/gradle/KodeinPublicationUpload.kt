@@ -14,6 +14,7 @@ class KodeinPublicationExtension(val project: Project) {
     var publications: () -> Array<out Any> = { arrayOf("Kodein") }
 
     class UploadData {
+        var userOrg: String = "kodein-framework"
         var name: String = ""
         var description: String = ""
         var repo: String = ""
@@ -31,7 +32,7 @@ class KodeinPublicationExtension(val project: Project) {
         extensions.configure<PublishingExtension>("publishing") {
             repositories {
                 maven {
-                    url = uri("https://dl.bintray.com/kodein-framework/${data.repo}")
+                    url = uri("https://dl.bintray.com/${data.userOrg}/${data.repo}")
                 }
             }
 
@@ -64,7 +65,7 @@ class KodeinPublicationExtension(val project: Project) {
             key = bintrayApiKey
 
             pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-                userOrg = "kodein-framework"
+                userOrg = data.userOrg
                 repo = data.repo
                 name = data.name
                 setLicenses("MIT")
