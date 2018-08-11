@@ -1,7 +1,7 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.1.1"
+version = "1.1.2"
 
 plugins {
     `maven-publish`
@@ -13,10 +13,13 @@ plugins {
 
 object KodeinVersions {
 
-    const val kotlin = "1.2.41"
+    const val kotlinGradle = "1.2.41"
 
-    const val konan = "0.8-dev-2179"
+    const val kotlin = "1.2.60"
 
+    const val konan = "0.8.1"
+
+    const val androidBuild = "3.1.4"
 }
 
 repositories {
@@ -34,14 +37,16 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlin}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlinGradle}")
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("org.jetbrains.kotlin:kotlin-native-gradle-plugin:${KodeinVersions.konan}")
 
+    api("com.android.tools.build:gradle:${KodeinVersions.androidBuild}")
+
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
-    api("com.android.tools.build:gradle:3.1.2")
     api("digital.wup:android-maven-publish:3.5.1-PR21")
 
     val kmpVer = "1.0.3"
@@ -53,7 +58,7 @@ dependencies {
 
 val sourcesJar = task<Jar>("sourcesJar") {
     classifier = "sources"
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     from(java.sourceSets["main"].allSource)
 }
 
@@ -77,7 +82,10 @@ if (hasProperty("bintrayUsername") && hasProperty("bintrayApiKey")) {
         key = bintrayApiKey
 
         pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-            userOrg = "kodein-framework"
+            if (hasProperty("bintrayUserOrg")) {
+                val bintrayUserOrg: String by project
+                userOrg = bintrayUserOrg
+            }
             repo = "Kodein-Internal-Gradle"
             name = project.name
             setLicenses("MIT")

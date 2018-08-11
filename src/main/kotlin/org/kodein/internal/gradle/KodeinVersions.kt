@@ -5,9 +5,9 @@ import org.gradle.api.Project
 
 object KodeinVersions {
 
-    const val kotlin = "1.2.41"
+    const val kotlin = "1.2.60"
 
-    const val konan = "0.8-dev-2179"
+    const val konan = "0.8.1"
 
 }
 
