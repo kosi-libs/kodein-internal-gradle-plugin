@@ -1,19 +1,18 @@
 package org.kodein.internal.gradle
 
-import com.github.salomonbrys.gradle.konanartifacts.KonanTestsPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.plugin
 
 class KodeinPlatformNative : Plugin<Project> {
 
     private fun Project.applyPlugin() {
         apply {
-            plugin("konan")
+            plugin("kotlin-platform-native")
             plugin("maven-publish")
             plugin<KodeinPublicationUpload>()
             plugin<KodeinVersionsPlugin>()
-            plugin<KonanTestsPlugin>()
         }
 
         extensions.add("kodeinNative", KodeinNativeExtension())
@@ -21,6 +20,8 @@ class KodeinPlatformNative : Plugin<Project> {
         extensions.configure<KodeinPublicationExtension>("kodeinPublication") {
             publications = { (project.extensions.getByName("publishing") as org.gradle.api.publish.PublishingExtension).publications.toTypedArray() }
         }
+
+        tasks["test"].group = "verification"
     }
 
     override fun apply(project: Project) = project.applyPlugin()
