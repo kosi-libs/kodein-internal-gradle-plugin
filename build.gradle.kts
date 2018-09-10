@@ -7,7 +7,7 @@ plugins {
     `maven-publish`
     `kotlin-dsl`
     `java-library`
-    kotlin("jvm") version "1.2.41"
+    kotlin("jvm") version "1.2.60"
     id("com.jfrog.bintray") version "1.8.0"
 }
 
