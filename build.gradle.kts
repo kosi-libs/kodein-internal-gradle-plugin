@@ -7,17 +7,17 @@ plugins {
     `maven-publish`
     `kotlin-dsl`
     `java-library`
-    kotlin("jvm") version "1.2.60"
+    kotlin("jvm") version "1.2.61"
     id("com.jfrog.bintray") version "1.8.0"
 }
 
 object KodeinVersions {
 
-    const val kotlinGradle = "1.2.60"
+    const val kotlinGradle = "1.2.61"
 
-    const val kotlin = "1.2.61"
+    const val kotlin = "1.2.70"
 
-    const val konan = "0.9"
+    const val konan = "0.9.2"
 
     const val androidBuild = "3.1.4"
 }
