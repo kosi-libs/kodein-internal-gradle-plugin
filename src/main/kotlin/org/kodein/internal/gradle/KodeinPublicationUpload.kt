@@ -35,8 +35,8 @@ class KodeinPublicationExtension(val project: Project) {
                 }
             }
 
-           publications {
-                register("Kodein", MavenPublication::class) {
+            (publications) {
+                "Kodein"(MavenPublication::class) {
                     if (components.findByName("java") != null)
                         from(components["java"])
                     else if (components.findByName("android") != null)

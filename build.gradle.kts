@@ -1,19 +1,19 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.2.2"
+version = "1.3.0"
 
 plugins {
     `maven-publish`
     `kotlin-dsl`
     `java-library`
-    kotlin("jvm") version "1.2.61"
-    id("com.jfrog.bintray") version "1.8.4"
+    kotlin("jvm") version "1.2.31"
+    id("com.jfrog.bintray") version "1.8.0"
 }
 
 object KodeinVersions {
 
-    const val kotlinGradle = "1.2.61"
+    const val kotlinGradle = "1.2.31"
 
     const val kotlin = "1.2.70"
 
@@ -47,10 +47,9 @@ dependencies {
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
 
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
-//    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
     api("digital.wup:android-maven-publish:3.5.1-PR21")
 
-    val kmpVer = "1.1.0"
+    val kmpVer = "1.2.0"
     api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
     api("com.github.salomonbrys.gradle:js-tests:$kmpVer")
     api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")
@@ -59,12 +58,12 @@ dependencies {
 val sourcesJar = task<Jar>("sourcesJar") {
     classifier = "sources"
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-    from(sourceSets["main"].allSource)
+    from(java.sourceSets["main"].allSource)
 }
 
 publishing {
     (publications) {
-        register("Kodein", MavenPublication::class.java) {
+        "Kodein"(MavenPublication::class) {
             from(components["java"])
             artifact(sourcesJar) {
                 classifier = "sources"
