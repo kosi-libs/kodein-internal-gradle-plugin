@@ -1,14 +1,14 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.2.0"
+version = "1.2.1"
 
 plugins {
     `maven-publish`
     `kotlin-dsl`
     `java-library`
     kotlin("jvm") version "1.2.61"
-    id("com.jfrog.bintray") version "1.8.0"
+    id("com.jfrog.bintray") version "1.8.2"
 }
 
 object KodeinVersions {
