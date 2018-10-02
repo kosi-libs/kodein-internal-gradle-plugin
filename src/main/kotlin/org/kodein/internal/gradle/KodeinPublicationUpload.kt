@@ -86,9 +86,12 @@ class KodeinPublicationUpload : Plugin<Project> {
         val extension = KodeinPublicationExtension(this)
         project.extensions.add("kodeinPublication", extension)
 
-        (tasks["bintrayUpload"] as BintrayUploadTask).doFirst {
+        val uploadTask = tasks["bintrayUpload"] as BintrayUploadTask
+        uploadTask.doFirst {
             (this as BintrayUploadTask).setPublications(*extension.publications())
         }
+
+        uploadTask.dependsOn("publishToMavenLocal")
     }
 
     override fun apply(project: Project) = project.applyPlugin()
