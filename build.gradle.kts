@@ -1,7 +1,7 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "org.kodein.internal.gradle"
-version = "1.3.0"
+version = "2.0.0"
 
 plugins {
     `maven-publish`
@@ -15,9 +15,9 @@ object KodeinVersions {
 
     const val kotlinGradle = "1.2.31"
 
-    const val kotlin = "1.2.70"
+    const val kotlin = "1.3.0-rc-146"
 
-    const val konan = "0.9.2"
+//    const val konan = "0.9.2"
 
     const val androidBuild = "3.1.4"
 }
@@ -27,8 +27,9 @@ repositories {
     google()
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
-    maven(url = "https://dl.bintray.com/salomonbrys/KMP-Gradle-Utils")
+//    maven(url = "https://dl.bintray.com/salomonbrys/KMP-Gradle-Utils")
     maven(url = "https://dl.bintray.com/salomonbrys/wup-digital-maven")
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 
     mavenLocal()
 }
@@ -40,7 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlinGradle}")
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
-    api("org.jetbrains.kotlin:kotlin-native-gradle-plugin:${KodeinVersions.konan}")
+//    api("org.jetbrains.kotlin:kotlin-native-gradle-plugin:${KodeinVersions.konan}")
 
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuild}")
 
@@ -49,10 +50,10 @@ dependencies {
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
     api("digital.wup:android-maven-publish:3.5.1-PR21")
 
-    val kmpVer = "1.2.0"
-    api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
-    api("com.github.salomonbrys.gradle:js-tests:$kmpVer")
-    api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")
+    val kmpVer = "1.0.0"
+//    api("com.github.salomonbrys.gradle:all-sources-jar:$kmpVer")
+    api("com.github.salomonbrys.gradle.kjs:js-tests:$kmpVer")
+//    api("com.github.salomonbrys.gradle:assemble-web:$kmpVer")
 }
 
 val sourcesJar = task<Jar>("sourcesJar") {

@@ -3,26 +3,27 @@ package org.kodein.internal.gradle
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
-class KodeinPlatformAndroid : Plugin<Project> {
+class KodeinLibraryAndroidPlugin : Plugin<Project> {
 
     private fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
             plugin("kotlin-platform-android")
+            plugin("org.gradle.maven-publish")
             plugin("digital.wup.android-maven-publish")
-            plugin<KodeinDokka>()
-            plugin<KodeinKotlinPublish>()
-            plugin<KodeinPublicationUpload>()
+//            plugin<KodeinDokka>()
+//            plugin<KodeinKotlinPublish>()
+//            plugin<KodeinPublicationUpload>()
             plugin<KodeinVersionsPlugin>()
         }
 
         extensions.configure<LibraryExtension>("android") {
             compileSdkVersion(27)
-            buildToolsVersion("27.0.3")
 
             defaultConfig {
                 minSdkVersion(15)
@@ -49,6 +50,15 @@ class KodeinPlatformAndroid : Plugin<Project> {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test:${KodeinVersions.kotlin}")
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
             "testImplementation"("junit:junit:4.12")
+        }
+
+        @Suppress("UnstableApiUsage")
+        extensions.configure<PublishingExtension>("publishing") {
+            (publications) {
+                "Kodein"(MavenPublication::class) {
+                    from(components["android"])
+                }
+            }
         }
 
     }
