@@ -3,18 +3,12 @@ package org.kodein.internal.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-object KodeinVersions {
-
-    const val kotlin = "1.3.0-rc-190"
-
-}
-
-class KodeinVersionsPlugin : Plugin<Project> {
+class KodeinPublicationsPlugin : Plugin<Project> {
 
     private fun Project.applyPlugin() {
-        extensions.add("kodeinVersions", KodeinVersions)
+        val ext = KodeinPublicationsExtension()
+        project.extensions.add("kodeinPublications", ext)
     }
 
     override fun apply(project: Project) = project.applyPlugin()
-
 }
