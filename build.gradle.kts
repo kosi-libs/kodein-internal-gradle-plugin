@@ -13,7 +13,7 @@ plugins {
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.31"
-    const val kotlin = "1.3.0-rc-190"
+    const val kotlin = "1.3.0"
     const val androidBuild = "3.1.4"
 }
 
