@@ -1,16 +1,17 @@
 package org.kodein.internal.gradle
 
-import com.github.salomonbrys.gradle.kjs.jstests.addKotlinJSTest
-import com.github.salomonbrys.gradle.kjs.jstests.mainJsCompileTask
+import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNodeExtension
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias TargetConf = KotlinTarget.() -> Unit
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+@Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
 class KodeinMPP {
 
     class KodeinSourceSet internal constructor(
@@ -84,12 +85,15 @@ class KodeinMPP {
     object Targets {
 
         val JsConf: KotlinTarget.() -> Unit = {
-            mainJsCompileTask.kotlinOptions.apply {
+            val mainCompileTask = project.tasks[compilations["main"].compileKotlinTaskName] as Kotlin2JsCompile
+            mainCompileTask.kotlinOptions.apply {
                 main = "noCall"
                 moduleKind = "umd"
                 sourceMap = true
             }
-            addKotlinJSTest()
+            project.extensions.configure<KotlinMppJsTestsNodeExtension>("kotlinJsNodeTests") {
+                thisTarget()
+            }
         }
 
         val jvm = KodeinTarget(

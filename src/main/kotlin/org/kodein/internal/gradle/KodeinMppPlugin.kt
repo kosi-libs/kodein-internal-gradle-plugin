@@ -1,6 +1,6 @@
 package org.kodein.internal.gradle
 
-import com.github.salomonbrys.gradle.kjs.jstests.JsTestsPlugin
+import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNodePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.plugin
@@ -12,7 +12,7 @@ class KodeinMppPlugin : Plugin<Project> {
     private fun Project.applyPlugin() {
         apply {
             plugin("org.jetbrains.kotlin.multiplatform")
-            plugin<JsTestsPlugin>()
+            plugin<KotlinMppJsTestsNodePlugin>()
         }
 
         extensions.add("kodein", KodeinMPP())
@@ -30,6 +30,12 @@ class KodeinMppPlugin : Plugin<Project> {
                         implementation("org.jetbrains.kotlin:kotlin-test-common")
                         implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
                     }
+                }
+            }
+
+            afterEvaluate {
+                sourceSets.forEach {
+                    it.languageSettings.progressiveMode = true
                 }
             }
         }

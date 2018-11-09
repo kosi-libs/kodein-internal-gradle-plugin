@@ -22,7 +22,7 @@ repositories {
     google()
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
-    maven(url = "https://dl.bintray.com/salomonbrys/KMP-Gradle-Utils")
+    maven(url = "https://dl.bintray.com/salomonbrys/gradle-plugins")
     maven(url = "https://dl.bintray.com/salomonbrys/wup-digital-maven")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 
@@ -44,7 +44,7 @@ dependencies {
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
     api("digital.wup:android-maven-publish:3.5.1-PR21")
 
-    api("com.github.salomonbrys.gradle.kjs:kotlin-js-gradle-utils:1.0.0")
+    api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0")
 }
 
 allprojects {

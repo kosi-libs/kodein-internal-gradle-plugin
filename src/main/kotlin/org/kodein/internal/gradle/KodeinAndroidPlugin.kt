@@ -4,9 +4,12 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.getByName
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 class KodeinAndroidPlugin : Plugin<Project> {
 
+    @Suppress("UnstableApiUsage")
     private fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
@@ -34,6 +37,11 @@ class KodeinAndroidPlugin : Plugin<Project> {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
             "testImplementation"("junit:junit:4.12")
         }
+
+        afterEvaluate {
+            extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
+        }
+
 
         printTestLogs()
     }
