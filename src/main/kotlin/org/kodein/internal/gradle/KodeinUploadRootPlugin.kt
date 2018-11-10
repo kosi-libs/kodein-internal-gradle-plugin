@@ -6,17 +6,14 @@ import org.gradle.kotlin.dsl.apply
 import java.lang.IllegalStateException
 
 class KodeinUploadRootPlugin : Plugin<Project> {
+
+    @Suppress("UnstableApiUsage")
     private fun Project.applyPlugin() {
-        val ext = KodeinUploadExtension()
-        project.extensions.add("kodeinUpload", ext)
+        val ext = KodeinRootUploadExtension()
+        project.extensions.add(KodeinUploadExtension::class.java, "kodeinUpload", ext)
 
         subprojects {
             apply(plugin = "org.kodein.upload")
-        }
-
-        afterEvaluate {
-            if (ext != KodeinUploadExtension())
-                throw IllegalStateException("You must not configure this project's kodeinUpload. It is only there to trick gradle into allowing subprojects { kodeinUpload {} }")
         }
     }
 
