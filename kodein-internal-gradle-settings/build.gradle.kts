@@ -8,6 +8,10 @@ plugins {
     id("com.jfrog.bintray")
 }
 
+repositories {
+    jcenter()
+}
+
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())

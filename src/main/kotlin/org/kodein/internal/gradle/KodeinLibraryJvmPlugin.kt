@@ -28,7 +28,7 @@ class KodeinLibraryJvmPlugin : Plugin<Project> {
 
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         }
 
         afterEvaluate {

@@ -1,11 +1,14 @@
 package org.kodein.internal.gradle
 
 import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.BintrayUploadTask
+import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import com.jfrog.bintray.gradle.tasks.entities.Artifact
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.kotlin.dsl.*
 import java.lang.IllegalStateException
 
@@ -55,21 +58,37 @@ class KodeinUploadPlugin : Plugin<Project> {
             }
         }
 
-        val uploadTask = tasks["bintrayUpload"]
-        uploadTask.doFirst {
-            if (bintray.pkg.name.isNullOrBlank() || bintray.pkg.desc.isNullOrBlank()) {
-                throw IllegalStateException("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
+        val uploadTask = tasks["bintrayUpload"] as BintrayUploadTask
+        uploadTask.apply {
+            doFirst {
+                if (bintray.pkg.name.isNullOrBlank() || bintray.pkg.desc.isNullOrBlank()) {
+                    throw IllegalStateException("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
+                }
+
+                val publications = project.extensions.getByName<PublishingExtension>("publishing").publications.filter { "-test" !in it.name }
+                publications.filterIsInstance<MavenPublication>().forEach {
+                    logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
+                }
+                setPublications(*publications.map { it.name } .toTypedArray())
+                publications.filterIsInstance<MavenPublication>().forEach {
+                    if (it is DefaultMavenPublication && it.component is ComponentWithVariants) {
+                        val moduleFile = it.publishableFiles.firstOrNull { it.name == "module.json" }
+                        if (moduleFile != null) {
+                            uploadArtifact(Artifact().apply {
+                                name = it.mavenProjectIdentity.artifactId
+                                groupId = it.mavenProjectIdentity.groupId
+                                version = it.mavenProjectIdentity.version
+                                extension = "module"
+                                type = "module"
+                                file = moduleFile
+                            })
+                        }
+                    }
+                }
             }
 
-            this as BintrayUploadTask
-            val publications = project.extensions.getByName<PublishingExtension>("publishing").publications.filter { "-test" !in it.name }
-            publications.filterIsInstance<MavenPublication>().forEach {
-                logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
-            }
-            setPublications(*publications.toTypedArray())
+            uploadTask.dependsOn("publishToMavenLocal")
         }
-
-        uploadTask.dependsOn("publishToMavenLocal")
     }
 
     override fun apply(project: Project) = project.applyPlugin()

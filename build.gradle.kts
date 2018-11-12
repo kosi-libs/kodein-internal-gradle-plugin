@@ -1,26 +1,21 @@
-import com.jfrog.bintray.gradle.BintrayExtension
-
 plugins {
     `maven-publish`
     `java-library`
     `kotlin-dsl`
     kotlin("jvm") version "1.2.31"
-    id("com.jfrog.bintray") version "1.8.0"
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.31"
     const val kotlin = "1.3.0"
-    const val androidBuild = "3.1.4"
 }
 
 repositories {
     jcenter()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
-    maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
     maven(url = "https://dl.bintray.com/salomonbrys/gradle-plugins")
-    maven(url = "https://dl.bintray.com/salomonbrys/wup-digital-maven")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 
     mavenLocal()
@@ -34,24 +29,24 @@ dependencies {
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
 
-    api("com.android.tools.build:gradle:${KodeinVersions.androidBuild}")
+    api("com.android.tools.build:gradle:3.1.4")
 
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
 
-    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.2-SNAPSHOT")
-    api("digital.wup:android-maven-publish:3.5.1-PR21")
+    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
+    api("digital.wup:android-maven-publish:3.5.1")
 
     api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.0.1"
+    version = "2.0.2"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
             from(java.sourceSets["main"].allSource)
         }
 
@@ -75,7 +70,7 @@ allprojects {
                 user = bintrayUsername
                 key = bintrayApiKey
 
-                pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+                pkg.apply {
                     if (bintrayUserOrg != null)
                         userOrg = bintrayUserOrg
                     repo = "Kodein-Internal-Gradle"
@@ -86,7 +81,7 @@ allprojects {
                     vcsUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git"
 
                     setPublications("Kodein")
-                })
+                }
 
             }
         }
