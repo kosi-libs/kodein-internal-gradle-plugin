@@ -75,9 +75,9 @@ class KodeinUploadPlugin : Plugin<Project> {
                         val moduleFile = it.publishableFiles.firstOrNull { it.name == "module.json" }
                         if (moduleFile != null) {
                             uploadArtifact(Artifact().apply {
-                                name = it.mavenProjectIdentity.artifactId
-                                groupId = it.mavenProjectIdentity.groupId
-                                version = it.mavenProjectIdentity.version
+                                name = it.mavenProjectIdentity.artifactId.get()
+                                groupId = it.mavenProjectIdentity.groupId.get()
+                                version = it.mavenProjectIdentity.version.get()
                                 extension = "module"
                                 type = "module"
                                 file = moduleFile

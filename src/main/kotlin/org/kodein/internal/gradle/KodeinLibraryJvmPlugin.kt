@@ -36,8 +36,8 @@ class KodeinLibraryJvmPlugin : Plugin<Project> {
             sourcesJar.from(sourceSets["main"].allSource)
 
             extensions.configure<PublishingExtension>("publishing") {
-                (publications) {
-                    "Kodein"(MavenPublication::class) {
+                publications {
+                    create<MavenPublication>("Kodein") {
                         from(components["java"])
                         artifact(sourcesJar)
                     }

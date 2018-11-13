@@ -4,8 +4,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.plugin
 
 class KodeinLibraryAndroidPlugin : Plugin<Project> {
@@ -20,8 +20,8 @@ class KodeinLibraryAndroidPlugin : Plugin<Project> {
 
         @Suppress("UnstableApiUsage")
         extensions.configure<PublishingExtension>("publishing") {
-            (publications) {
-                "Kodein"(MavenPublication::class) {
+            publications {
+                create<MavenPublication>("Kodein") {
                     from(components["android"])
                 }
             }
