@@ -1,14 +1,13 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.plugin
 import org.gradle.kotlin.dsl.repositories
 
-class KodeinRootPlugin : Plugin<Project> {
+class KodeinRootPlugin : KtPlugin<Project> {
 
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply {
             plugin<KodeinPublicationsPlugin>()
         }
@@ -21,7 +20,5 @@ class KodeinRootPlugin : Plugin<Project> {
             }
         }
     }
-
-    override fun apply(project: Project) = project.applyPlugin()
 
 }

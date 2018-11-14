@@ -2,6 +2,7 @@ package org.kodein.internal.gradle
 
 import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNodeExtension
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -10,15 +11,17 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias TargetConf = KotlinTarget.() -> Unit
+typealias OSTest = OperatingSystem.() -> Boolean
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
-class KodeinMPP {
+class KodeinMPP(val nativeCommonHost: Boolean) {
 
     class KodeinSourceSet internal constructor(
             val name: String,
             val dependencies: List<KodeinMPP.KodeinSourceSet> = emptyList(),
             val mainConf: SourceSetConf = {},
-            val testConf: SourceSetConf = {}
+            val testConf: SourceSetConf = {},
+            val isNativeCommon: Boolean = false
     )
 
     object SourceSets {
@@ -52,25 +55,18 @@ class KodeinMPP {
                 }
         )
 
-        object Native {
-            val all = KodeinSourceSet(
-                    name = "allNative",
-                    mainConf = { dependsOn(it.getByName("commonMain")) },
-                    testConf = { dependsOn(it.getByName("commonTest")) }
-            )
+        val allNative = KodeinSourceSet(
+                name = "allNative",
+                mainConf = { dependsOn(it.getByName("commonMain")) },
+                testConf = { dependsOn(it.getByName("commonTest")) },
+                isNativeCommon = true
+        )
 
-            val allDesktop = KodeinSourceSet(
-                    name = "allDesktopNative",
-                    dependencies = listOf(all)
-            )
-
-            val allMobile = KodeinSourceSet(
-                    name = "allMobileNative",
-                    dependencies = listOf(all)
-            )
-        }
-
-        val native = Native
+        val allNativePosix = KodeinSourceSet(
+                name = "allNativePosix",
+                dependencies = listOf(allNative),
+                isNativeCommon = true
+        )
     }
 
     val kodeinSourceSets = SourceSets
@@ -79,7 +75,8 @@ class KodeinMPP {
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
-            val conf: TargetConf = {}
+            val conf: TargetConf = {},
+            val isNativeHost: OSTest = { false }
     )
 
     object Targets {
@@ -110,64 +107,72 @@ class KodeinMPP {
             val androidArm32 = KodeinTarget(
                     target = "androidNativeArm32",
                     name = "androidArm32",
-                    dependencies = listOf(SourceSets.Native.allMobile)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val androidArm64 = KodeinTarget(
                     target = "androidNativeArm64",
                     name = "androidArm64",
-                    dependencies = listOf(SourceSets.Native.allMobile)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val iosArm32 = KodeinTarget(
                     target = "iosArm32",
-                    dependencies = listOf(SourceSets.Native.allMobile)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val iosArm64 = KodeinTarget(
                     target = "iosArm64",
-                    dependencies = listOf(SourceSets.Native.allMobile)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val iosX64 = KodeinTarget(
                     target = "iosX64",
-                    dependencies = listOf(SourceSets.Native.allMobile)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val linuxArm32Hfp = KodeinTarget(
                     target = "linuxArm32Hfp",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val linuxMips32 = KodeinTarget(
                     target = "linuxMips32",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val linuxMipsel32 = KodeinTarget(
                     target = "linuxMipsel32",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNativePosix)
             )
 
             val linuxX64 = KodeinTarget(
                     target = "linuxX64",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNativePosix),
+                    isNativeHost = OperatingSystem::isLinux
             )
 
             val macosX64 = KodeinTarget(
                     target = "macosX64",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNativePosix),
+                    isNativeHost = OperatingSystem::isMacOsX
             )
 
             val mingwX64 = KodeinTarget(
                     target = "mingwX64",
-                    dependencies = listOf(SourceSets.Native.allDesktop)
+                    dependencies = listOf(SourceSets.allNative),
+                    isNativeHost = OperatingSystem::isWindows
             )
 
             val allAndroid = listOf(androidArm32, androidArm64)
             val allIos = listOf(iosArm32, iosArm64, iosX64)
             val allMobile = allAndroid + allIos
-            val allDesktop = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32, linuxX64, macosX64, mingwX64)
+
+            val allLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32, linuxX64)
+            val allPosix = allLinux + allMobile + macosX64
+
+            val allDesktop = allLinux + macosX64 + mingwX64
+
             val all = allMobile + allDesktop
         }
 
@@ -224,14 +229,51 @@ class KodeinMPP {
         fun target(block: KotlinTarget.() -> Unit) { target.block() }
     }
 
+    private fun KotlinMultiplatformExtension.addSrcDir(target: KodeinTarget, dependencies: List<KodeinSourceSet>) {
+        dependencies.forEach {
+            if (it.isNativeCommon) {
+                sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${it.name}Main/kotlin")
+                sourceSets.getByName(target.name + "Test").kotlin.srcDir("src/${it.name}Test/kotlin")
+                addSrcDir(target, it.dependencies)
+            }
+        }
+    }
+
     fun KotlinMultiplatformExtension.add(target: KodeinTarget, conf: TargetBuilder.() -> Unit = {}) {
-        val preset = presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")
-        val ktTarget = preset.createTarget(target.name).apply(target.conf)
-        targets.add(ktTarget)
-        target.dependencies.forEach {
-            sourceSets.add(it)
-            sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.getByName(it.name + "Main"))
-            sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(it.name + "Test"))
+        val ktTarget = targets.findByName(target.name) ?: run {
+            val preset = presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")
+            val ktTarget = preset.createTarget(target.name).apply(target.conf).also { targets.add(it) }
+
+            // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
+            val os = OperatingSystem.current()
+            if (nativeCommonHost && target.isNativeHost(os)) {
+                addSrcDir(target, target.dependencies)
+            }
+
+            target.dependencies.forEach {
+                // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
+                if (nativeCommonHost && it.isNativeCommon) {
+                    if (!target.isNativeHost(os)) {
+                        val osTarget = when {
+                            os.isLinux -> kodeinTargets.native.linuxX64
+                            os.isMacOsX -> kodeinTargets.native.macosX64
+                            os.isWindows -> kodeinTargets.native.mingwX64
+                            else -> throw IllegalStateException("Unsupported OS $os, please set the nativeCommonHost property to false")
+                        }
+                        if (targets.findByName(osTarget.name) == null) {
+                            add(osTarget)
+                        }
+                        sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.maybeCreate(osTarget.name + "Main"))
+                        sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.maybeCreate(osTarget.name + "Test"))
+                    }
+                }
+                else {
+                    sourceSets.add(it)
+                    sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.getByName(it.name + "Main"))
+                    sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(it.name + "Test"))
+                }
+            }
+            ktTarget
         }
         TargetBuilder(sourceSets, ktTarget).apply(conf)
     }

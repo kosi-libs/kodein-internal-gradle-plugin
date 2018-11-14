@@ -1,21 +1,22 @@
 package org.kodein.internal.gradle
 
 import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNodePlugin
-import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.plugin
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class KodeinMppPlugin : Plugin<Project> {
+class KodeinMppPlugin : KtPlugin<Project> {
 
     @Suppress("UnstableApiUsage")
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply {
             plugin("org.jetbrains.kotlin.multiplatform")
             plugin<KotlinMppJsTestsNodePlugin>()
         }
 
-        extensions.add("kodein", KodeinMPP())
+        val nativeCommonHost: String? by project
+
+        extensions.add("kodein", KodeinMPP(nativeCommonHost == "true"))
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
             sourceSets.apply {
@@ -42,7 +43,5 @@ class KodeinMppPlugin : Plugin<Project> {
 
         printTestLogs()
     }
-
-    override fun apply(target: Project) = target.applyPlugin()
 
 }

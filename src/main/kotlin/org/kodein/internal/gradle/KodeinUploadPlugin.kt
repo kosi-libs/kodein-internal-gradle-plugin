@@ -3,20 +3,18 @@ package org.kodein.internal.gradle
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import com.jfrog.bintray.gradle.tasks.entities.Artifact
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.kotlin.dsl.*
-import java.lang.IllegalStateException
 
 
 @Suppress("UnstableApiUsage")
-class KodeinUploadPlugin : Plugin<Project> {
+class KodeinUploadPlugin : KtPlugin<Project> {
 
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply { plugin("com.jfrog.bintray") }
 
         val bintray = extensions["bintray"] as BintrayExtension
@@ -90,7 +88,5 @@ class KodeinUploadPlugin : Plugin<Project> {
             uploadTask.dependsOn("publishToMavenLocal")
         }
     }
-
-    override fun apply(project: Project) = project.applyPlugin()
 
 }

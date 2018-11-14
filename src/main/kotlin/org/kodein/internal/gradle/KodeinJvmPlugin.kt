@@ -1,15 +1,14 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-class KodeinJvmPlugin : Plugin<Project> {
+class KodeinJvmPlugin : KtPlugin<Project> {
 
     @Suppress("UnstableApiUsage")
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply {
             plugin("kotlin-platform-jvm")
             plugin("org.gradle.maven-publish")
@@ -23,7 +22,5 @@ class KodeinJvmPlugin : Plugin<Project> {
             extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
         }
     }
-
-    override fun apply(project: Project) = project.applyPlugin()
 
 }

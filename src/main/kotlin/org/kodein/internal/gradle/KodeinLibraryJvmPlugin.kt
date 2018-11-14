@@ -1,6 +1,5 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
@@ -9,9 +8,9 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
 @Suppress("UnstableApiUsage")
-class KodeinLibraryJvmPlugin : Plugin<Project> {
+class KodeinLibraryJvmPlugin : KtPlugin<Project> {
 
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply {
             plugin<KodeinJvmPlugin>()
             plugin("maven-publish")
@@ -47,7 +46,5 @@ class KodeinLibraryJvmPlugin : Plugin<Project> {
 
         printTestLogs()
     }
-
-    override fun apply(project: Project) = project.applyPlugin()
 
 }
