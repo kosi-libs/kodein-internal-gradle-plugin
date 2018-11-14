@@ -1,16 +1,15 @@
 package org.kodein.internal.gradle
 
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-class KodeinAndroidPlugin : Plugin<Project> {
+class KodeinAndroidPlugin : KtPlugin<Project> {
 
     @Suppress("UnstableApiUsage")
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
             plugin("kotlin-platform-android")
@@ -45,7 +44,5 @@ class KodeinAndroidPlugin : Plugin<Project> {
 
         printTestLogs()
     }
-
-    override fun apply(project: Project) = project.applyPlugin()
 
 }

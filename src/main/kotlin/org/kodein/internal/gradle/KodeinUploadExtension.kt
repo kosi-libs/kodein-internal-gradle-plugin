@@ -1,7 +1,6 @@
 package org.kodein.internal.gradle
 
 import com.jfrog.bintray.gradle.BintrayExtension
-import java.lang.IllegalStateException
 
 interface KodeinUploadExtension {
     var name: String

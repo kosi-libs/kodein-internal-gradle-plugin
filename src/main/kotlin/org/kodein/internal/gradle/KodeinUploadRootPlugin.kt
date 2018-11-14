@@ -1,14 +1,12 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
-import java.lang.IllegalStateException
 
-class KodeinUploadRootPlugin : Plugin<Project> {
+class KodeinUploadRootPlugin : KtPlugin<Project> {
 
     @Suppress("UnstableApiUsage")
-    private fun Project.applyPlugin() {
+    override fun Project.applyPlugin() {
         val ext = KodeinRootUploadExtension()
         project.extensions.add(KodeinUploadExtension::class.java, "kodeinUpload", ext)
 
@@ -17,5 +15,4 @@ class KodeinUploadRootPlugin : Plugin<Project> {
         }
     }
 
-    override fun apply(project: Project) = project.applyPlugin()
 }
