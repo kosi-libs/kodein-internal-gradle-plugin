@@ -14,11 +14,11 @@ typealias TargetConf = KotlinTarget.() -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
-class KodeinMPP(val nativeCommonHost: Boolean) {
+class KodeinMPPExtension(val nativeCommonHost: Boolean) {
 
     class KodeinSourceSet internal constructor(
             val name: String,
-            val dependencies: List<KodeinMPP.KodeinSourceSet> = emptyList(),
+            val dependencies: List<KodeinMPPExtension.KodeinSourceSet> = emptyList(),
             val mainConf: SourceSetConf = {},
             val testConf: SourceSetConf = {},
             val isNativeCommon: Boolean = false

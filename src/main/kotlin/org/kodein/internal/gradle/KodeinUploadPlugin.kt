@@ -69,7 +69,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 }
                 setPublications(*publications.map { it.name } .toTypedArray())
                 publications.filterIsInstance<MavenPublication>().forEach {
-                    if (it is DefaultMavenPublication && it.component is ComponentWithVariants) {
+                    if (it is DefaultMavenPublication && it.component != null) {
                         val moduleFile = it.publishableFiles.firstOrNull { it.name == "module.json" }
                         if (moduleFile != null) {
                             uploadArtifact(Artifact().apply {
