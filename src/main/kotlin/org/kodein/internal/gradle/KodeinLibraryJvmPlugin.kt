@@ -14,8 +14,11 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
         apply {
             plugin<KodeinJvmPlugin>()
             plugin("maven-publish")
+            plugin("java-library")
             plugin<KodeinUploadPlugin>()
         }
+
+        extensions.add("kodeinLib", KodeinLibraryDependencyExtension(this))
 
         DependencyHandlerScope(dependencies).apply {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7")

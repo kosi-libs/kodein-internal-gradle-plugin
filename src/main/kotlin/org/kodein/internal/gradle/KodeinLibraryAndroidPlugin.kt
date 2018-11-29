@@ -12,10 +12,13 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin<KodeinAndroidPlugin>()
-            plugin("org.gradle.maven-publish")
+            plugin("maven-publish")
+//            plugin("java-library")
             plugin("digital.wup.android-maven-publish")
             plugin<KodeinUploadPlugin>()
         }
+
+        extensions.add("kodeinLib", KodeinLibraryDependencyExtension(this))
 
         @Suppress("UnstableApiUsage")
         extensions.configure<PublishingExtension>("publishing") {
