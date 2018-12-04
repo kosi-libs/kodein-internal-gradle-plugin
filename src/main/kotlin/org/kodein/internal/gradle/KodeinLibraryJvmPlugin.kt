@@ -1,11 +1,13 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 
 @Suppress("UnstableApiUsage")
 class KodeinLibraryJvmPlugin : KtPlugin<Project> {
@@ -18,15 +20,8 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
             plugin<KodeinUploadPlugin>()
         }
 
-        extensions.add("kodeinLib", KodeinLibraryDependencyExtension(this))
-
-        DependencyHandlerScope(dependencies).apply {
-            "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
-
-            "testImplementation"("org.jetbrains.kotlin:kotlin-test")
-            "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit")
-            "testImplementation"("junit:junit:4.12")
-        }
+        val ext = KodeinLibraryDependencyExtension(this)
+        extensions.add("kodeinLib", ext)
 
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
@@ -42,6 +37,8 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
                     create<MavenPublication>("Kodein") {
                         from(components["java"])
                         artifact(sourcesJar)
+
+                        ext.updatPom(this)
                     }
                 }
             }

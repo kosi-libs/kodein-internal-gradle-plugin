@@ -26,6 +26,7 @@ class KodeinLibraryMppExtension(val project: Project) {
                 .map { project.configurations[it] }
                 .flatMap { it.allDependencies }
                 .filterIsInstance<ProjectDependency>()
+                .distinct()
 
         val publishing = project.extensions["publishing"] as PublishingExtension
         publishing.publications.filterIsInstance<MavenPublication>().forEach { pub ->
