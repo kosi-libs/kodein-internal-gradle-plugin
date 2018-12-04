@@ -16,6 +16,10 @@ class KodeinJvmPlugin : KtPlugin<Project> {
 
         DependencyHandlerScope(dependencies).apply {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+
+            "testImplementation"("org.jetbrains.kotlin:kotlin-test")
+            "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit")
+            "testImplementation"("junit:junit:4.12")
         }
 
         afterEvaluate {

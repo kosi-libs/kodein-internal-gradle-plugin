@@ -41,7 +41,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.1.0"
+    version = "2.2.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
