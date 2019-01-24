@@ -8,7 +8,7 @@ plugins {
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.61"
-    const val kotlin = "1.3.10"
+    const val kotlin = "1.3.20"
 }
 
 repositories {
