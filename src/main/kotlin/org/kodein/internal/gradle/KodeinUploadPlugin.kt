@@ -2,12 +2,9 @@ package org.kodein.internal.gradle
 
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import com.jfrog.bintray.gradle.tasks.entities.Artifact
 import org.gradle.api.Project
-import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.kotlin.dsl.*
 
 
@@ -68,21 +65,6 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
                 }
                 setPublications(*publications.map { it.name } .toTypedArray())
-                publications.filterIsInstance<MavenPublication>().forEach {
-                    if (it is DefaultMavenPublication && it.component != null) {
-                        val moduleFile = it.publishableFiles.firstOrNull { it.name == "module.json" }
-                        if (moduleFile != null) {
-                            uploadArtifact(Artifact().apply {
-                                name = it.mavenProjectIdentity.artifactId.get()
-                                groupId = it.mavenProjectIdentity.groupId.get()
-                                version = it.mavenProjectIdentity.version.get()
-                                extension = "module"
-                                type = "module"
-                                file = moduleFile
-                            })
-                        }
-                    }
-                }
             }
 
             uploadTask.dependsOn("publishToMavenLocal")

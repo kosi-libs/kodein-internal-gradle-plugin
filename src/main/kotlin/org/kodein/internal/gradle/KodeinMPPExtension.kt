@@ -4,14 +4,22 @@ import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNode
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias TargetConf = KotlinTarget.() -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
+
+typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeCompilation>
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
 class KodeinMPPExtension(val nativeCommonHost: Boolean) {
@@ -71,7 +79,7 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
 
     val kodeinSourceSets = SourceSets
 
-    class KodeinTarget internal constructor(
+    class KodeinTarget<C : KotlinCompilation<*>> internal constructor(
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
@@ -93,75 +101,80 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
             }
         }
 
-        val jvm = KodeinTarget(
+        val jvm = KodeinTarget<KotlinJvmCompilation>(
                 target = "jvm",
                 dependencies = listOf(SourceSets.allJvm)
         )
 
-        val android = KodeinTarget(
+        val android = KodeinTarget<KotlinJvmAndroidCompilation>(
                 target = "android",
                 dependencies = listOf(SourceSets.allJvm)
         )
 
         object Native {
-            val androidArm32 = KodeinTarget(
+            val androidArm32 = KodeinNativeTarget(
                     target = "androidNativeArm32",
                     name = "androidArm32",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val androidArm64 = KodeinTarget(
+            val androidArm64 = KodeinNativeTarget(
                     target = "androidNativeArm64",
                     name = "androidArm64",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val iosArm32 = KodeinTarget(
+            val iosArm32 = KodeinNativeTarget(
                     target = "iosArm32",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val iosArm64 = KodeinTarget(
+            val iosArm64 = KodeinNativeTarget(
                     target = "iosArm64",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val iosX64 = KodeinTarget(
+            val iosX64 = KodeinNativeTarget(
                     target = "iosX64",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val linuxArm32Hfp = KodeinTarget(
+            val linuxArm32Hfp = KodeinNativeTarget(
                     target = "linuxArm32Hfp",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val linuxMips32 = KodeinTarget(
+            val linuxMips32 = KodeinNativeTarget(
                     target = "linuxMips32",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val linuxMipsel32 = KodeinTarget(
+            val linuxMipsel32 = KodeinNativeTarget(
                     target = "linuxMipsel32",
                     dependencies = listOf(SourceSets.allNativePosix)
             )
 
-            val linuxX64 = KodeinTarget(
+            val linuxX64 = KodeinNativeTarget(
                     target = "linuxX64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNativeHost = OperatingSystem::isLinux
             )
 
-            val macosX64 = KodeinTarget(
+            val macosX64 = KodeinNativeTarget(
                     target = "macosX64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNativeHost = OperatingSystem::isMacOsX
             )
 
-            val mingwX64 = KodeinTarget(
+            val mingwX64 = KodeinNativeTarget(
                     target = "mingwX64",
                     dependencies = listOf(SourceSets.allNative),
                     isNativeHost = OperatingSystem::isWindows
+            )
+
+            val wasm32 = KodeinNativeTarget(
+                    target = "wasm32",
+                    dependencies = listOf(SourceSets.allNative)
             )
 
             val allAndroid = listOf(androidArm32, androidArm64)
@@ -173,25 +186,27 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
 
             val allDesktop = allLinux + macosX64 + mingwX64
 
-            val all = allMobile + allDesktop
+            val allNonWeb = allMobile + allDesktop
+
+            val all = allNonWeb + wasm32
         }
 
         val native = Native
 
-        val js = KodeinTarget(
+        val js = KodeinTarget<KotlinJsCompilation>(
                 target = "js",
                 dependencies = listOf(SourceSets.allJs),
                 conf = JsConf
         )
 
-        val webjs = KodeinTarget(
+        val webjs = KodeinTarget<KotlinJsCompilation>(
                 target = "js",
                 name = "webjs",
                 dependencies = listOf(SourceSets.allJs),
                 conf = JsConf
         )
 
-        val nodejs = KodeinTarget(
+        val nodejs = KodeinTarget<KotlinJsCompilation>(
                 target = "js",
                 name = "nodejs",
                 dependencies = listOf(SourceSets.allJs),
@@ -225,11 +240,15 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
         fun test(block: KotlinSourceSet.() -> Unit) { test.apply(block) }
     }
 
-    class TargetBuilder internal constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, val target: KotlinTarget) : SourceSetBuilder(sourceSets, target.name) {
+    class TargetBuilder<C : KotlinCompilation<*>> internal constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, val target: KotlinTarget) : SourceSetBuilder(sourceSets, target.name) {
+        @Suppress("UNCHECKED_CAST")
+        val mainCompilation get() = target.compilations["main"] as C
+        @Suppress("UNCHECKED_CAST")
+        val testCompilation get() = target.compilations["test"] as C
         fun target(block: KotlinTarget.() -> Unit) { target.block() }
     }
 
-    private fun KotlinMultiplatformExtension.addSrcDir(target: KodeinTarget, dependencies: List<KodeinSourceSet>) {
+    private fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.addSrcDir(target: KodeinTarget<C>, dependencies: List<KodeinSourceSet>) {
         dependencies.forEach {
             if (it.isNativeCommon) {
                 sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${it.name}Main/kotlin")
@@ -239,7 +258,7 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
         }
     }
 
-    fun KotlinMultiplatformExtension.add(target: KodeinTarget, conf: TargetBuilder.() -> Unit = {}) {
+    fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(target: KodeinTarget<C>, conf: TargetBuilder<C>.() -> Unit = {}) {
         val ktTarget = targets.findByName(target.name) ?: run {
             val preset = presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")
             val ktTarget = preset.createTarget(target.name).apply(target.conf).also { targets.add(it) }
@@ -275,17 +294,36 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
             }
             ktTarget
         }
-        TargetBuilder(sourceSets, ktTarget).apply(conf)
+        TargetBuilder<C>(sourceSets, ktTarget).apply(conf)
     }
 
-    fun KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget>, conf: TargetBuilder.() -> Unit = {}) =
+    fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<C>>, conf: TargetBuilder<C>.() -> Unit = {}) =
             targets.forEach { add(it, conf) }
 
-    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget, conf: SourceSetBuilder.() -> Unit) {
+    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>, conf: SourceSetBuilder.() -> Unit) {
         SourceSetBuilder(sourceSets, target.name).apply(conf)
     }
 
-    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget) = SourceSetBuilder(sourceSets, target.name)
+    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>) = SourceSetBuilder(sourceSets, target.name)
+
+    fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
+        if (nativeCommonHost && sourceSet.isNativeCommon) {
+            val os = OperatingSystem.current()
+            val target = when {
+                os.isLinux -> kodeinTargets.native.linuxX64
+                os.isMacOsX -> kodeinTargets.native.macosX64
+                os.isWindows -> kodeinTargets.native.mingwX64
+                else -> throw IllegalStateException("Unsupported OS $os")
+            }
+            add(target, conf)
+        }
+        else {
+            sourceSets.add(sourceSet)
+            SourceSetBuilder(sourceSets, sourceSet.name)
+        }
+    }
+
+//    fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet) = SourceSetBuilder(sourceSets, sourceSet.name)
 
     fun KotlinMultiplatformExtension.common(conf: SourceSetBuilder.() -> Unit) {
         SourceSetBuilder(sourceSets, "common").apply(conf)

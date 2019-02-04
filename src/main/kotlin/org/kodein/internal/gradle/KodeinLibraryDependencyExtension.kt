@@ -18,18 +18,6 @@ class KodeinLibraryDependencyExtension(val project: Project) {
         return this
     }
 
-//    infix fun ProjectDependency.target(target: String): String {
-//        val notation = "$group:$name-$target:$version"
-//
-//        project.configurations.all {
-//            resolutionStrategy.dependencySubstitution {
-//                substitute(module(notation)).because("Kotlin multiplatform dependency fix").with(project(dependencyProject.path))
-//            }
-//        }
-//
-//        return notation
-//    }
-
     @Suppress("UnstableApiUsage")
     internal fun updatPom(publication: MavenPublication) {
         publication.pom.withXml {
