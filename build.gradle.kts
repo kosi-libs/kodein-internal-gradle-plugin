@@ -2,13 +2,13 @@ plugins {
     `maven-publish`
     `java-library`
     `kotlin-dsl`
-    kotlin("jvm") version "1.2.31"
+    kotlin("jvm") version "1.2.61"
     id("com.jfrog.bintray") version "1.8.4"
 }
 
 object KodeinVersions {
-    const val kotlinGradle = "1.2.31"
-    const val kotlin = "1.3.10"
+    const val kotlinGradle = "1.2.61"
+    const val kotlin = "1.3.20"
 }
 
 repositories {
@@ -34,25 +34,25 @@ dependencies {
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
 
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
-    api("digital.wup:android-maven-publish:3.5.1")
+    api("digital.wup:android-maven-publish:3.6.2")
 
     api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.2.0"
+    version = "2.2.0-LGM"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
             setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            from(java.sourceSets["main"].allSource)
+            from(sourceSets["main"].allSource)
         }
 
         publishing {
-            (publications) {
-                "Kodein"(MavenPublication::class) {
+            publications {
+                create<MavenPublication>("Kodein") {
                     from(components["java"])
                     artifact(sourcesJar) {
                         classifier = "sources"

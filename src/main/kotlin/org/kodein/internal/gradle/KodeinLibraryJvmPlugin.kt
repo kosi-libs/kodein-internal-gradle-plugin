@@ -25,7 +25,7 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
 
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         }
 
         afterEvaluate {
@@ -33,8 +33,8 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
             sourcesJar.from(sourceSets["main"].allSource)
 
             extensions.configure<PublishingExtension>("publishing") {
-                (publications) {
-                    "Kodein"(MavenPublication::class) {
+                publications {
+                    create<MavenPublication>("Kodein") {
                         from(components["java"])
                         artifact(sourcesJar)
 

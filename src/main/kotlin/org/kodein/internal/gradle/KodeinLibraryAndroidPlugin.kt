@@ -5,8 +5,8 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.plugin
 import org.gradle.kotlin.dsl.task
 
@@ -26,13 +26,13 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
 
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         }
 
         @Suppress("UnstableApiUsage")
         extensions.configure<PublishingExtension>("publishing") {
-            (publications) {
-                "Kodein"(MavenPublication::class) {
+            publications {
+                create<MavenPublication>("Kodein") {
                     from(components["android"])
                     artifact(sourcesJar)
 
