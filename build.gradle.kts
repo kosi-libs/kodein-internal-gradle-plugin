@@ -37,12 +37,12 @@ dependencies {
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4-jetbrains-5")
     api("digital.wup:android-maven-publish:3.6.2")
 
-    api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0")
+    api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.3.0"
+    version = "2.3.1"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
