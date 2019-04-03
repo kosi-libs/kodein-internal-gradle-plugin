@@ -8,7 +8,7 @@ plugins {
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.61"
-    const val kotlin = "1.3.20"
+    const val kotlin = "1.3.21"
 }
 
 repositories {
@@ -30,19 +30,19 @@ dependencies {
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
 
-    api("com.android.tools.build:gradle:3.1.4")
+    api("com.android.tools.build:gradle:3.2.1")
 
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
 
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4-jetbrains-5")
     api("digital.wup:android-maven-publish:3.6.2")
 
-    api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0")
+    api("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.2.0")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.3.1"
+    version = "2.3.2"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {

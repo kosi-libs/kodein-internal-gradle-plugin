@@ -4,19 +4,16 @@ import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNode
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
-typealias TargetConf = KotlinTarget.() -> Unit
+typealias TargetConf<C> = KotlinOnlyTarget<C>.() -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
 
 typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeCompilation>
@@ -83,13 +80,13 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
-            val conf: TargetConf = {},
+            val conf: TargetConf<C> = {},
             val isNativeHost: OSTest = { false }
     )
 
     object Targets {
 
-        val JsConf: KotlinTarget.() -> Unit = {
+        val JsConf: KotlinOnlyTarget<KotlinJsCompilation>.() -> Unit = {
             val mainCompileTask = project.tasks[compilations["main"].compileKotlinTaskName] as Kotlin2JsCompile
             mainCompileTask.kotlinOptions.apply {
                 main = "noCall"
@@ -193,20 +190,20 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
 
         val native = Native
 
-        val js = KodeinTarget<KotlinJsCompilation>(
+        val js = KodeinTarget(
                 target = "js",
                 dependencies = listOf(SourceSets.allJs),
                 conf = JsConf
         )
 
-        val webjs = KodeinTarget<KotlinJsCompilation>(
+        val webjs = KodeinTarget(
                 target = "js",
                 name = "webjs",
                 dependencies = listOf(SourceSets.allJs),
                 conf = JsConf
         )
 
-        val nodejs = KodeinTarget<KotlinJsCompilation>(
+        val nodejs = KodeinTarget(
                 target = "js",
                 name = "nodejs",
                 dependencies = listOf(SourceSets.allJs),
@@ -260,7 +257,8 @@ class KodeinMPPExtension(val nativeCommonHost: Boolean) {
 
     fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(target: KodeinTarget<C>, conf: TargetBuilder<C>.() -> Unit = {}) {
         val ktTarget = targets.findByName(target.name) ?: run {
-            val preset = presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")
+            @Suppress("UNCHECKED_CAST")
+            val preset = (presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")) as KotlinTargetPreset<KotlinOnlyTarget<C>>
             val ktTarget = preset.createTarget(target.name).apply(target.conf).also { targets.add(it) }
 
             // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
