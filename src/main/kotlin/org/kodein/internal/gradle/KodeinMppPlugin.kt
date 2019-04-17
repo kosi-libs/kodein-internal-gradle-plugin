@@ -14,9 +14,7 @@ class KodeinMppPlugin : KtPlugin<Project> {
             plugin<KotlinMppJsTestsNodePlugin>()
         }
 
-        val nativeCommonHost: String? by project
-
-        extensions.add("kodein", KodeinMPPExtension(nativeCommonHost == "true"))
+        extensions.add("kodein", KodeinMPPExtension(this))
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
             sourceSets.apply {

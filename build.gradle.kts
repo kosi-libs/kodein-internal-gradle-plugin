@@ -8,7 +8,7 @@ plugins {
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.61"
-    const val kotlin = "1.3.21"
+    const val kotlin = "1.3.30"
 }
 
 repositories {
@@ -42,7 +42,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.3.2"
+    version = "2.4.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {

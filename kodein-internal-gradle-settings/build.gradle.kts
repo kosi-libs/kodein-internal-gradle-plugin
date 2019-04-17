@@ -1,5 +1,3 @@
-import com.jfrog.bintray.gradle.BintrayExtension
-
 plugins {
     `maven-publish`
     `java-library`
