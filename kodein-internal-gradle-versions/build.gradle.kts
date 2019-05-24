@@ -13,6 +13,4 @@ repositories {
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
-
-    implementation(project(":kodein-internal-gradle-versions"))
 }

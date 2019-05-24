@@ -10,7 +10,7 @@ class KodeinSettingsPlugin : Plugin<Settings> {
 
     private fun Settings.applyPlugin() {
 
-        val version = this@applyPlugin.buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
+        val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
 
         enableFeaturePreview("GRADLE_METADATA")
 
@@ -29,8 +29,10 @@ class KodeinSettingsPlugin : Plugin<Settings> {
 
             resolutionStrategy {
                 eachPlugin {
-                    if (requested.id.id.startsWith("org.kodein.")) {
-                        useModule("org.kodein.internal.gradle:kodein-internal-gradle-plugin:$version")
+                    val id = requested.id.id
+                    when {
+                        id.startsWith("org.kodein.") -> useModule("org.kodein.internal.gradle:kodein-internal-gradle-plugin:$version")
+                        id == "kotlinx-serialization" -> useModule("org.jetbrains.kotlin:kotlin-serialization:${KodeinVersions.kotlin}")
                     }
                 }
             }

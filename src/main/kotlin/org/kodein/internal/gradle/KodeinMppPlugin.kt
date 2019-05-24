@@ -12,6 +12,7 @@ class KodeinMppPlugin : KtPlugin<Project> {
         apply {
             plugin("org.jetbrains.kotlin.multiplatform")
             plugin<KotlinMppJsTestsNodePlugin>()
+            plugin<KodeinVersionsPlugin>()
         }
 
         extensions.add("kodein", KodeinMPPExtension(this))

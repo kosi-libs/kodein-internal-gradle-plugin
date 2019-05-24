@@ -5,14 +5,14 @@ import org.gradle.api.Project
 
 object KodeinVersions {
 
-    const val kotlin = "1.3.30"
+    const val kotlin = "1.3.31"
 
 }
 
 class KodeinVersionsPlugin : Plugin<Project> {
 
     private fun Project.applyPlugin() {
-        extensions.add("kodeinVersions", KodeinVersions)
+        extensions.add("kodeinVersions", org.kodein.internal.gradle.KodeinVersions)
     }
 
     override fun apply(project: Project) = project.applyPlugin()

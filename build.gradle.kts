@@ -8,7 +8,7 @@ plugins {
 
 object KodeinVersions {
     const val kotlinGradle = "1.2.61"
-    const val kotlin = "1.3.30"
+    const val kotlin = "1.3.31"
 }
 
 repositories {
@@ -28,6 +28,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlinGradle}")
 
+    api(project(":kodein-internal-gradle-versions"))
+
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
 
     api("com.android.tools.build:gradle:3.2.1")
@@ -42,7 +44,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.4.0"
+    version = "2.4.1"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {

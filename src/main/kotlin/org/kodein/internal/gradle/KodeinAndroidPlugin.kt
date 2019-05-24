@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 class KodeinAndroidPlugin : KtPlugin<Project> {
@@ -13,6 +14,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
         apply {
             plugin("com.android.library")
             plugin("kotlin-platform-android")
+            plugin<KodeinVersionsPlugin>()
         }
 
         extensions.configure<LibraryExtension>("android") {

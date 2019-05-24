@@ -264,19 +264,36 @@ class KodeinMPPExtension(val project: Project) {
     }
 
 
-    open class SourceSetBuilder internal constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, name: String) {
-        val main: KotlinSourceSet = sourceSets.getByName(name + "Main")
-        val test: KotlinSourceSet = sourceSets.getByName(name + "Test")
+    interface SourceSetBuilder {
+        val main: KotlinSourceSet
+        val test: KotlinSourceSet
         fun main(block: KotlinSourceSet.() -> Unit) { main.apply(block) }
         fun test(block: KotlinSourceSet.() -> Unit) { test.apply(block) }
     }
 
-    class TargetBuilder<C : KotlinCompilation<*>> internal constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, val target: KotlinTarget) : SourceSetBuilder(sourceSets, target.name) {
-        @Suppress("UNCHECKED_CAST")
-        val mainCompilation get() = target.compilations["main"] as C
-        @Suppress("UNCHECKED_CAST")
-        val testCompilation get() = target.compilations["test"] as C
+    private class SourceSetBuilderImpl(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, name: String) : SourceSetBuilder {
+        override val main: KotlinSourceSet = sourceSets.getByName(name + "Main")
+        override val test: KotlinSourceSet = sourceSets.getByName(name + "Test")
+    }
+
+    interface TargetConfigurator<C : KotlinCompilation<*>> {
+        val mainCompilation: C
+        val testCompilation: C
+        val target: KotlinTarget
         fun target(block: KotlinTarget.() -> Unit) { target.block() }
+    }
+
+    private class TargetConfiguratorImpl<C : KotlinCompilation<*>>(override val target: KotlinTarget) : TargetConfigurator<C> {
+        @Suppress("UNCHECKED_CAST")
+        override val mainCompilation get() = target.compilations["main"] as C
+        @Suppress("UNCHECKED_CAST")
+        override val testCompilation get() = target.compilations["test"] as C
+    }
+
+    interface TargetBuilder<C : KotlinCompilation<*>> : SourceSetBuilder, TargetConfigurator<C>
+
+    private class TargetBuilderImpl<C : KotlinCompilation<*>> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<C>) : TargetBuilder<C>, SourceSetBuilder by ssb, TargetConfigurator<C> by tc {
+        constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, target: KotlinTarget, sourceSetName: String = target.name) : this(SourceSetBuilderImpl(sourceSets, sourceSetName), TargetConfiguratorImpl(target))
     }
 
     // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
@@ -357,17 +374,17 @@ class KodeinMPPExtension(val project: Project) {
             }
             ktTarget
         }
-        TargetBuilder<C>(sourceSets, ktTarget).apply(conf)
+        TargetBuilderImpl<C>(sourceSets, ktTarget).apply(conf)
     }
 
     fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<C>>, conf: TargetBuilder<C>.() -> Unit = {}) =
             targets.forEach { add(it, conf) }
 
     fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>, conf: SourceSetBuilder.() -> Unit) {
-        SourceSetBuilder(sourceSets, target.name).apply(conf)
+        SourceSetBuilderImpl(sourceSets, target.name).apply(conf)
     }
 
-    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>) = SourceSetBuilder(sourceSets, target.name)
+    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>): SourceSetBuilder = SourceSetBuilderImpl(sourceSets, target.name)
 
     fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
         // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
@@ -385,17 +402,15 @@ class KodeinMPPExtension(val project: Project) {
             add(kodeinTargets.jvm, conf)
         } else {
             sourceSets.add(sourceSet)
-            SourceSetBuilder(sourceSets, sourceSet.name)
+            SourceSetBuilderImpl(sourceSets, sourceSet.name)
         }
     }
 
-//    fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet) = SourceSetBuilder(sourceSets, sourceSet.name)
-
-    fun KotlinMultiplatformExtension.common(conf: SourceSetBuilder.() -> Unit) {
-        SourceSetBuilder(sourceSets, "common").apply(conf)
+    fun KotlinMultiplatformExtension.common(conf: TargetBuilder<KotlinCompilation<*>>.() -> Unit) {
+        TargetBuilderImpl(sourceSets, targets["metadata"], "common").apply(conf)
     }
 
-    val KotlinMultiplatformExtension.common get() = SourceSetBuilder(sourceSets, "common")
+    val KotlinMultiplatformExtension.common get(): SourceSetBuilder = SourceSetBuilderImpl(sourceSets, "common")
 
     fun KotlinTarget.setCompileClasspath() {
         val targetName = name
@@ -404,5 +419,8 @@ class KodeinMPPExtension(val project: Project) {
         }
     }
 
+    fun KotlinMultiplatformExtension.allTargets(conf: TargetConfigurator<KotlinCompilation<*>>.() -> Unit) {
+        targets.forEach { TargetConfiguratorImpl(it).conf() }
+    }
 }
 
