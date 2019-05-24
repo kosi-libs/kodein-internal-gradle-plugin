@@ -24,7 +24,7 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
         extensions.add("kodeinLib", ext)
 
         val sourcesJar = task<Jar>("sourcesJar") {
-            classifier = "sources"
+            archiveClassifier.set("sources")
             setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         }
 

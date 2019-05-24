@@ -3,6 +3,7 @@ package org.kodein.internal.gradle
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -23,15 +24,9 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             defaultConfig {
                 minSdkVersion(15)
             }
-
-            dexOptions {
-                val travisBuild = System.getenv("TRAVIS") == "true"
-                val preDexEnabled = System.getProperty("pre-dex", "true") == "true"
-                preDexLibraries = preDexEnabled && !travisBuild
-            }
         }
 
-        DependencyHandlerScope(dependencies).apply {
+        dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlin}")
 
             "testImplementation"("org.jetbrains.kotlin:kotlin-test:${KodeinVersions.kotlin}")

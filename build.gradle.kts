@@ -1,15 +1,14 @@
+import org.kodein.internal.gradle.KodeinVersions
+
 plugins {
     `maven-publish`
     `java-library`
     `kotlin-dsl`
-    kotlin("jvm") version "1.2.61"
+    kotlin("jvm") version "1.3.21"
     id("com.jfrog.bintray") version "1.8.4"
 }
 
-object KodeinVersions {
-    const val kotlinGradle = "1.2.61"
-    const val kotlin = "1.3.31"
-}
+val gradleKotlin = "1.3.21"
 
 repositories {
     jcenter()
@@ -26,15 +25,15 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlinGradle}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$gradleKotlin")
 
     api(project(":kodein-internal-gradle-versions"))
 
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
 
-    api("com.android.tools.build:gradle:3.2.1")
+    api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
 
-    api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+    api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
 
     api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4-jetbrains-5")
     api("digital.wup:android-maven-publish:3.6.2")
@@ -44,11 +43,11 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.4.1"
+    version = "2.5.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
-            classifier = "sources"
+            archiveClassifier.set("sources")
             setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
             from(sourceSets["main"].allSource)
         }

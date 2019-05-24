@@ -2,6 +2,7 @@ package org.kodein.internal.gradle
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -16,7 +17,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        DependencyHandlerScope(dependencies).apply {
+        dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
             "testImplementation"("org.jetbrains.kotlin:kotlin-test")

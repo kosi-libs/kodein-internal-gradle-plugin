@@ -6,13 +6,14 @@ import org.gradle.api.Project
 object KodeinVersions {
 
     const val kotlin = "1.3.31"
+    const val androidBuildTools = "3.4.1"
 
 }
 
 class KodeinVersionsPlugin : Plugin<Project> {
 
     private fun Project.applyPlugin() {
-        extensions.add("kodeinVersions", org.kodein.internal.gradle.KodeinVersions)
+        extensions.add("kodeinVersions", KodeinVersions)
     }
 
     override fun apply(project: Project) = project.applyPlugin()
