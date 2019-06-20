@@ -5,7 +5,7 @@ import org.gradle.api.Project
 
 object KodeinVersions {
 
-    const val kotlin = "1.3.31"
+    const val kotlin = "1.3.40"
     const val androidBuildTools = "3.4.1"
 
 }
