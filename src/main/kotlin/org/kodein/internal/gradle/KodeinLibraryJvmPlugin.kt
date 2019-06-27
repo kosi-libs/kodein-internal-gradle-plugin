@@ -1,13 +1,11 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.*
+import org.gradle.api.file.*
+import org.gradle.api.publish.*
+import org.gradle.api.publish.maven.*
+import org.gradle.jvm.tasks.*
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 
 @Suppress("UnstableApiUsage")
 class KodeinLibraryJvmPlugin : KtPlugin<Project> {
@@ -29,8 +27,12 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
-            val sourceSets = project.convention.getPluginByName<org.gradle.api.plugins.JavaPluginConvention>("java").sourceSets
+            val javaPlugin = project.convention.getPluginByName<org.gradle.api.plugins.JavaPluginConvention>("java")
+            val sourceSets = javaPlugin.sourceSets
             sourcesJar.from(sourceSets["main"].allSource)
+
+            javaPlugin.sourceCompatibility = JavaVersion.VERSION_1_8
+            javaPlugin.targetCompatibility = JavaVersion.VERSION_1_8
 
             extensions.configure<PublishingExtension>("publishing") {
                 publications {
