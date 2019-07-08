@@ -1,7 +1,6 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.plugin
@@ -28,6 +27,8 @@ class KodeinJvmPlugin : KtPlugin<Project> {
         afterEvaluate {
             extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
         }
+
+        printTestLogs()
     }
 
 }

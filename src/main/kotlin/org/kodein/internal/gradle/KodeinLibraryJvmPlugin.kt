@@ -1,10 +1,11 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.publish.*
-import org.gradle.api.publish.maven.*
-import org.gradle.jvm.tasks.*
+import org.gradle.api.JavaVersion
+import org.gradle.api.Project
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
 @Suppress("UnstableApiUsage")
@@ -45,8 +46,6 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
                 }
             }
         }
-
-        printTestLogs()
     }
 
 }
