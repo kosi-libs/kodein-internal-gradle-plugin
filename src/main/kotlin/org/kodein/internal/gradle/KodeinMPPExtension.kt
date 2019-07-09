@@ -1,6 +1,5 @@
 package org.kodein.internal.gradle
 
-import com.github.salomonbrys.gradle.kotlin.js.jstests.node.KotlinMppJsTestsNodeExtension
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
@@ -11,14 +10,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
-typealias TargetConf<C> = KotlinOnlyTarget<C>.() -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
 typealias ConfTest = Project.() -> Boolean
 
-typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeCompilation>
+typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeCompilation, KotlinNativeTarget>
 
 private fun Project.isTrue(property: String) = findProperty(property) == "true"
 
@@ -82,11 +81,11 @@ class KodeinMPPExtension(val project: Project) {
 
     val kodeinSourceSets = SourceSets
 
-    class KodeinTarget<C : KotlinCompilation<*>> internal constructor(
+    class KodeinTarget<C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> internal constructor(
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
-            val conf: TargetConf<C> = {},
+            val conf: T.() -> Unit = {},
             val isNative: Boolean = false,
             val isNativeHost: OSTest = { false },
             val exclude: ConfTest = { false }
@@ -94,28 +93,17 @@ class KodeinMPPExtension(val project: Project) {
 
     object Targets {
 
-        val JsConf: KotlinOnlyTarget<KotlinJsCompilation>.() -> Unit = {
-            val mainCompileTask = project.tasks[compilations["main"].compileKotlinTaskName] as Kotlin2JsCompile
-            mainCompileTask.kotlinOptions.apply {
-                main = "noCall"
-                moduleKind = "umd"
-                sourceMap = true
-            }
-            project.extensions.configure<KotlinMppJsTestsNodeExtension>("kotlinJsNodeTests") {
-                thisTarget()
-            }
-        }
-
-        val jvm = KodeinTarget<KotlinJvmCompilation>(
+        val jvm = KodeinTarget<KotlinJvmCompilation, KotlinJvmTarget>(
                 target = "jvm",
                 dependencies = listOf(SourceSets.allJvm)
         )
 
-        val android = KodeinTarget<KotlinJvmAndroidCompilation>(
-                target = "android",
-                dependencies = listOf(SourceSets.allJvm),
-                exclude = { isTrue("excludeAndroid") }
-        )
+        // TODO: get Android back if/when needed.
+//        val android = KodeinTarget<KotlinAndroidTarget>(
+//                target = "android",
+//                dependencies = listOf(SourceSets.allJvm),
+//                exclude = { isTrue("excludeAndroid") }
+//        )
 
         object Native {
             val androidArm32 = KodeinNativeTarget(
@@ -224,24 +212,24 @@ class KodeinMPPExtension(val project: Project) {
 
         val native = Native
 
-        val js = KodeinTarget(
+        val js = KodeinTarget<KotlinJsCompilation, KotlinJsTarget>(
                 target = "js",
                 dependencies = listOf(SourceSets.allJs),
-                conf = JsConf
+                conf = { browser() ; nodejs() }
         )
 
-        val webjs = KodeinTarget(
+        val webjs = KodeinTarget<KotlinJsCompilation, KotlinJsTarget>(
                 target = "js",
                 name = "webjs",
                 dependencies = listOf(SourceSets.allJs),
-                conf = JsConf
+                conf = { browser() }
         )
 
-        val nodejs = KodeinTarget(
+        val nodejs = KodeinTarget<KotlinJsCompilation, KotlinJsTarget>(
                 target = "js",
                 name = "nodejs",
                 dependencies = listOf(SourceSets.allJs),
-                conf = JsConf
+                conf = { nodejs() }
         )
     }
 
@@ -276,28 +264,28 @@ class KodeinMPPExtension(val project: Project) {
         override val test: KotlinSourceSet = sourceSets.getByName(name + "Test")
     }
 
-    interface TargetConfigurator<C : KotlinCompilation<*>> {
+    interface TargetConfigurator<C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> {
         val mainCompilation: C
         val testCompilation: C
-        val target: KotlinTarget
-        fun target(block: KotlinTarget.() -> Unit) { target.block() }
+        val target: T
+        fun target(block: T.() -> Unit) { target.block() }
     }
 
-    private class TargetConfiguratorImpl<C : KotlinCompilation<*>>(override val target: KotlinTarget) : TargetConfigurator<C> {
+    private class TargetConfiguratorImpl<C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>>(override val target: T) : TargetConfigurator<C, T> {
         @Suppress("UNCHECKED_CAST")
-        override val mainCompilation get() = target.compilations["main"] as C
+        override val mainCompilation get() = target.compilations["main"]!!
         @Suppress("UNCHECKED_CAST")
-        override val testCompilation get() = target.compilations["test"] as C
+        override val testCompilation get() = target.compilations["test"]!!
     }
 
-    interface TargetBuilder<C : KotlinCompilation<*>> : SourceSetBuilder, TargetConfigurator<C>
+    interface TargetBuilder<C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> : SourceSetBuilder, TargetConfigurator<C, T>
 
-    private class TargetBuilderImpl<C : KotlinCompilation<*>> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<C>) : TargetBuilder<C>, SourceSetBuilder by ssb, TargetConfigurator<C> by tc {
-        constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, target: KotlinTarget, sourceSetName: String = target.name) : this(SourceSetBuilderImpl(sourceSets, sourceSetName), TargetConfiguratorImpl(target))
+    private class TargetBuilderImpl<C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<C, T>) : TargetBuilder<C, T>, SourceSetBuilder by ssb, TargetConfigurator<C, T> by tc {
+        constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, target: T, sourceSetName: String = target.name) : this(SourceSetBuilderImpl(sourceSets, sourceSetName), TargetConfiguratorImpl(target))
     }
 
     // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
-    private fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.addNativeCommonSrcDir(target: KodeinTarget<C>, dependencies: List<KodeinSourceSet>) {
+    private fun <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> KotlinMultiplatformExtension.addNativeCommonSrcDir(target: KodeinTarget<C, T>, dependencies: List<KodeinSourceSet>) {
         dependencies.forEach {
             if (it.isNativeCommon) {
                 sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${it.name}Main/kotlin")
@@ -310,7 +298,7 @@ class KodeinMPPExtension(val project: Project) {
     }
 
     // TODO: remove this fix once the KT plugin correctly identifies allJvmMain as JVM sources instead of common sources
-    private fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.addJvmCommonSrcDir(target: KodeinTarget<C>, dependencies: List<KodeinSourceSet>) {
+    private fun <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> KotlinMultiplatformExtension.addJvmCommonSrcDir(target: KodeinTarget<C, T>, dependencies: List<KodeinSourceSet>) {
         dependencies.forEach {
             if (it.isJvmCommon) {
                 sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${it.name}Main/kotlin")
@@ -322,7 +310,7 @@ class KodeinMPPExtension(val project: Project) {
         }
     }
 
-    fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(target: KodeinTarget<C>, conf: TargetBuilder<C>.() -> Unit = {}) {
+    fun <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> KotlinMultiplatformExtension.add(target: KodeinTarget<C, T>, conf: TargetBuilder<C, T>.() -> Unit = {}) {
         if (target.exclude(project)) {
             project.logger.warn("Target ${target.name} excluded.")
             return
@@ -330,7 +318,7 @@ class KodeinMPPExtension(val project: Project) {
 
         val ktTarget = targets.findByName(target.name) ?: run {
             @Suppress("UNCHECKED_CAST")
-            val preset = (presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")) as KotlinTargetPreset<KotlinOnlyTarget<C>>
+            val preset = (presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")) as KotlinTargetPreset<T>
             val ktTarget = preset.createTarget(target.name).apply(target.conf).also { targets.add(it) }
 
             // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
@@ -374,17 +362,18 @@ class KodeinMPPExtension(val project: Project) {
             }
             ktTarget
         }
-        TargetBuilderImpl<C>(sourceSets, ktTarget).apply(conf)
+        @Suppress("UNCHECKED_CAST")
+        TargetBuilderImpl(sourceSets, ktTarget as T).apply(conf)
     }
 
-    fun <C : KotlinCompilation<*>> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<C>>, conf: TargetBuilder<C>.() -> Unit = {}) =
+    fun <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<C, T>>, conf: TargetBuilder<C, T>.() -> Unit = {}) =
             targets.forEach { add(it, conf) }
 
-    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>, conf: SourceSetBuilder.() -> Unit) {
+    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*, *>, conf: SourceSetBuilder.() -> Unit) {
         SourceSetBuilderImpl(sourceSets, target.name).apply(conf)
     }
 
-    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>): SourceSetBuilder = SourceSetBuilderImpl(sourceSets, target.name)
+    fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*, *>): SourceSetBuilder = SourceSetBuilderImpl(sourceSets, target.name)
 
     fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
         // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
@@ -406,8 +395,9 @@ class KodeinMPPExtension(val project: Project) {
         }
     }
 
-    fun KotlinMultiplatformExtension.common(conf: TargetBuilder<KotlinCompilation<*>>.() -> Unit) {
-        TargetBuilderImpl(sourceSets, targets["metadata"], "common").apply(conf)
+    fun KotlinMultiplatformExtension.common(conf: TargetBuilder<KotlinCommonCompilation, KotlinOnlyTarget<KotlinCommonCompilation>>.() -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        TargetBuilderImpl(sourceSets, targets["metadata"] as KotlinOnlyTarget<KotlinCommonCompilation>, "common").apply(conf)
     }
 
     val KotlinMultiplatformExtension.common get(): SourceSetBuilder = SourceSetBuilderImpl(sourceSets, "common")
@@ -419,8 +409,11 @@ class KodeinMPPExtension(val project: Project) {
         }
     }
 
-    fun KotlinMultiplatformExtension.allTargets(conf: TargetConfigurator<KotlinCompilation<*>>.() -> Unit) {
-        targets.forEach { TargetConfiguratorImpl(it).conf() }
+    fun KotlinMultiplatformExtension.allTargets(conf: TargetConfigurator<out KotlinCompilation<*>, out KotlinOnlyTarget<out KotlinCompilation<*>>>.() -> Unit) {
+        targets.forEach {
+            if (it !is KotlinOnlyTarget<*>) return@forEach
+            TargetConfiguratorImpl(it).conf()
+        }
     }
 }
 

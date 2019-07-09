@@ -1,9 +1,9 @@
 package org.kodein.internal.gradle
 
-import com.github.salomonbrys.gradle.kotlin.js.jstests.node.*
-import org.gradle.api.*
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.getting
+import org.gradle.kotlin.dsl.plugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KodeinMppPlugin : KtPlugin<Project> {
 
@@ -11,7 +11,6 @@ class KodeinMppPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("org.jetbrains.kotlin.multiplatform")
-            plugin<KotlinMppJsTestsNodePlugin>()
             plugin<KodeinVersionsPlugin>()
         }
 
