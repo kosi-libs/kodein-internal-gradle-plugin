@@ -1,10 +1,10 @@
 package org.kodein.internal.gradle
 
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import org.gradle.api.Project
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
+import com.jfrog.bintray.gradle.*
+import com.jfrog.bintray.gradle.tasks.*
+import org.gradle.api.*
+import org.gradle.api.publish.*
+import org.gradle.api.publish.maven.*
 import org.gradle.kotlin.dsl.*
 
 
@@ -36,6 +36,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         val bintrayApiKey: String by project
         val bintrayUserOrg: String? by project
         val bintrayDryRun: String? by project
+        val snapshotNumber: String? by project
 
         bintray.apply {
             user = bintrayUsername
@@ -50,6 +51,11 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 websiteUrl = "http://kodein.org"
                 issueTrackerUrl = "https://github.com/Kodein-Framework/${rootExt.repo}/issues"
                 vcsUrl = "https://github.com/Kodein-Framework/${rootExt.repo}.git"
+
+                if (snapshotNumber != null) {
+                    repo = "kodein-dev"
+                    project.version = "${project.version}-$snapshotNumber"
+                }
             }
         }
 

@@ -64,6 +64,7 @@ allprojects {
             val bintrayUsername: String by project
             val bintrayApiKey: String by project
             val bintrayUserOrg: String? by project
+            val snapshotNumber: String? by project
 
             bintray {
                 user = bintrayUsername
@@ -78,6 +79,11 @@ allprojects {
                     websiteUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin"
                     issueTrackerUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues"
                     vcsUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git"
+
+                    if (snapshotNumber != null){
+                        repo = "kodein-dev"
+                        project.version = "${project.version}-$snapshotNumber"
+                    }
 
                     setPublications("Kodein")
                 }
