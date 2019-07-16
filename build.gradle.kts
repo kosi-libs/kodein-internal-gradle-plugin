@@ -40,7 +40,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.6.0"
+    version = "2.6.1"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
@@ -71,7 +71,7 @@ allprojects {
                 user = bintrayUsername
                 key = bintrayApiKey
                 dryRun = bintrayDryRun == "true"
-                
+
                 pkg.apply {
                     if (bintrayUserOrg.isNotEmpty())
                         userOrg = bintrayUserOrg
