@@ -27,13 +27,13 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             return
         }
 
-        val bintrayUsername = "${properties["bintrayUsername"] ?: System.getenv("BINTRAY_USER")}"
-        val bintrayApiKey = "${properties["bintrayApiKey"] ?: System.getenv("BINTRAY_APIKEY")}"
-        val bintrayUserOrg = "${properties["bintrayUserOrg"] ?: System.getenv("BINTRAY_USER_ORG")}"
+        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
         val bintrayDryRun: String? by project
         val snapshotNumber: String? by project
 
-        if (bintrayUsername.isEmpty() || bintrayApiKey.isEmpty()) {
+        if (bintrayUsername == null || bintrayApiKey == null) {
             logger.warn("$project: Ignoring bintrayUpload in because bintrayUsername and/or bintrayApiKey is not set in gradle.properties.")
             return
         }
@@ -44,7 +44,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             dryRun = bintrayDryRun == "true"
 
             pkg.apply {
-                if (bintrayUserOrg.isNotEmpty())
+                if (bintrayUserOrg != null)
                     userOrg = bintrayUserOrg
                 repo = rootExt.repo
                 setLicenses("MIT")

@@ -60,13 +60,13 @@ allprojects {
             }
         }
 
-        val bintrayUsername = "${properties["bintrayUsername"] ?: System.getenv("BINTRAY_USER")}"
-        val bintrayApiKey = "${properties["bintrayApiKey"] ?: System.getenv("BINTRAY_APIKEY")}"
-        val bintrayUserOrg = "${properties["bintrayUserOrg"] ?: System.getenv("BINTRAY_USER_ORG")}"
+        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
         val bintrayDryRun: String? by project
         val snapshotNumber: String? by project
 
-        if (bintrayUsername.isNotEmpty() && bintrayApiKey.isNotEmpty()) {
+        if (bintrayUsername != null && bintrayApiKey != null) {
             bintray {
                 user = bintrayUsername
                 key = bintrayApiKey
