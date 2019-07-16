@@ -1,5 +1,4 @@
 stages:
-  - name: test
   - name: snapshot
     if: branch = dev
   - name: release
@@ -7,11 +6,6 @@ stages:
 
 jobs:
   include:
-    - stage: test
-      script: ./gradlew check
-      os: linux
-      language: java
-      jdk: openjdk12
     - stage: snapshot
       script: ./gradlew bintrayUpload -PsnapshotNumber=$TRAVIS_BUILD_NUMBER
       os: linux
