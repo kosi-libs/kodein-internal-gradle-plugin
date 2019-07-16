@@ -73,7 +73,7 @@ allprojects {
                 dryRun = bintrayDryRun == "true"
 
                 pkg.apply {
-                    if (bintrayUserOrg.isNotEmpty())
+                    if (bintrayUserOrg != null)
                         userOrg = bintrayUserOrg
                     repo = "Kodein-Internal-Gradle"
                     name = project.name
