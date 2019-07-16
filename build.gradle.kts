@@ -84,7 +84,7 @@ allprojects {
 
                     if (snapshotNumber != null){
                         repo = "kodein-dev"
-                        project.version = "${project.version}-$snapshotNumber"
+                        project.version = "${project.version}-dev-$snapshotNumber"
                     }
 
                     setPublications("Kodein")
