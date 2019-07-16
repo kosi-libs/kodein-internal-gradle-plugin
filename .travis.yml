@@ -1,29 +1,24 @@
 stages:
   - name: test
-    if: (tag IS NOT present) && (branch != master) && (branch != dev)
   - name: snapshot
     if: branch = dev
   - name: release
     if: branch = master
 
-os: linux
-language: java
-jdk: openjdk12
-
 jobs:
   include:
     - stage: test
-      script:
-#      - ./gradlew check
-      - echo $TRAVIS_BUILD_ID
-      - echo TRAVIS_BUILD_NUMBER
+      script: ./gradlew check
+      os: linux
+      language: java
+      jdk: openjdk12
     - stage: snapshot
-      script:
-#      - ./gradlew check bintrayUpload -PsnapshotNumber=2
-      - echo $TRAVIS_BUILD_ID
-      - echo TRAVIS_BUILD_NUMBER
+      script: ./gradlew bintrayUpload -PsnapshotNumber=$TRAVIS_BUILD_NUMBER
+      os: linux
+      language: java
+      jdk: openjdk12
     - stage: release
-      script:
-#        - ./gradlew check bintrayUpload
-        - echo $TRAVIS_BUILD_ID
-        - echo TRAVIS_BUILD_NUMBER
+      script: ./gradlew bintrayUpload
+      os: linux
+      language: java
+      jdk: openjdk12
