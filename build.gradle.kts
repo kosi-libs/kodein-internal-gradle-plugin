@@ -60,18 +60,20 @@ allprojects {
             }
         }
 
-        if (hasProperty("bintrayUsername") && hasProperty("bintrayApiKey")) {
-            val bintrayUsername: String by project
-            val bintrayApiKey: String by project
-            val bintrayUserOrg: String? by project
-            val snapshotNumber: String? by project
+        val bintrayUsername = "${properties["bintrayUsername"] ?: System.getenv("BINTRAY_USER")}"
+        val bintrayApiKey = "${properties["bintrayApiKey"] ?: System.getenv("BINTRAY_APIKEY")}"
+        val bintrayUserOrg = "${properties["bintrayUserOrg"] ?: System.getenv("BINTRAY_USER_ORG")}"
+        val bintrayDryRun: String? by project
+        val snapshotNumber: String? by project
 
+        if (bintrayUsername.isNotEmpty() && bintrayApiKey.isNotEmpty()) {
             bintray {
                 user = bintrayUsername
                 key = bintrayApiKey
-
+                dryRun = bintrayDryRun == "true"
+                
                 pkg.apply {
-                    if (bintrayUserOrg != null)
+                    if (bintrayUserOrg.isNotEmpty())
                         userOrg = bintrayUserOrg
                     repo = "Kodein-Internal-Gradle"
                     name = project.name
