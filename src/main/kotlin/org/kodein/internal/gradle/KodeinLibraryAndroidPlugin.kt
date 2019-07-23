@@ -36,7 +36,7 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
                     from(components["android"])
                     artifact(sourcesJar)
 
-                    ext.updatPom(this)
+                    ext.updatePom(this)
                 }
             }
         }

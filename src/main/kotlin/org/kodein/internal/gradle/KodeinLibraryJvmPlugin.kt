@@ -1,6 +1,5 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
@@ -32,16 +31,13 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
             val sourceSets = javaPlugin.sourceSets
             sourcesJar.from(sourceSets["main"].allSource)
 
-            javaPlugin.sourceCompatibility = JavaVersion.VERSION_1_8
-            javaPlugin.targetCompatibility = JavaVersion.VERSION_1_8
-
             extensions.configure<PublishingExtension>("publishing") {
                 publications {
                     create<MavenPublication>("Kodein") {
                         from(components["java"])
                         artifact(sourcesJar)
 
-                        ext.updatPom(this)
+                        ext.updatePom(this)
                     }
                 }
             }

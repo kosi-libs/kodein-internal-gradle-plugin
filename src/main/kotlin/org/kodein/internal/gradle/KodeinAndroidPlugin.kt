@@ -2,15 +2,24 @@ package org.kodein.internal.gradle
 
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.DependencyHandlerScope
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.plugin
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
+@Suppress("UnstableApiUsage")
 class KodeinAndroidPlugin : KtPlugin<Project> {
 
-    @Suppress("UnstableApiUsage")
+    companion object {
+        fun Project.configureAndroid() {
+            extensions.configure<LibraryExtension>("android") {
+                compileSdkVersion(28)
+                defaultConfig {
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                    minSdkVersion(21)
+                }
+            }
+        }
+    }
+
     override fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
@@ -18,13 +27,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        extensions.configure<LibraryExtension>("android") {
-            compileSdkVersion(28)
-
-            defaultConfig {
-                minSdkVersion(15)
-            }
-        }
+        configureAndroid()
 
         dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlin}")
@@ -37,7 +40,6 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
         afterEvaluate {
             extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
         }
-
 
         printTestLogs()
     }

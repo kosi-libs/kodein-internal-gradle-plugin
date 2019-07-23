@@ -19,7 +19,7 @@ class KodeinLibraryDependencyExtension(val project: Project) {
     }
 
     @Suppress("UnstableApiUsage")
-    internal fun updatPom(publication: MavenPublication) {
+    internal fun updatePom(publication: MavenPublication) {
         publication.pom.withXml {
             val doc = asElement().ownerDocument
 
