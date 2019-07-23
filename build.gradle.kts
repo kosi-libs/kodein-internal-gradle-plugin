@@ -60,14 +60,17 @@ allprojects {
             }
         }
 
-        if (hasProperty("bintrayUsername") && hasProperty("bintrayApiKey")) {
-            val bintrayUsername: String by project
-            val bintrayApiKey: String by project
-            val bintrayUserOrg: String? by project
+        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
+        val bintrayDryRun: String? by project
+        val snapshotNumber: String? by project
 
+        if (bintrayUsername != null && bintrayApiKey != null) {
             bintray {
                 user = bintrayUsername
                 key = bintrayApiKey
+                dryRun = bintrayDryRun == "true"
 
                 pkg.apply {
                     if (bintrayUserOrg != null)
@@ -78,6 +81,11 @@ allprojects {
                     websiteUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin"
                     issueTrackerUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues"
                     vcsUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git"
+
+                    if (snapshotNumber != null){
+                        repo = "kodein-dev"
+                        project.version = "${project.version}-dev-$snapshotNumber"
+                    }
 
                     setPublications("Kodein")
                 }

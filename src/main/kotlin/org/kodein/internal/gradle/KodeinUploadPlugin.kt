@@ -1,10 +1,10 @@
 package org.kodein.internal.gradle
 
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import org.gradle.api.Project
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
+import com.jfrog.bintray.gradle.*
+import com.jfrog.bintray.gradle.tasks.*
+import org.gradle.api.*
+import org.gradle.api.publish.*
+import org.gradle.api.publish.maven.*
 import org.gradle.kotlin.dsl.*
 
 
@@ -27,15 +27,16 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             return
         }
 
-        if (!hasProperty("bintrayUsername") || !hasProperty("bintrayApiKey")) {
+        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
+        val bintrayDryRun: String? by project
+        val snapshotNumber: String? by project
+
+        if (bintrayUsername == null || bintrayApiKey == null) {
             logger.warn("$project: Ignoring bintrayUpload in because bintrayUsername and/or bintrayApiKey is not set in gradle.properties.")
             return
         }
-
-        val bintrayUsername: String by project
-        val bintrayApiKey: String by project
-        val bintrayUserOrg: String? by project
-        val bintrayDryRun: String? by project
 
         bintray.apply {
             user = bintrayUsername
@@ -50,6 +51,11 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 websiteUrl = "http://kodein.org"
                 issueTrackerUrl = "https://github.com/Kodein-Framework/${rootExt.repo}/issues"
                 vcsUrl = "https://github.com/Kodein-Framework/${rootExt.repo}.git"
+
+                if (snapshotNumber != null) {
+                    repo = "kodein-dev"
+                    project.version = "${project.version}-dev-$snapshotNumber"
+                }
             }
         }
 
