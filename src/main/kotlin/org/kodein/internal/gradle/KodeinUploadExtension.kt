@@ -7,7 +7,7 @@ interface KodeinUploadExtension {
     var description: String
 }
 
-class KodeinBintrayUploadExtension(val bintray: BintrayExtension) : KodeinUploadExtension {
+class KodeinBintrayUploadExtension(private val bintray: BintrayExtension) : KodeinUploadExtension {
 
     override var name: String
         get() = bintray.pkg.name

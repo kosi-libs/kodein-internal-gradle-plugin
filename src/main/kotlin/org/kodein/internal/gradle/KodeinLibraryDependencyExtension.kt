@@ -11,8 +11,6 @@ class KodeinLibraryDependencyExtension(val project: Project) {
 
     private val deps = HashMap<ProjectDependency, String>()
 
-    var baseArtifactName: String = project.name
-
     infix fun ProjectDependency.target(target: String): ProjectDependency {
         deps[this] = target
         return this
