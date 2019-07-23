@@ -16,7 +16,7 @@ class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
             plugin("com.android.library")
         }
 
-        KodeinAndroidPlugin.apply { configureAndroid() }
+        KodeinAndroidPlugin.configureAndroid(this)
 
         extensions.configure<LibraryExtension>("android") {
             sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

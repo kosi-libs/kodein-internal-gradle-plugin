@@ -13,7 +13,7 @@ class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
             plugin("com.android.library")
         }
 
-        KodeinAndroidPlugin.apply { configureAndroid() }
+        KodeinAndroidPlugin.configureAndroid(this)
     }
 
 }

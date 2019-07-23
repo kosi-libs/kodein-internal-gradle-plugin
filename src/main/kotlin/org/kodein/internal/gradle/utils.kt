@@ -10,8 +10,7 @@ internal interface KtPlugin<T> : Plugin<T> {
     override fun apply(target: T) = target.applyPlugin()
 }
 
-
-fun Project.printTestLogs() {
+fun Project.configureTestLogsPrint() {
     afterEvaluate {
         tasks.withType<AbstractTestTask>().forEach {
             it.testLogging {

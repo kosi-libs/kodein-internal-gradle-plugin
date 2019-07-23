@@ -1,6 +1,7 @@
 package org.kodein.internal.gradle
 
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -9,12 +10,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 class KodeinAndroidPlugin : KtPlugin<Project> {
 
     companion object {
-        fun Project.configureAndroid() {
+        internal fun configureAndroid(project: Project) = with(project) {
             extensions.configure<LibraryExtension>("android") {
                 compileSdkVersion(28)
                 defaultConfig {
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     minSdkVersion(21)
+                }
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_1_8
+                    targetCompatibility = JavaVersion.VERSION_1_8
                 }
             }
         }
@@ -27,7 +32,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        configureAndroid()
+        configureAndroid(this)
 
         dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlin}")
@@ -41,7 +46,9 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
         }
 
-        printTestLogs()
+        KodeinJvmPlugin.configureJvm18(this)
+
+        configureTestLogsPrint()
     }
 
 }

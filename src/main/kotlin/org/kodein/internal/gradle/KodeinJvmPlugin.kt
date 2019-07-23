@@ -2,13 +2,31 @@ package org.kodein.internal.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("UnstableApiUsage")
 class KodeinJvmPlugin : KtPlugin<Project> {
 
-    @Suppress("UnstableApiUsage")
+    companion object {
+
+        internal fun configureJvm18(project: Project) = with(project) {
+            tasks.withType<KotlinCompile>().all {
+                sourceCompatibility = "1.8"
+                targetCompatibility = "1.8"
+                kotlinOptions.jvmTarget = "1.8"
+            }
+
+            project.convention.configure<JavaPluginConvention>("java") {
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
+            }
+        }
+
+    }
+
     override fun Project.applyPlugin() {
         apply {
             plugin("kotlin-platform-jvm")
@@ -29,18 +47,10 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 it.languageSettings.progressiveMode = true
             }
 
-            tasks.withType<KotlinCompile>().all {
-                sourceCompatibility = "1.8"
-                targetCompatibility = "1.8"
-                kotlinOptions.jvmTarget = "1.8"
-            }
-
-            val javaPlugin = project.convention.getPluginByName<org.gradle.api.plugins.JavaPluginConvention>("java")
-            javaPlugin.sourceCompatibility = JavaVersion.VERSION_1_8
-            javaPlugin.targetCompatibility = JavaVersion.VERSION_1_8
+            configureJvm18(this)
         }
 
-        printTestLogs()
+        configureTestLogsPrint()
     }
 
 }

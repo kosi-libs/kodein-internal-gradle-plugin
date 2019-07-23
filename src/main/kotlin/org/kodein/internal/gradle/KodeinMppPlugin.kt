@@ -1,8 +1,8 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.plugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KodeinMppPlugin : KtPlugin<Project> {
@@ -33,20 +33,19 @@ class KodeinMppPlugin : KtPlugin<Project> {
             }
 
             afterEvaluate {
-                jvm {
-                    compilations.getting {
-                        kotlinOptions {
-                            jvmTarget = "1.8"
-                        }
+                targets.all {
+                    compilations.all {
+                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.8"
                     }
                 }
-                sourceSets.forEach {
-                    it.languageSettings.progressiveMode = true
+
+                sourceSets.all {
+                    languageSettings.progressiveMode = true
                 }
             }
         }
 
-        printTestLogs()
+        configureTestLogsPrint()
     }
 
 }
