@@ -90,7 +90,7 @@ class KodeinMPPExtension(val project: Project) {
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
-            val conf: T.() -> Unit = {},
+            val conf: TargetBuilder<T>.() -> Unit = {},
             val isNative: Boolean = false,
             val isNativeHost: OSTest = { false },
             val exclude: ConfTest = { false }
@@ -104,7 +104,7 @@ class KodeinMPPExtension(val project: Project) {
                 target = "jvm",
                 dependencies = listOf(SourceSets.allJvm),
                 conf = {
-                    compilations.all {
+                    target.compilations.all {
                         compileKotlinTask.sourceCompatibility = "1.8"
                         compileKotlinTask.targetCompatibility = "1.8"
                         kotlinOptions.jvmTarget = "1.8"
@@ -115,6 +115,13 @@ class KodeinMPPExtension(val project: Project) {
         val android = KodeinAndroidTarget(
                 target = "android",
                 dependencies = listOf(SourceSets.allJvm),
+                conf = {
+                    target.publishLibraryVariants("release")
+                    test.dependencies {
+                        implementation("androidx.test.ext:junit:1.1.1")
+                        implementation("androidx.test.espresso:espresso-core:3.2.0")
+                    }
+                },
                 exclude = { isTrue("excludeAndroid") }
         )
 
@@ -228,21 +235,21 @@ class KodeinMPPExtension(val project: Project) {
         val js = KodeinJsTarget(
                 target = "js",
                 dependencies = listOf(SourceSets.allJs),
-                conf = { browser() ; nodejs() }
+                conf = { target.browser() ; target.nodejs() }
         )
 
         val webjs = KodeinJsTarget(
                 target = "js",
                 name = "webjs",
                 dependencies = listOf(SourceSets.allJs),
-                conf = { browser() }
+                conf = { target.browser() }
         )
 
         val nodejs = KodeinJsTarget(
                 target = "js",
                 name = "nodejs",
                 dependencies = listOf(SourceSets.allJs),
-                conf = { nodejs() }
+                conf = { target.nodejs() }
         )
     }
 
@@ -340,7 +347,7 @@ class KodeinMPPExtension(val project: Project) {
         val ktTarget = targets.findByName(target.name) ?: run {
             @Suppress("UNCHECKED_CAST")
             val preset = (presets.findByName(target.target) ?: throw IllegalArgumentException("Unknown target ${target.name}")) as KotlinTargetPreset<T>
-            val ktTarget = preset.createTarget(target.name).apply(target.conf).also { targets.add(it) }
+            val ktTarget = preset.createTarget(target.name).also { targets.add(it) }
 
             // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
             val os = OperatingSystem.current()
@@ -384,7 +391,7 @@ class KodeinMPPExtension(val project: Project) {
             ktTarget
         }
         @Suppress("UNCHECKED_CAST")
-        TargetBuilderImpl(sourceSets, ktTarget as T).apply(conf)
+        TargetBuilderImpl(sourceSets, ktTarget as T).apply(target.conf).apply(conf)
     }
 
     fun <T : KotlinTarget> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<T>>, conf: TargetBuilder<T>.() -> Unit = {}) =

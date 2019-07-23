@@ -10,17 +10,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 class KodeinAndroidPlugin : KtPlugin<Project> {
 
     companion object {
-        internal fun configureAndroid(project: Project) = with(project) {
-            extensions.configure<LibraryExtension>("android") {
-                compileSdkVersion(28)
-                defaultConfig {
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                    minSdkVersion(21)
-                }
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_1_8
-                    targetCompatibility = JavaVersion.VERSION_1_8
-                }
+        internal fun configureAndroid(android: LibraryExtension) = with(android) {
+            compileSdkVersion(28)
+            defaultConfig {
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                minSdkVersion(21)
+            }
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
             }
         }
     }
@@ -32,7 +30,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        configureAndroid(this)
+        configureAndroid(extensions["android"] as LibraryExtension)
 
         dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${KodeinVersions.kotlin}")
@@ -40,6 +38,10 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test:${KodeinVersions.kotlin}")
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
             "testImplementation"("junit:junit:4.12")
+
+            "androidTestImplementation"("androidx.test.ext:junit:1.1.1")
+            "androidTestImplementation"("androidx.test.espresso:espresso-core:3.2.0")
+
         }
 
         afterEvaluate {

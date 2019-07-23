@@ -1,6 +1,8 @@
 package org.kodein.internal.gradle
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension

@@ -12,16 +12,16 @@ class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {
-            plugin<KodeinLibraryMppPlugin>()
             plugin("com.android.library")
+            plugin<KodeinLibraryMppPlugin>()
         }
 
-        KodeinAndroidPlugin.configureAndroid(this)
-
-        extensions.configure<LibraryExtension>("android") {
+        val android = extensions["android"] as LibraryExtension
+        android.apply {
             sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
         }
 
+        KodeinAndroidPlugin.configureAndroid(android)
     }
 
 }

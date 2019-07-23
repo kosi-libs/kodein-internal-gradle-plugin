@@ -19,7 +19,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 kotlinOptions.jvmTarget = "1.8"
             }
 
-            project.convention.configure<JavaPluginConvention>("java") {
+            project.withConvention(JavaPluginConvention::class) {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8
             }
