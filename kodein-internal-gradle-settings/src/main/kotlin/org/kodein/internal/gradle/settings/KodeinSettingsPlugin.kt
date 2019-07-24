@@ -1,9 +1,10 @@
-package org.kodein.internal.gradle
+package org.kodein.internal.gradle.settings
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
+import org.kodein.internal.gradle.KodeinVersions
 
 @Suppress("UnstableApiUsage")
 class KodeinSettingsPlugin : Plugin<Settings> {
@@ -35,7 +36,6 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 }
             }
         }
-
     }
 
     override fun apply(settings: Settings) = settings.applyPlugin()
