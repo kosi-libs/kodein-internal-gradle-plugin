@@ -11,17 +11,23 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
+        val excludeAndroid = isPropertyTrue("excludeAndroid")
+
         apply {
-            plugin("com.android.library")
+            if (!excludeAndroid) plugin("com.android.library")
             plugin<KodeinLibraryMppPlugin>()
         }
 
-        val android = extensions["android"] as LibraryExtension
-        android.apply {
-            sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        if (!excludeAndroid) {
+            val android = extensions["android"] as LibraryExtension
+            android.apply {
+                sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            }
+            KodeinAndroidPlugin.configureAndroid(android)
+            extensions.add("kodeinAndroid", KodeinMppAndroidExtension(android))
+        } else {
+            extensions.add("kodeinAndroid", KodeinMppAndroidExtension(null))
         }
-
-        KodeinAndroidPlugin.configureAndroid(android)
     }
 
 }

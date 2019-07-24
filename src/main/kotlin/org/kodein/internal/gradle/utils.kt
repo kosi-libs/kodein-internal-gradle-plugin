@@ -19,3 +19,5 @@ internal fun Project.configureTestLogsPrint() {
         }
     }
 }
+
+internal fun Project.isPropertyTrue(property: String) = findProperty(property) == "true"

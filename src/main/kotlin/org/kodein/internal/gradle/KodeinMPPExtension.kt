@@ -24,8 +24,6 @@ typealias KodeinJsTarget = KodeinMPPExtension.KodeinTarget<KotlinJsTarget>
 typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeTarget>
 typealias KodeinAndroidTarget = KodeinMPPExtension.KodeinTarget<KotlinAndroidTarget>
 
-private fun Project.isTrue(property: String) = findProperty(property) == "true"
-
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
 class KodeinMPPExtension(val project: Project) {
 
@@ -122,7 +120,7 @@ class KodeinMPPExtension(val project: Project) {
                         implementation("androidx.test.espresso:espresso-core:3.2.0")
                     }
                 },
-                exclude = { isTrue("excludeAndroid") }
+                exclude = { isPropertyTrue("excludeAndroid") }
         )
 
         object Native {
@@ -131,7 +129,7 @@ class KodeinMPPExtension(val project: Project) {
                     name = "androidArm32",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val androidArm64 = KodeinNativeTarget(
@@ -139,49 +137,49 @@ class KodeinMPPExtension(val project: Project) {
                     name = "androidArm64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val iosArm32 = KodeinNativeTarget(
                     target = "iosArm32",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val iosArm64 = KodeinNativeTarget(
                     target = "iosArm64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val iosX64 = KodeinNativeTarget(
                     target = "iosX64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
                     target = "linuxArm32Hfp",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val linuxMips32 = KodeinNativeTarget(
                     target = "linuxMips32",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val linuxMipsel32 = KodeinNativeTarget(
                     target = "linuxMipsel32",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val linuxX64 = KodeinNativeTarget(
@@ -189,7 +187,7 @@ class KodeinMPPExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
                     isNativeHost = OperatingSystem::isLinux,
-                    exclude = { isTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isLinux }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isLinux }
 
             )
 
@@ -198,7 +196,7 @@ class KodeinMPPExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
                     isNativeHost = OperatingSystem::isMacOsX,
-                    exclude = { isTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isMacOsX }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isMacOsX }
             )
 
             val mingwX64 = KodeinNativeTarget(
@@ -206,14 +204,14 @@ class KodeinMPPExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allNative),
                     isNative = true,
                     isNativeHost = OperatingSystem::isWindows,
-                    exclude = { isTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isWindows }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") && !OperatingSystem.current().isWindows }
             )
 
             val wasm32 = KodeinNativeTarget(
                     target = "wasm32",
                     dependencies = listOf(SourceSets.allNative),
                     isNative = true,
-                    exclude = { isTrue("excludeNonHostNativeTargets") }
+                    exclude = { isPropertyTrue("excludeNonHostNativeTargets") }
             )
 
             val allAndroid = listOf(androidArm32, androidArm64)
@@ -351,18 +349,18 @@ class KodeinMPPExtension(val project: Project) {
 
             // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
             val os = OperatingSystem.current()
-            if (project.isTrue("nativeCommonHost") && target.isNativeHost(os)) {
+            if (project.isPropertyTrue("nativeCommonHost") && target.isNativeHost(os)) {
                 addNativeCommonSrcDir(target, target.dependencies)
             }
 
             // TODO: remove this fix once the KT plugin correctly identifies allJvmMain as JVM sources instead of common sources
-            if (project.isTrue("allJvmAsJvmOnly") && target.name == "jvm") {
+            if (project.isPropertyTrue("allJvmAsJvmOnly") && target.name == "jvm") {
                 addJvmCommonSrcDir(target, target.dependencies)
             }
 
             target.dependencies.forEach {
                 // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
-                if (project.isTrue("nativeCommonHost") && it.isNativeCommon) {
+                if (project.isPropertyTrue("nativeCommonHost") && it.isNativeCommon) {
                     if (!target.isNativeHost(os)) {
                         val osTarget = when {
                             os.isLinux -> kodeinTargets.native.linuxX64
@@ -377,7 +375,7 @@ class KodeinMPPExtension(val project: Project) {
                         sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.maybeCreate(osTarget.name + "Test"))
                     }
                 // TODO: remove this fix once the KT plugin correctly identifies allJvmMain as JVM sources instead of common sources
-                } else if (project.isTrue("allJvmAsJvmOnly") && it.isJvmCommon) {
+                } else if (project.isPropertyTrue("allJvmAsJvmOnly") && it.isJvmCommon) {
                     if (target.name != "jvm") {
                         sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.maybeCreate("jvmMain"))
                         sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.maybeCreate("jvmTest"))
@@ -405,7 +403,7 @@ class KodeinMPPExtension(val project: Project) {
 
     fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
         // TODO: remove this fix once the KT plugin correctly identifies allNativeMain as native sources instead of common sources
-        if (project.isTrue("nativeCommonHost") && sourceSet.isNativeCommon) {
+        if (project.isPropertyTrue("nativeCommonHost") && sourceSet.isNativeCommon) {
             val os = OperatingSystem.current()
             val target = when {
                 os.isLinux -> kodeinTargets.native.linuxX64
@@ -415,7 +413,7 @@ class KodeinMPPExtension(val project: Project) {
             }
             add(target, conf)
         // TODO: remove this fix once the KT plugin correctly identifies allJvmMain as JVM sources instead of common sources
-        } else if (project.isTrue("allJvmAsJvmOnly") && sourceSet.isNativeCommon) {
+        } else if (project.isPropertyTrue("allJvmAsJvmOnly") && sourceSet.isNativeCommon) {
             add(kodeinTargets.jvm, conf)
         } else {
             sourceSets.add(sourceSet)
