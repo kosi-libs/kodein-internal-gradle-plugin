@@ -1,10 +1,9 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.JavaVersion
-import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.*
+import org.gradle.api.plugins.*
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("UnstableApiUsage")
@@ -12,16 +11,17 @@ class KodeinJvmPlugin : KtPlugin<Project> {
 
     companion object {
 
-        internal fun configureJvm18(project: Project) = with(project) {
+        internal fun configureJvmTarget(project: Project) = with(project) {
+//            TODO v3.0 move to 1.8 source compatibility
             tasks.withType<KotlinCompile>().all {
-                sourceCompatibility = "1.8"
-                targetCompatibility = "1.8"
-                kotlinOptions.jvmTarget = "1.8"
+                sourceCompatibility = "1.6"
+                targetCompatibility = "1.6"
+                kotlinOptions.jvmTarget = "1.6"
             }
 
             project.withConvention(JavaPluginConvention::class) {
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
+                sourceCompatibility = JavaVersion.VERSION_1_6
+                targetCompatibility = JavaVersion.VERSION_1_6
             }
         }
 
@@ -47,7 +47,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 it.languageSettings.progressiveMode = true
             }
 
-            configureJvm18(this)
+            configureJvmTarget(this)
         }
 
         configureTestLogsPrint()

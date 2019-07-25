@@ -1,10 +1,9 @@
 package org.kodein.internal.gradle
 
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.JavaVersion
-import org.gradle.api.Project
+import com.android.build.gradle.*
+import org.gradle.api.*
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 
 @Suppress("UnstableApiUsage")
 class KodeinAndroidPlugin : KtPlugin<Project> {
@@ -14,8 +13,9 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             compileSdkVersion(28)
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                minSdkVersion(21)
+                minSdkVersion(16)
             }
+//            TODO v3.0 move to 1.8 source compatibility
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8
@@ -48,7 +48,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
         }
 
-        KodeinJvmPlugin.configureJvm18(this)
+        KodeinJvmPlugin.configureJvmTarget(this)
 
         configureTestLogsPrint()
     }
