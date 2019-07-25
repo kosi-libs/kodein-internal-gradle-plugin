@@ -55,6 +55,8 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 if (snapshotNumber != null) {
                     repo = "kodein-dev"
                     project.version = "${project.version}-dev-$snapshotNumber"
+                    publish = true
+                    override = true
                 }
             }
         }

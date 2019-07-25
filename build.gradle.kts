@@ -40,7 +40,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.9.2"
+    version = "2.9.3"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
@@ -85,6 +85,7 @@ allprojects {
                     if (snapshotNumber != null){
                         repo = "kodein-dev"
                         project.version = "${project.version}-dev-$snapshotNumber"
+                        publish = true
                     }
 
                     setPublications("Kodein")
