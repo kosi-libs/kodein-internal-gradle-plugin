@@ -1,18 +1,13 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
-import org.gradle.internal.os.OperatingSystem
+import org.gradle.api.*
+import org.gradle.internal.os.*
 import org.gradle.kotlin.dsl.get
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.*
+import org.jetbrains.kotlin.gradle.targets.jvm.*
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
@@ -103,9 +98,10 @@ class KodeinMPPExtension(val project: Project) {
                 dependencies = listOf(SourceSets.allJvm),
                 conf = {
                     target.compilations.all {
-                        compileKotlinTask.sourceCompatibility = "1.8"
-                        compileKotlinTask.targetCompatibility = "1.8"
-                        kotlinOptions.jvmTarget = "1.8"
+//                        TODO v3.0 move to 1.8 source compatibility
+                        compileKotlinTask.sourceCompatibility = "1.6"
+                        compileKotlinTask.targetCompatibility = "1.6"
+                        kotlinOptions.jvmTarget = "1.6"
                     }
                 }
         )

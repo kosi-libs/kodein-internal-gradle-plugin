@@ -1,4 +1,4 @@
-import org.kodein.internal.gradle.KodeinVersions
+import org.kodein.internal.gradle.*
 
 plugins {
     `maven-publish`
@@ -40,7 +40,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.9.1"
+    version = "2.9.2"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {

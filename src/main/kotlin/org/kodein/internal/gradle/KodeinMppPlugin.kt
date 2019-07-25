@@ -1,11 +1,8 @@
 package org.kodein.internal.gradle
 
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Project
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.plugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.gradle.api.*
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.*
 
 class KodeinMppPlugin : KtPlugin<Project> {
 
@@ -37,7 +34,8 @@ class KodeinMppPlugin : KtPlugin<Project> {
             afterEvaluate {
                 targets.all {
                     compilations.all {
-                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.8"
+//                        TODO v3.0 move to 1.8 source compatibility
+                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.6"
                     }
                 }
 
