@@ -12,16 +12,15 @@ class KodeinJvmPlugin : KtPlugin<Project> {
     companion object {
 
         internal fun configureJvmTarget(project: Project) = with(project) {
-//            TODO v3.0 move to 1.8 source compatibility
             tasks.withType<KotlinCompile>().all {
-                sourceCompatibility = "1.6"
-                targetCompatibility = "1.6"
-                kotlinOptions.jvmTarget = "1.6"
+                sourceCompatibility = "1.8"
+                targetCompatibility = "1.8"
+                kotlinOptions.jvmTarget = "1.8"
             }
 
             project.withConvention(JavaPluginConvention::class) {
-                sourceCompatibility = JavaVersion.VERSION_1_6
-                targetCompatibility = JavaVersion.VERSION_1_6
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
             }
         }
 

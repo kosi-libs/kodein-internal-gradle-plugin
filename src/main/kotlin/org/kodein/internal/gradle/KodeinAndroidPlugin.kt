@@ -15,7 +15,6 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 minSdkVersion(16)
             }
-//            TODO v3.0 move to 1.8 source compatibility
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8

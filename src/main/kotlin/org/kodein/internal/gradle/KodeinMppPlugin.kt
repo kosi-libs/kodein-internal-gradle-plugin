@@ -34,8 +34,7 @@ class KodeinMppPlugin : KtPlugin<Project> {
             afterEvaluate {
                 targets.all {
                     compilations.all {
-//                        TODO v3.0 move to 1.8 source compatibility
-                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.6"
+                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.8"
                     }
                 }
 

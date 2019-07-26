@@ -98,10 +98,9 @@ class KodeinMPPExtension(val project: Project) {
                 dependencies = listOf(SourceSets.allJvm),
                 conf = {
                     target.compilations.all {
-//                        TODO v3.0 move to 1.8 source compatibility
-                        compileKotlinTask.sourceCompatibility = "1.6"
-                        compileKotlinTask.targetCompatibility = "1.6"
-                        kotlinOptions.jvmTarget = "1.6"
+                        compileKotlinTask.sourceCompatibility = "1.8"
+                        compileKotlinTask.targetCompatibility = "1.8"
+                        kotlinOptions.jvmTarget = "1.8"
                     }
                 }
         )
