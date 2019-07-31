@@ -3,11 +3,14 @@ package org.kodein.internal.gradle
 import org.gradle.api.*
 import org.gradle.internal.os.*
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.jvm.*
+import org.kodein.internal.gradle.task.KotlinIosTest
+import org.kodein.internal.gradle.task.configureConventions
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias OSTest = OperatingSystem.() -> Boolean
@@ -153,7 +156,25 @@ class KodeinMPPExtension(val project: Project) {
                     target = "iosX64",
                     dependencies = listOf(SourceSets.allNativePosix),
                     isNative = true,
-                    exclude = { isExcluded("nonHostNativeTargets") }
+                    exclude = { isExcluded("nonHostNativeTargets") },
+                    conf = {
+                        if (os.isMacOsX) {
+                            target.project.task<KotlinIosTest>("iosX64Test") {
+                                val binary = target.binaries.getTest("DEBUG")
+
+                                dependsOn(binary.linkTaskName)
+                                group = "verification"
+
+                                targetName = "iosX64"
+                                executable = binary.outputFile
+                                workingDir = project.projectDir.absolutePath
+
+                                configureConventions()
+                            }
+
+                            target.project.tasks["allTests"].dependsOn("iosX64Test")
+                        }
+                    }
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
@@ -221,6 +242,14 @@ class KodeinMPPExtension(val project: Project) {
             val allNonWeb = allMobile + allDesktop
 
             val all = allNonWeb + wasm32
+
+            val os = OperatingSystem.current()
+            val host = when {
+                os.isLinux -> linuxX64
+                os.isMacOsX -> macosX64
+                os.isWindows -> mingwX64
+                else -> throw IllegalStateException("Unsupported OS $os")
+            }
         }
 
         val native = Native
