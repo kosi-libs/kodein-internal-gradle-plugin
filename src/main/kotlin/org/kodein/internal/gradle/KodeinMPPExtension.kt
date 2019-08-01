@@ -163,6 +163,8 @@ class KodeinMPPExtension(val project: Project) {
                                 val binary = target.binaries.getTest("DEBUG")
 
                                 dependsOn(binary.linkTaskName)
+                                onlyIf { binary.outputFile.exists() }
+
                                 group = "verification"
 
                                 targetName = "iosX64"
