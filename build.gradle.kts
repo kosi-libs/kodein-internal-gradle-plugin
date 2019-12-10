@@ -40,7 +40,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.9.9"
+    version = "2.9.10"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
@@ -72,6 +72,9 @@ allprojects {
                 key = bintrayApiKey
                 dryRun = bintrayDryRun == "true"
 
+                override = snapshotNumber != null
+                publish = snapshotNumber != null
+
                 pkg.apply {
                     if (bintrayUserOrg != null)
                         userOrg = bintrayUserOrg
@@ -85,7 +88,6 @@ allprojects {
                     if (snapshotNumber != null){
                         repo = "kodein-dev"
                         project.version = "${project.version}-dev-$snapshotNumber"
-                        publish = true
                     }
 
                     setPublications("Kodein")
