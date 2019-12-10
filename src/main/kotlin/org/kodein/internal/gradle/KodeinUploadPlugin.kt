@@ -43,7 +43,8 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             key = bintrayApiKey
             dryRun = bintrayDryRun == "true"
 
-            override = true
+            override = snapshotNumber != null
+            publish = snapshotNumber != null
 
             pkg.apply {
                 if (bintrayUserOrg != null)
