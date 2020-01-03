@@ -62,8 +62,9 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             }
         }
 
-        val uploadTask = tasks["bintrayUpload"] as BintrayUploadTask
-        uploadTask.apply {
+        val bintrayUploadTask = tasks["bintrayUpload"] as BintrayUploadTask
+
+        bintrayUploadTask.apply {
             doFirst {
                 if (bintray.pkg.name.isNullOrBlank() || bintray.pkg.desc.isNullOrBlank()) {
                     throw IllegalStateException("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
@@ -76,7 +77,17 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 setPublications(*publications.map { it.name } .toTypedArray())
             }
 
-            uploadTask.dependsOn("publishToMavenLocal")
+            bintrayUploadTask.dependsOn(tasks["publishToMavenLocal"])
+
+            doFirst {
+                if (project.findProperty("classpathFixes") != null) {
+                    error("Cannot use bintrayUpload with Classpath Fixes!")
+                }
+                val excludeTargets = project.findProperty("excludeTargets")
+                if (excludeTargets != null) {
+                    logger.warn("UPLOADING TO BINTRAY WITH EXCLUDED TARGETS $excludeTargets")
+                }
+            }
         }
     }
 

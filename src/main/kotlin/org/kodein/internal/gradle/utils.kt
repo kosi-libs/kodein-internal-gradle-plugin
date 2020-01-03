@@ -20,7 +20,7 @@ internal fun Project.configureTestLogsPrint() {
     }
 }
 
-fun Project.isTrue(property: String) = findProperty(property) == "true"
-
-fun Project.isExcluded(framework: String) =
-        (findProperty("exclude${framework.capitalize()}") ?: System.getenv("EXCLUDE_${framework.toUpperCase()}")) == "true"
+//fun Project.isTrue(property: String) = findProperty(property) == "true"
+//
+//fun Project.isExcluded(framework: String) =
+//        (findProperty("exclude${framework.capitalize()}") ?: System.getenv("EXCLUDE_${framework.toUpperCase()}")) == "true"

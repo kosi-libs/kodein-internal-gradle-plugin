@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
-        val excludeAndroid = isExcluded("android")
+        val excludedTargets = (project.findProperty("excludeTargets") as String?)
+                ?.split(",")
+                ?.map { it.trim() }
+                ?: emptyList()
+        val excludeAndroid = "android" in excludedTargets
 
         apply {
             if (!excludeAndroid) plugin("com.android.library")

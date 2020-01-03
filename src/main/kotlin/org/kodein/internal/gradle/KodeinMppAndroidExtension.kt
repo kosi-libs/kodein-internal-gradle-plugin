@@ -8,8 +8,7 @@ class KodeinMppAndroidExtension(val android: LibraryExtension?) {
     val isIncluded: Boolean get() = android != null
 
     fun android(block: LibraryExtension.() -> Unit) {
-        if (android != null)
-            android.apply(block)
+        android?.apply(block)
     }
 
 }
