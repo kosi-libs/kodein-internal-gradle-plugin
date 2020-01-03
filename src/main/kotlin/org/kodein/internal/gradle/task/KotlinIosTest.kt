@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage", "unused")
+
 package org.kodein.internal.gradle.task
 
 import groovy.lang.Closure
@@ -42,6 +44,7 @@ open class KotlinIosTest : KotlinTest() {
             executableProperty.set(value)
         }
 
+    @Suppress("UnstableApiUsage")
     @get:Input
     var workingDir: String
         get() = processOptions.workingDir.canonicalPath

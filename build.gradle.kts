@@ -40,12 +40,13 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.9.10"
+    version = "2.10.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
+            @Suppress("UnstableApiUsage")
             archiveClassifier.set("sources")
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             from(sourceSets["main"].allSource)
         }
 
