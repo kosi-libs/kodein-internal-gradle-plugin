@@ -98,7 +98,7 @@ open class KotlinIosTest : KotlinTest() {
 
         return TCServiceMessagesTestExecutionSpec(
                 extendedForkOptions,
-                listOf( "simctl", "spawn", device, executable.absolutePath) + cliArgs.toList(),
+                listOf( "simctl", "spawn", "--standalone", device, executable.absolutePath) + cliArgs.toList(),
                 false,
                 clientSettings
         )
