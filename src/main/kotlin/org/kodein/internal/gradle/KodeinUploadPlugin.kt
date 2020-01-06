@@ -65,19 +65,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         val bintrayUploadTask = tasks["bintrayUpload"] as BintrayUploadTask
 
         bintrayUploadTask.apply {
-            doFirst {
-                if (bintray.pkg.name.isNullOrBlank() || bintray.pkg.desc.isNullOrBlank()) {
-                    throw IllegalStateException("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
-                }
-
-                val publications = project.extensions.getByName<PublishingExtension>("publishing").publications.filter { "-test" !in it.name }
-                publications.filterIsInstance<MavenPublication>().forEach {
-                    logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
-                }
-                setPublications(*publications.map { it.name } .toTypedArray())
-            }
-
-            bintrayUploadTask.dependsOn(tasks["publishToMavenLocal"])
+            dependsOn("publishToMavenLocal")
 
             doFirst {
                 if (project.findProperty("classpathFixes") != null) {
@@ -87,6 +75,16 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 if (excludeTargets != null) {
                     logger.warn("UPLOADING TO BINTRAY WITH EXCLUDED TARGETS $excludeTargets")
                 }
+
+                if (bintray.pkg.name.isNullOrBlank() || bintray.pkg.desc.isNullOrBlank()) {
+                    throw IllegalStateException("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
+                }
+
+                val publications = project.extensions.getByName<PublishingExtension>("publishing").publications.filter { "-test" !in it.name }
+                publications.filterIsInstance<MavenPublication>().forEach {
+                    logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
+                }
+                setPublications(*publications.map { it.name } .toTypedArray())
             }
         }
     }
