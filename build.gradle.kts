@@ -73,8 +73,7 @@ allprojects {
                 key = bintrayApiKey
                 dryRun = bintrayDryRun == "true"
 
-                override = snapshotNumber != null
-                publish = snapshotNumber != null
+                override = true
 
                 pkg.apply {
                     if (bintrayUserOrg != null)
@@ -89,6 +88,7 @@ allprojects {
                     if (snapshotNumber != null){
                         repo = "kodein-dev"
                         project.version = "${project.version}-dev-$snapshotNumber"
+                        publish = true
                     }
 
                     setPublications("Kodein")
