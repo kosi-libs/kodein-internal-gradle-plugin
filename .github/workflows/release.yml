@@ -2,7 +2,9 @@ name: Release
 
 on:
   push:
-    branches: [master]
+    branches:
+      - stable
+      - '[0-9]+.[0-9]+'
 
 jobs:
   build-deploy:
