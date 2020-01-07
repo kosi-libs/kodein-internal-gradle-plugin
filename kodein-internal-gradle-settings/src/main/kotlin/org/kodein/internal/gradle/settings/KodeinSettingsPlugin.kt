@@ -23,6 +23,7 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 maven(url = "https://plugins.gradle.org/m2/")
                 maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
                 maven(url = "https://dl.bintray.com/kodein-framework/Kodein-Internal-Gradle")
+                maven(url = "https://dl.bintray.com/kodein-framework/kodein-dev")
                 maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
             }
 
