@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
@@ -23,10 +24,13 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
 
         val ext = KodeinLibraryDependencyExtension(this)
         extensions.add("kodeinLib", ext)
+        
+        val android = this@applyPlugin.extensions.getByName("android") as LibraryExtension
 
         val sourcesJar = task<Jar>("sourcesJar") {
             archiveClassifier.set("sources")
             setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+            from(android.sourceSets["main"].java.srcDirs)
         }
 
         @Suppress("UnstableApiUsage")

@@ -2,7 +2,7 @@ name: Snapshot
 
 on:
   push:
-    branches: [snapshot]
+    branches: [master]
 
 jobs:
   snapshot-version:
