@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.kodein.internal.gradle.task.KotlinIosTest
-import org.kodein.internal.gradle.task.configureConventions
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 typealias ConfTest = Project.() -> Boolean
@@ -157,27 +155,7 @@ class KodeinMPPExtension(val project: Project) {
 
             val iosX64 = KodeinNativeTarget(
                     target = "iosX64",
-                    dependencies = listOf(SourceSets.allIos),
-                    conf = {
-                        if (os.isMacOsX) {
-                            target.project.task<KotlinIosTest>("iosX64Test") {
-                                val binary = target.binaries.getTest("DEBUG")
-
-                                dependsOn(binary.linkTaskName)
-                                onlyIf { binary.outputFile.exists() }
-
-                                group = "verification"
-
-                                targetName = "iosX64"
-                                executable = binary.outputFile
-                                workingDir = project.projectDir.absolutePath
-
-                                configureConventions()
-                            }
-
-                            target.project.tasks["allTests"].dependsOn("iosX64Test")
-                        }
-                    }
+                    dependencies = listOf(SourceSets.allIos)
             )
 
             val tvosArm64 = KodeinNativeTarget(
