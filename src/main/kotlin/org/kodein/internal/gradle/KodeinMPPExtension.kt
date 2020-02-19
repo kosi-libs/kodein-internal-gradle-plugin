@@ -179,6 +179,41 @@ class KodeinMPPExtension(val project: Project) {
                     }
             )
 
+            val watchosArm32 = KodeinNativeTarget(
+                    target = "watchosArm32",
+                    dependencies = listOf(SourceSets.allNative),
+                    isNative = true,
+                    exclude = { isExcluded("nonHostNativeTargets") }
+            )
+
+            val watchosArm64 = KodeinNativeTarget(
+                    target = "watchosArm64",
+                    dependencies = listOf(SourceSets.allNative),
+                    isNative = true,
+                    exclude = { isExcluded("nonHostNativeTargets") }
+            )
+
+            val watchosX86 = KodeinNativeTarget(
+                    target = "watchosX86",
+                    dependencies = listOf(SourceSets.allNative),
+                    isNative = true,
+                    exclude = { isExcluded("nonHostNativeTargets") }
+            )
+
+            val tvosArm64 = KodeinNativeTarget(
+                    target = "tvosArm64",
+                    dependencies = listOf(SourceSets.allNative),
+                    isNative = true,
+                    exclude = { isExcluded("nonHostNativeTargets") }
+            )
+
+            val tvosX64 = KodeinNativeTarget(
+                    target = "tvosX64",
+                    dependencies = listOf(SourceSets.allNative),
+                    isNative = true,
+                    exclude = { isExcluded("nonHostNativeTargets") }
+            )
+
             val linuxArm32Hfp = KodeinNativeTarget(
                     target = "linuxArm32Hfp",
                     dependencies = listOf(SourceSets.allNativePosix),
@@ -234,16 +269,18 @@ class KodeinMPPExtension(val project: Project) {
 
             val allAndroid = listOf(androidArm32, androidArm64)
             val allIos = listOf(iosArm32, iosArm64, iosX64)
+            val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
+            val allTvos = listOf(tvosArm64, tvosX64)
             val allMobile = allAndroid + allIos
 
             val allLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32, linuxX64)
-            val allPosix = allLinux + allMobile + macosX64
+            val allPosix = allLinux + allMobile + macosX64 + allWatchos + allTvos
 
             val allDesktop = allLinux + macosX64 + mingwX64
 
             val allNonWeb = allMobile + allDesktop
 
-            val all = allNonWeb + wasm32
+            val all = allNonWeb + wasm32 + allWatchos + allTvos
 
             val os = OperatingSystem.current()
             val host = when {
