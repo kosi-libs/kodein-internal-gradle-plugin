@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
-typealias ConfTest = Project.() -> Boolean
 
 @Suppress("UNUSED_TYPEALIAS_PARAMETER")
 typealias KodeinJvmTarget = KodeinMPPExtension.KodeinTarget<KotlinJvmTarget>
@@ -279,7 +278,7 @@ class KodeinMPPExtension(val project: Project) {
     val kodeinTargets = Targets
 
 
-    class CPFix(
+    data class CPFix(
             val name: String,
             val mainTarget: KodeinTarget<*>,
             val excludedTargets: List<KodeinTarget<*>>,
@@ -309,12 +308,15 @@ class KodeinMPPExtension(val project: Project) {
             )
     )
 
-    val cpFixes = (project.findProperty("classpathFixes") as String?)
+    val appliedCpFixes = (project.findProperty("classpathFixes") as String?)
             ?.split(",")
             ?.map { it.trim() }
             ?.also { if ("host" in it && "ios" in it) error("You cannot apply both host and ios classpath fixes at the same time") }
-            ?.map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
             ?: emptyList()
+
+    val cpFixes = appliedCpFixes
+            .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
+            .toMutableList()
 
     val excludedTargets = (
             (project.findProperty("excludeTargets") as String?)
