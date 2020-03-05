@@ -43,7 +43,8 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             key = bintrayApiKey
             dryRun = bintrayDryRun == "true"
 
-            override = true
+            override = snapshotNumber != null
+            publish = snapshotNumber != null
 
             pkg.apply {
                 if (bintrayUserOrg != null)
@@ -66,7 +67,6 @@ class KodeinUploadPlugin : KtPlugin<Project> {
 
         bintrayUploadTask.apply {
             dependsOn("publishToMavenLocal")
-
             doFirst {
                 if (project.findProperty("classpathFixes") != null) {
                     error("Cannot use bintrayUpload with Classpath Fixes!")
@@ -85,6 +85,18 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     logger.warn("${if (bintrayDryRun == "true") "DRY RUN " else ""} Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
                 }
                 setPublications(*publications.map { it.name } .toTypedArray())
+            }
+
+            bintrayUploadTask.dependsOn(tasks["publishToMavenLocal"])
+
+            doFirst {
+                if (project.findProperty("classpathFixes") != null) {
+                    error("Cannot use bintrayUpload with Classpath Fixes!")
+                }
+                val excludeTargets = project.findProperty("excludeTargets")
+                if (excludeTargets != null) {
+                    logger.warn("UPLOADING TO BINTRAY WITH EXCLUDED TARGETS $excludeTargets")
+                }
             }
         }
     }

@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.kodein.internal.gradle.task.KotlinIosTest
-import org.kodein.internal.gradle.task.configureConventions
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
-typealias ConfTest = Project.() -> Boolean
 
 @Suppress("UNUSED_TYPEALIAS_PARAMETER")
 typealias KodeinJvmTarget = KodeinMPPExtension.KodeinTarget<KotlinJvmTarget>
@@ -157,27 +154,37 @@ class KodeinMPPExtension(val project: Project) {
 
             val iosX64 = KodeinNativeTarget(
                     target = "iosX64",
-                    dependencies = listOf(SourceSets.allIos),
-                    conf = {
-                        if (os.isMacOsX) {
-                            target.project.task<KotlinIosTest>("iosX64Test") {
-                                val binary = target.binaries.getTest("DEBUG")
+                    dependencies = listOf(SourceSets.allIos)
+            )
 
-                                dependsOn(binary.linkTaskName)
-                                onlyIf { binary.outputFile.exists() }
+            val tvosArm64 = KodeinNativeTarget(
+                    target = "tvosArm64",
+                    name = "tvosArm64",
+                    dependencies = listOf(SourceSets.allPosix)
+            )
 
-                                group = "verification"
+            val tvosX64 = KodeinNativeTarget(
+                    target = "tvosX64",
+                    name = "tvosX64",
+                    dependencies = listOf(SourceSets.allPosix)
+            )
 
-                                targetName = "iosX64"
-                                executable = binary.outputFile
-                                workingDir = project.projectDir.absolutePath
+            val watchosArm32 = KodeinNativeTarget(
+                    target = "watchosArm32",
+                    name = "watchosArm32",
+                    dependencies = listOf(SourceSets.allPosix)
+            )
 
-                                configureConventions()
-                            }
+            val watchosArm64 = KodeinNativeTarget(
+                    target = "watchosArm64",
+                    name = "watchosArm64",
+                    dependencies = listOf(SourceSets.allPosix)
+            )
 
-                            target.project.tasks["allTests"].dependsOn("iosX64Test")
-                        }
-                    }
+            val watchosX86 = KodeinNativeTarget(
+                    target = "watchosX86",
+                    name = "watchosX86",
+                    dependencies = listOf(SourceSets.allPosix)
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
@@ -217,6 +224,8 @@ class KodeinMPPExtension(val project: Project) {
 
             val allAndroid = listOf(androidArm32, androidArm64)
             val allIos = listOf(iosArm32, iosArm64, iosX64)
+            val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
+            val allTvos = listOf(tvosArm64, tvosX64)
             val allMobile = allAndroid + allIos
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
@@ -269,7 +278,7 @@ class KodeinMPPExtension(val project: Project) {
     val kodeinTargets = Targets
 
 
-    class CPFix(
+    data class CPFix(
             val name: String,
             val mainTarget: KodeinTarget<*>,
             val excludedTargets: List<KodeinTarget<*>>,
@@ -299,12 +308,15 @@ class KodeinMPPExtension(val project: Project) {
             )
     )
 
-    val cpFixes = (project.findProperty("classpathFixes") as String?)
+    val appliedCpFixes = (project.findProperty("classpathFixes") as String?)
             ?.split(",")
             ?.map { it.trim() }
             ?.also { if ("host" in it && "ios" in it) error("You cannot apply both host and ios classpath fixes at the same time") }
-            ?.map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
             ?: emptyList()
+
+    val cpFixes = appliedCpFixes
+            .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
+            .toMutableList()
 
     val excludedTargets = (
             (project.findProperty("excludeTargets") as String?)
