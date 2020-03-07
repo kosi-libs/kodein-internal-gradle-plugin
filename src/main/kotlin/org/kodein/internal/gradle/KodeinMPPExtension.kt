@@ -4,7 +4,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.task
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -223,15 +222,20 @@ class KodeinMPPExtension(val project: Project) {
             )
 
             val allAndroid = listOf(androidArm32, androidArm64)
+
             val allIos = listOf(iosArm32, iosArm64, iosX64)
             val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
             val allTvos = listOf(tvosArm64, tvosX64)
+            val allApple = allIos + allWatchos + allTvos
+
             val allMobile = allAndroid + allIos
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
-            val allLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32, linuxX64)
-            val allPosix = allLinux + macosX64 + mingwX64 + allMobile
+            val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32)
+            val allLinux = allEmbeddedLinux + linuxX64
+
+            val allPosix = allDesktop + allEmbeddedLinux + allApple + allAndroid
 
             val all = allPosix + wasm32
 
