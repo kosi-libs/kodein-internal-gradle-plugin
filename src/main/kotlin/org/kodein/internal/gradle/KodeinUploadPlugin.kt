@@ -87,7 +87,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 setPublications(*publications.map { it.name } .toTypedArray())
             }
 
-            bintrayUploadTask.dependsOn(tasks["publishToMavenLocal"])
+            bintrayUploadTask.dependsOn("publishToMavenLocal")
 
             doFirst {
                 if (project.findProperty("classpathFixes") != null) {

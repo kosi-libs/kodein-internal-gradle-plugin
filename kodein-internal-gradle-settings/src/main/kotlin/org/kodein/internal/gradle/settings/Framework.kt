@@ -11,7 +11,15 @@ class Framework(private val settings: Settings, framework: String) {
                         .let { if (it.isFound) (it.value as String) else null }
     }
 
-    val isExcluded = (settings.findStringProperty("exclude${framework.capitalize()}") ?: System.getenv("EXCLUDE_${framework.toUpperCase()}")) == "true"
+    val excludedTargets = settings.findStringProperty("excludeTargets")
+            ?.split(",")
+            ?.map { it.trim() }
+            ?: emptyList()
+
+    val isExcluded =
+            (framework in excludedTargets)
+            || (System.getenv("EXCLUDE_${framework.toUpperCase()}") != null)
+
     val isIncluded get() = !isExcluded
 
     fun include(vararg projectPaths: String) {
