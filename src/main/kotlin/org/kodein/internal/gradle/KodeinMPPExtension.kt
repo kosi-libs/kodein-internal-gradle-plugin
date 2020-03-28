@@ -328,6 +328,9 @@ class KodeinMPPExtension(val project: Project) {
                     ?.map { it.trim() }
                     ?.flatMap {
                         when (it) {
+                            "native" -> Targets.Native.all
+                            "jvm" -> Targets.JVM.all
+                            "js" -> Targets.JS.all
                             "nativeNonHost" -> Targets.Native.all - Targets.Native.host
                             else -> listOf(Targets[it])
                         }
