@@ -38,6 +38,9 @@ class KodeinMPPExtension(val project: Project) {
     )
 
     object SourceSets {
+        fun new(name: String, dependencies: List<KodeinSourceSet> = emptyList(), mainConf: SourceSetConf = {}, testConf: SourceSetConf = {}) =
+                KodeinSourceSet(name, dependencies, mainConf, testConf)
+
         val allJvm = KodeinSourceSet(
                 name = "allJvm",
                 mainConf = {
@@ -69,9 +72,7 @@ class KodeinMPPExtension(val project: Project) {
         )
 
         val allNative = KodeinSourceSet(
-                name = "allNative",
-                mainConf = { dependsOn(it.getByName("commonMain")) },
-                testConf = { dependsOn(it.getByName("commonTest")) }
+                name = "allNative"
         )
 
         val allPosix = KodeinSourceSet(
@@ -79,9 +80,14 @@ class KodeinMPPExtension(val project: Project) {
                 dependencies = listOf(allNative)
         )
 
+        val allApple = KodeinSourceSet(
+                name = "allApple",
+                dependencies = listOf(allPosix)
+        )
+
         val allIos = KodeinSourceSet(
                 name = "allIos",
-                dependencies = listOf(allPosix)
+                dependencies = listOf(allApple)
         )
     }
 
@@ -159,31 +165,31 @@ class KodeinMPPExtension(val project: Project) {
             val tvosArm64 = KodeinNativeTarget(
                     target = "tvosArm64",
                     name = "tvosArm64",
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allApple)
             )
 
             val tvosX64 = KodeinNativeTarget(
                     target = "tvosX64",
                     name = "tvosX64",
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosArm32 = KodeinNativeTarget(
                     target = "watchosArm32",
                     name = "watchosArm32",
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosArm64 = KodeinNativeTarget(
                     target = "watchosArm64",
                     name = "watchosArm64",
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosX86 = KodeinNativeTarget(
                     target = "watchosX86",
                     name = "watchosX86",
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allApple)
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
@@ -308,7 +314,7 @@ class KodeinMPPExtension(val project: Project) {
                     name = "ios",
                     mainTarget = Targets.Native.iosX64,
                     excludedTargets = Targets.Native.all - Targets.Native.iosX64,
-                    intermediateSourceSets = listOf(SourceSets.allNative, SourceSets.allPosix, SourceSets.allIos)
+                    intermediateSourceSets = listOf(SourceSets.allNative, SourceSets.allPosix, SourceSets.allApple, SourceSets.allIos)
             )
     )
 
@@ -321,6 +327,12 @@ class KodeinMPPExtension(val project: Project) {
     val cpFixes = appliedCpFixes
             .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
             .toMutableList()
+
+    fun MutableList<CPFix>.update(name: String, update: (CPFix) -> CPFix) {
+        val fix = find { it.name == name } ?: return
+        remove(fix)
+        add(update(fix))
+    }
 
     val excludedTargets = (
             (project.findProperty("excludeTargets") as String?)
@@ -352,10 +364,15 @@ class KodeinMPPExtension(val project: Project) {
         sourceSet.mainConf(main, this)
         sourceSet.testConf(test, this)
 
-        sourceSet.dependencies.forEach { dep ->
-            add(dep)?.takeIf { it != name } ?.let {
-                main.dependsOn(getByName(it + "Main"))
-                test.dependsOn(getByName(it + "Test"))
+        if (sourceSet.dependencies.isEmpty()) {
+            main.dependsOn(getByName("commonMain"))
+            test.dependsOn(getByName("commonTest"))
+        } else {
+            sourceSet.dependencies.forEach { dep ->
+                add(dep)?.takeIf { it != name } ?.let {
+                    main.dependsOn(getByName(it + "Main"))
+                    test.dependsOn(getByName(it + "Test"))
+                }
             }
         }
 
@@ -368,15 +385,18 @@ class KodeinMPPExtension(val project: Project) {
         val test: KotlinSourceSet
         fun main(block: KotlinSourceSet.() -> Unit) { main.apply(block) }
         fun test(block: KotlinSourceSet.() -> Unit) { test.apply(block) }
-        fun dependsBothOn(name: String)
+        fun dependsOn(sourceSet: KodeinSourceSet)
     }
 
-    private class SourceSetBuilderImpl(val sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, name: String) : SourceSetBuilder {
+    private inner class SourceSetBuilderImpl(val sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, val name: String) : SourceSetBuilder {
         override val main: KotlinSourceSet = sourceSets.maybeCreate(name + "Main")
         override val test: KotlinSourceSet = sourceSets.maybeCreate(name + "Test")
-        override fun dependsBothOn(name: String) {
-            main.dependsOn(sourceSets[name + "Main"])
-            test.dependsOn(sourceSets[name + "Test"])
+        override fun dependsOn(sourceSet: KodeinSourceSet) {
+            val dependency = sourceSets.add(sourceSet)
+            if (dependency != name) {
+                main.dependsOn(sourceSets[dependency + "Main"])
+                test.dependsOn(sourceSets[dependency + "Test"])
+            }
         }
     }
 
@@ -399,7 +419,7 @@ class KodeinMPPExtension(val project: Project) {
 
     interface TargetBuilder<T : KotlinTarget> : SourceSetBuilder, TargetConfigurator<T>
 
-    private class TargetBuilderImpl<T : KotlinTarget> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<T>) : TargetBuilder<T>, SourceSetBuilder by ssb, TargetConfigurator<T> by tc {
+    private inner class TargetBuilderImpl<T : KotlinTarget> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<T>) : TargetBuilder<T>, SourceSetBuilder by ssb, TargetConfigurator<T> by tc {
         constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, target: T, sourceSetName: String = target.name) : this(SourceSetBuilderImpl(sourceSets, sourceSetName), TargetConfiguratorImpl(target))
     }
 
