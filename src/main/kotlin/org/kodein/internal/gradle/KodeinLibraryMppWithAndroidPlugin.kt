@@ -18,8 +18,8 @@ class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
         val excludeAndroid = "android" in excludedTargets
 
         apply {
-            if (!excludeAndroid) plugin("com.android.library")
             plugin<KodeinLibraryMppPlugin>()
+            if (!excludeAndroid) plugin("com.android.library")
         }
 
         if (!excludeAndroid) {

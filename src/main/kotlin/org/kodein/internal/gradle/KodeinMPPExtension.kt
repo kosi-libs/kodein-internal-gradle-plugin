@@ -121,7 +121,7 @@ class KodeinMPPExtension(val project: Project) {
                     target = "android",
                     dependencies = listOf(SourceSets.allJvm),
                     conf = {
-                        target.publishLibraryVariants("release")
+                        target.publishLibraryVariants("debug", "release")
                         test.dependencies {
                             implementation("androidx.test.ext:junit:1.1.1")
                             implementation("androidx.test.espresso:espresso-core:3.2.0")
@@ -282,7 +282,7 @@ class KodeinMPPExtension(val project: Project) {
         val js = JS
 
         val all = JVM.all + Native.all + JS.all
-        operator fun get(name: String) = all.firstOrNull { it.target == name } ?: error("No Kodein target named $name")
+        operator fun get(name: String) = all.firstOrNull { it.target == name } ?: error("No Kodein target named $name\n Known targets are: ${all.map { it.target }.joinToString()}.")
     }
 
     val kodeinTargets = Targets
@@ -503,4 +503,7 @@ class KodeinMPPExtension(val project: Project) {
             TargetConfiguratorImpl(it).conf()
         }
     }
+
+    var enableCrossCompilation: Boolean = false
+
 }

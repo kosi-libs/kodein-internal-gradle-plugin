@@ -19,3 +19,7 @@ internal fun Project.configureTestLogsPrint() {
         }
     }
 }
+
+fun <T> Iterable<T>.applyEach(action: T.() -> Unit): Unit {
+    forEach { it.apply(action) }
+}
