@@ -34,13 +34,13 @@ dependencies {
 
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
 
-    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4-jetbrains-5")
+    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
     api("digital.wup:android-maven-publish:3.6.3")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.17.0"
+    version = "2.18.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
