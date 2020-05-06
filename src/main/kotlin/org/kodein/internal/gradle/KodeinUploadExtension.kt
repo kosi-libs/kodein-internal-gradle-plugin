@@ -1,21 +1,15 @@
 package org.kodein.internal.gradle
 
-import com.jfrog.bintray.gradle.BintrayExtension
-
 interface KodeinUploadExtension {
     var name: String
     var description: String
 }
 
-class KodeinBintrayUploadExtension(private val bintray: BintrayExtension) : KodeinUploadExtension {
+class KodeinBintrayUploadExtension : KodeinUploadExtension {
 
-    override var name: String
-        get() = bintray.pkg.name
-        set(value) { bintray.pkg.name = value }
+    override var name: String = ""
 
-    override var description: String
-        get() = bintray.pkg.desc
-        set(value) { bintray.pkg.desc = value }
+    override var description: String = ""
 
 }
 

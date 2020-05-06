@@ -15,7 +15,6 @@ repositories {
     google()
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
-    maven(url = "https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
 
     mavenLocal()
 }
@@ -34,13 +33,12 @@ dependencies {
 
     api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
 
-    api("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
     api("digital.wup:android-maven-publish:3.6.3")
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "2.18.0"
+    version = "3.0.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
