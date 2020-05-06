@@ -5,7 +5,6 @@ plugins {
     `java-library`
     `kotlin-dsl`
     kotlin("jvm") version "1.3.21"
-    id("com.jfrog.bintray") version "1.8.4"
 }
 
 val gradleKotlin = "1.3.21"
@@ -48,6 +47,13 @@ allprojects {
             from(sourceSets["main"].allSource)
         }
 
+        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
+        val snapshotNumber: String? by project
+
+        if (snapshotNumber != null) project.version = "${project.version}-dev-$snapshotNumber"
+
         publishing {
             publications {
                 create<MavenPublication>("Kodein") {
@@ -55,43 +61,39 @@ allprojects {
                     artifact(sourcesJar) {
                         classifier = "sources"
                     }
+                    pom {
+                        licenses {
+                            license {
+                                name.set("MIT")
+                                url.set("https://opensource.org/licenses/MIT")
+                            }
+                        }
+                        url.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin")
+                        issueManagement {
+                            name.set("Github")
+                            url.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues")
+                        }
+                        scm {
+                            connection.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git")
+                        }
+                    }
                 }
             }
-        }
 
-        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
-        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
-        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
-        val bintrayDryRun: String? by project
-        val snapshotNumber: String? by project
-
-        if (bintrayUsername != null && bintrayApiKey != null) {
-            bintray {
-                user = bintrayUsername
-                key = bintrayApiKey
-                dryRun = bintrayDryRun == "true"
-
-                override = snapshotNumber != null
-                publish = snapshotNumber != null
-
-                pkg.apply {
-                    if (bintrayUserOrg != null)
-                        userOrg = bintrayUserOrg
-                    repo = "Kodein-Internal-Gradle"
-                    name = project.name
-                    setLicenses("MIT")
-                    websiteUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin"
-                    issueTrackerUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues"
-                    vcsUrl = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git"
-
-                    if (snapshotNumber != null){
-                        repo = "kodein-dev"
-                        project.version = "${project.version}-dev-$snapshotNumber"
+            if (bintrayUsername != null && bintrayApiKey != null) {
+                repositories {
+                    maven {
+                        name = "bintray"
+                        val isSnaphost = if (snapshotNumber != null) 1 else 0
+                        val btSubject = bintrayUserOrg ?: bintrayUsername
+                        val btRepo = if (snapshotNumber != null) "kodein-dev" else "Kodein-Internal-Gradle"
+                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${project.name}/;publish=$isSnaphost;override=$isSnaphost")
+                        credentials {
+                            username = bintrayUsername
+                            password = bintrayApiKey
+                        }
                     }
-
-                    setPublications("Kodein")
                 }
-
             }
         }
     }
