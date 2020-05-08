@@ -63,7 +63,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     maven {
                         name = "bintray"
                         val isSnaphost = if (snapshotNumber != null) 1 else 0
-                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${ext.name}/;publish=$isSnaphost;override=$isSnaphost")
+                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${ext.name}/;publish=0")
                         credentials {
                             username = bintrayUsername
                             password = bintrayApiKey
@@ -119,9 +119,6 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 }
             }
             publishing.publications.withType<MavenPublication>().configureEach {
-                if (!OperatingSystem.current().isLinux && name.contains("linux", true))
-                    return@configureEach
-
                 tasks.getByName<PublishToMavenRepository>("publish${name.capitalize()}PublicationToBintrayRepository").apply {
                     dependsOn(createPackage)
                     onlyIf {
@@ -129,7 +126,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                         inputs.files.forEach {
                             logger.warn("    - " + it.name)
                         }
-                        !btDryRun
+                        !btDryRun && (!OperatingSystem.current().isLinux && !name.contains("linux", true))
                     }
                 }
                 pom {
