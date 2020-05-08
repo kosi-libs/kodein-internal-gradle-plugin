@@ -14,6 +14,7 @@ import org.gradle.api.publish.*
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.internal.impldep.org.apache.maven.model.License
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import java.net.URI
 import java.net.http.HttpClient
@@ -117,8 +118,10 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     }
                 }
             }
-
             publishing.publications.withType<MavenPublication>().configureEach {
+                if (!OperatingSystem.current().isLinux && name.contains("linux", true))
+                    return@configureEach
+
                 tasks.getByName<PublishToMavenRepository>("publish${name.capitalize()}PublicationToBintrayRepository").apply {
                     dependsOn(createPackage)
                     onlyIf {
