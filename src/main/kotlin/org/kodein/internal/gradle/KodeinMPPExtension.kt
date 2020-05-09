@@ -97,6 +97,7 @@ class KodeinMPPExtension(val project: Project) {
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
+            val nativeBuildOn: OperatingSystem.() -> Boolean = { true },
             val conf: TargetBuilder<T>.() -> Unit = {}
     ) {
         operator fun invoke(name: String) = copy(name = name)
@@ -149,76 +150,85 @@ class KodeinMPPExtension(val project: Project) {
 
             val iosArm32 = KodeinNativeTarget(
                     target = "iosArm32",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allIos)
             )
 
             val iosArm64 = KodeinNativeTarget(
                     target = "iosArm64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allIos)
             )
 
             val iosX64 = KodeinNativeTarget(
                     target = "iosX64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allIos)
             )
 
             val tvosArm64 = KodeinNativeTarget(
                     target = "tvosArm64",
-                    name = "tvosArm64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allApple)
             )
 
             val tvosX64 = KodeinNativeTarget(
                     target = "tvosX64",
-                    name = "tvosX64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosArm32 = KodeinNativeTarget(
                     target = "watchosArm32",
-                    name = "watchosArm32",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosArm64 = KodeinNativeTarget(
                     target = "watchosArm64",
-                    name = "watchosArm64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allApple)
             )
 
             val watchosX86 = KodeinNativeTarget(
                     target = "watchosX86",
-                    name = "watchosX86",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allApple)
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
                     target = "linuxArm32Hfp",
+                    nativeBuildOn = { isLinux },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
             val linuxMips32 = KodeinNativeTarget(
                     target = "linuxMips32",
+                    nativeBuildOn = { isLinux },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
             val linuxMipsel32 = KodeinNativeTarget(
                     target = "linuxMipsel32",
+                    nativeBuildOn = { isLinux },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
             val linuxX64 = KodeinNativeTarget(
                     target = "linuxX64",
+                    nativeBuildOn = { isLinux },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
             val macosX64 = KodeinNativeTarget(
                     target = "macosX64",
+                    nativeBuildOn = { isMacOsX },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
             val mingwX64 = KodeinNativeTarget(
                     target = "mingwX64",
+                    nativeBuildOn = { isWindows },
                     dependencies = listOf(SourceSets.allPosix)
             )
 
@@ -350,6 +360,7 @@ class KodeinMPPExtension(val project: Project) {
                     ?: emptyList()
             ).plus(cpFixes.flatMap { it.excludedTargets })
 
+    internal var crossTargets = ArrayList<String>()
 
     fun NamedDomainObjectContainer<out KotlinSourceSet>.add(sourceSet: KodeinSourceSet): String? {
         for (fix in cpFixes) {
@@ -451,6 +462,9 @@ class KodeinMPPExtension(val project: Project) {
                     sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(depName + "Test"))
                 }
             }
+
+            if (!target.nativeBuildOn(OperatingSystem.current())) crossTargets.add(target.name)
+
             ktTarget
         }
         @Suppress("UNCHECKED_CAST")

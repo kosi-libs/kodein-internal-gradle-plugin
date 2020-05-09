@@ -3,6 +3,7 @@ package org.kodein.internal.gradle
 import org.gradle.api.*
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
@@ -50,38 +51,30 @@ class KodeinMppPlugin : KtPlugin<Project> {
 
                 // https://youtrack.jetbrains.com/issue/KT-30498
                 if (!ext.enableCrossCompilation) {
-                    val os = OperatingSystem.current()
-                    (listOf("linuxX64", "macosX64", "mingwX64") - when {
-                        os.isLinux -> "linuxX64"
-                        os.isMacOsX -> "macosX64"
-                        os.isWindows -> "mingwX64"
-                        else -> ""
-                    })
-                            .mapNotNull { targets.findByName(it) as KotlinNativeTarget? }
+                    val upload = project.plugins.findPlugin(KodeinUploadPlugin::class)
+                    ext.crossTargets
+                            .mapNotNull { targets.findByName(it) }
                             .applyEach {
-                                logger.log(LogLevel.INFO,"Disabling cross target $name")
                                 compilations.applyEach {
-                                    cinterops.applyEach {
-                                        tasks[interopProcessingTaskName].enabled = false
-                                    }
                                     compileKotlinTask.enabled = false
-                                    tasks[this.processResourcesTaskName].enabled = false
-                                }
-                                binaries.applyEach {
-                                    linkTask.enabled = false
                                 }
 
                                 mavenPublication {
-                                    val publicationToDisable = this
-                                    tasks.withType<AbstractPublishToMaven>().applyEach {
-                                        onlyIf { publication != publicationToDisable }
+                                    upload?.disabledPublications?.add(this)
+                                }
+
+                                if (this is KotlinNativeTarget) {
+                                    compilations.applyEach {
+                                        cinterops.applyEach {
+                                            tasks[interopProcessingTaskName].enabled = false
+                                        }
+                                        tasks[this.processResourcesTaskName].enabled = false
                                     }
-                                    tasks.withType<GenerateModuleMetadata>().applyEach {
-                                        onlyIf { publication.get() != publicationToDisable }
+                                    binaries.applyEach {
+                                        linkTask.enabled = false
                                     }
                                 }
                             }
-
                 }
             }
 

@@ -12,7 +12,9 @@ import org.apache.http.impl.client.HttpClients
 import org.gradle.api.*
 import org.gradle.api.publish.*
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.internal.impldep.org.apache.maven.model.License
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
@@ -25,6 +27,8 @@ class KodeinUploadPlugin : KtPlugin<Project> {
 
     private val Project.publishing get() = extensions.getByName<PublishingExtension>("publishing")
     private fun Project.publishing(action: PublishingExtension.() -> Unit) = publishing.apply(action)
+
+    internal val disabledPublications = ArrayList<Publication>()
 
     override fun Project.applyPlugin() {
         apply { plugin("org.gradle.maven-publish") }
@@ -119,20 +123,6 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 }
             }
             publishing.publications.withType<MavenPublication>().configureEach {
-                tasks.getByName<PublishToMavenRepository>("publish${name.capitalize()}PublicationToBintrayRepository").apply {
-                    dependsOn(createPackage)
-                    onlyIf {
-                        logger.warn("${if (btDryRun) "DRY RUN " else ""}Uploading '$groupId:$artifactId:$version' from publication '$name':")
-                        inputs.files.forEach {
-                            logger.warn("    - " + it.name)
-                        }
-                        val runLinuxPublicationOnLinux =
-                                if(OperatingSystem.current().isLinux) true
-                                else !name.contains("linux", true)
-
-                        !btDryRun && runLinuxPublicationOnLinux
-                    }
-                }
                 pom {
                     description.set(ext.description)
                     licenses {
@@ -148,6 +138,32 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     }
                     scm {
                         connection.set("https://github.com/Kodein-Framework/${rootExt.repo}.git")
+                    }
+                }
+            }
+
+            afterEvaluate {
+                tasks.withType<PublishToMavenRepository>().configureEach {
+                    if (this.repository.name == "bintray") {
+                        dependsOn(createPackage)
+                        onlyIf {
+                            if (publication in disabledPublications) {
+                                logger.warn("Publication ${publication.name} disabled")
+                                false
+                            } else {
+                                logger.warn("${if (btDryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                inputs.files.forEach {
+                                    logger.warn("    - " + it.name)
+                                }
+                                !btDryRun
+                            }
+                        }
+                    }
+                }
+
+                tasks.withType<GenerateModuleMetadata>().configureEach {
+                    onlyIf {
+                        publication.get() !in disabledPublications
                     }
                 }
             }
