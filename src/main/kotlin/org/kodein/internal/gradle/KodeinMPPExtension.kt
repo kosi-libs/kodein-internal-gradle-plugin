@@ -97,7 +97,7 @@ class KodeinMPPExtension(val project: Project) {
             val target: String,
             val name: String = target,
             val dependencies: List<KodeinSourceSet> = emptyList(),
-            val nativeBuildOn: OperatingSystem.() -> Boolean = { true },
+            val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
             val conf: TargetBuilder<T>.() -> Unit = {}
     ) {
         operator fun invoke(name: String) = copy(name = name)
@@ -136,18 +136,6 @@ class KodeinMPPExtension(val project: Project) {
         val jvm = JVM
 
         object Native {
-            val androidArm32 = KodeinNativeTarget(
-                    target = "androidNativeArm32",
-                    name = "androidArm32",
-                    dependencies = listOf(SourceSets.allPosix)
-            )
-
-            val androidArm64 = KodeinNativeTarget(
-                    target = "androidNativeArm64",
-                    name = "androidArm64",
-                    dependencies = listOf(SourceSets.allPosix)
-            )
-
             val iosArm32 = KodeinNativeTarget(
                     target = "iosArm32",
                     nativeBuildOn = { isMacOsX },
@@ -232,28 +220,19 @@ class KodeinMPPExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allPosix)
             )
 
-            val wasm32 = KodeinNativeTarget(
-                    target = "wasm32",
-                    dependencies = listOf(SourceSets.allNative)
-            )
-
-            val allAndroid = listOf(androidArm32, androidArm64)
-
             val allIos = listOf(iosArm32, iosArm64, iosX64)
             val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
             val allTvos = listOf(tvosArm64, tvosX64)
             val allApple = allIos + allWatchos + allTvos
-
-            val allMobile = allAndroid + allIos
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = allDesktop + allEmbeddedLinux + allApple + allAndroid
+            val allPosix = allDesktop + allEmbeddedLinux + allApple
 
-            val all = allPosix + wasm32
+            val all = allPosix
 
             val host = when {
                 os.isLinux -> linuxX64
@@ -361,6 +340,8 @@ class KodeinMPPExtension(val project: Project) {
             ).plus(cpFixes.flatMap { it.excludedTargets })
 
     internal var crossTargets = ArrayList<String>()
+    internal var hostTargets = ArrayList<String>()
+    internal var universalTargets = ArrayList<String>()
 
     fun NamedDomainObjectContainer<out KotlinSourceSet>.add(sourceSet: KodeinSourceSet): String? {
         for (fix in cpFixes) {
@@ -463,7 +444,11 @@ class KodeinMPPExtension(val project: Project) {
                 }
             }
 
-            if (!target.nativeBuildOn(OperatingSystem.current())) crossTargets.add(target.name)
+            when (target.nativeBuildOn(OperatingSystem.current())) {
+                true -> hostTargets.add(target.name)
+                false -> crossTargets.add(target.name)
+                null -> universalTargets.add(target.name)
+            }
 
             ktTarget
         }

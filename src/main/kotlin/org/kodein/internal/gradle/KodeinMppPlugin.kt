@@ -4,11 +4,15 @@ import org.gradle.api.*
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 class KodeinMppPlugin : KtPlugin<Project> {
 
@@ -49,9 +53,10 @@ class KodeinMppPlugin : KtPlugin<Project> {
                     languageSettings.progressiveMode = true
                 }
 
+                val upload = project.plugins.findPlugin(KodeinUploadPlugin::class)
+
                 // https://youtrack.jetbrains.com/issue/KT-30498
                 if (!ext.enableCrossCompilation) {
-                    val upload = project.plugins.findPlugin(KodeinUploadPlugin::class)
                     ext.crossTargets
                             .mapNotNull { targets.findByName(it) }
                             .applyEach {
@@ -76,6 +81,27 @@ class KodeinMppPlugin : KtPlugin<Project> {
                                 }
                             }
                 }
+
+                if (upload != null) {
+                    ext.hostTargets
+                            .mapNotNull { targets.findByName(it) }
+                            .applyEach {
+                                mavenPublication {
+                                    upload.hostOnlyPublications.add(this)
+                                }
+                            }
+                }
+
+                println(tasks["mingwX64Test"].javaClass)
+                tasks.create("hostOnlyTest") {
+                    group = "verification"
+                    tasks.withType<KotlinTest>()
+                            .filter { it.targetName in ext.hostTargets }
+                            .forEach {
+                                dependsOn(it)
+                            }
+                }
+
             }
 
         }

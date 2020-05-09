@@ -1,7 +1,6 @@
 package org.kodein.internal.gradle
 
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
@@ -12,14 +11,9 @@ import org.apache.http.impl.client.HttpClients
 import org.gradle.api.*
 import org.gradle.api.publish.*
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
-import org.gradle.internal.impldep.org.apache.maven.model.License
-import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
-import java.net.URI
-import java.net.http.HttpClient
 
 
 @Suppress("UnstableApiUsage")
@@ -29,6 +23,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
     private fun Project.publishing(action: PublishingExtension.() -> Unit) = publishing.apply(action)
 
     internal val disabledPublications = ArrayList<Publication>()
+    internal val hostOnlyPublications = ArrayList<Publication>()
 
     override fun Project.applyPlugin() {
         apply { plugin("org.gradle.maven-publish") }
@@ -92,7 +87,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
 
             val createPackage = tasks.maybeCreate("create${ext.name.capitalize()}PackageToBintrayRepository").apply {
                 onlyIf {
-                    !btDryRun and run {
+                    !btDryRun && run {
                         HttpClients.createDefault().use { client ->
                             client.execute(HttpGet("https://api.bintray.com/packages/$btSubject/$btRepo/${ext.name}")).use {
                                 it.statusLine.statusCode == 404
@@ -166,8 +161,18 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                         publication.get() !in disabledPublications
                     }
                 }
+
+                tasks.create("hostOnlyPublish") {
+                    group = "publishing"
+                    tasks.withType<PublishToMavenRepository>()
+                            .filter { it.publication in hostOnlyPublications }
+                            .forEach {
+                                dependsOn(it)
+                            }
+                }
             }
         }
+
     }
 
 }
