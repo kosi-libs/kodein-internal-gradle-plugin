@@ -126,7 +126,11 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                         inputs.files.forEach {
                             logger.warn("    - " + it.name)
                         }
-                        !btDryRun && (!OperatingSystem.current().isLinux && !name.contains("linux", true))
+                        val runLinuxPublicationOnLinux =
+                                if(OperatingSystem.current().isLinux) true
+                                else !name.contains("linux", true)
+
+                        !btDryRun && runLinuxPublicationOnLinux
                     }
                 }
                 pom {
