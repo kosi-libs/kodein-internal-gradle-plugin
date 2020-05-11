@@ -92,7 +92,6 @@ class KodeinMppPlugin : KtPlugin<Project> {
                             }
                 }
 
-                println(tasks["mingwX64Test"].javaClass)
                 tasks.create("hostOnlyTest") {
                     group = "verification"
                     tasks.withType<KotlinTest>()
