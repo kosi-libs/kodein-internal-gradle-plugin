@@ -52,6 +52,9 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
+            if (ext.name.isEmpty() || ext.description.isEmpty()) {
+                error("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
+            }
             if (snapshotNumber != null) project.version = "${project.version}-dev-$snapshotNumber"
             val btSubject = bintrayUserOrg ?: bintrayUsername
             val btRepo = if (snapshotNumber != null) "kodein-dev" else rootExt.repo
@@ -80,9 +83,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     logger.warn("UPLOADING TO BINTRAY WITH EXCLUDED TARGETS $excludeTargets")
                 }
 
-                if (ext.name.isEmpty() || ext.description.isEmpty()) {
-                    error("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
-                }
+
             }
 
             val createPackage = tasks.maybeCreate("create${ext.name.capitalize()}PackageToBintrayRepository").apply {
