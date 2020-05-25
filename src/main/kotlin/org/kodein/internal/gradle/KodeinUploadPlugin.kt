@@ -65,7 +65,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     maven {
                         name = "bintray"
                         val isSnaphost = if (snapshotNumber != null) 1 else 0
-                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${ext.name}/;publish=0")
+                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${ext.name}/;publish=0;override=$isSnaphost")
                         credentials {
                             username = bintrayUsername
                             password = bintrayApiKey
