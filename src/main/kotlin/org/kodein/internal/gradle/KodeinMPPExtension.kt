@@ -80,14 +80,14 @@ class KodeinMPPExtension(val project: Project) {
                 dependencies = listOf(allNative)
         )
 
-        val allApple = KodeinSourceSet(
-                name = "allApple",
+        val allDarwin = KodeinSourceSet(
+                name = "allDarwin",
                 dependencies = listOf(allPosix)
         )
 
         val allIos = KodeinSourceSet(
                 name = "allIos",
-                dependencies = listOf(allApple)
+                dependencies = listOf(allDarwin)
         )
     }
 
@@ -157,31 +157,31 @@ class KodeinMPPExtension(val project: Project) {
             val tvosArm64 = KodeinNativeTarget(
                     target = "tvosArm64",
                     nativeBuildOn = { isMacOsX },
-                    dependencies = listOf(SourceSets.allApple)
+                    dependencies = listOf(SourceSets.allDarwin)
             )
 
             val tvosX64 = KodeinNativeTarget(
                     target = "tvosX64",
                     nativeBuildOn = { isMacOsX },
-                    dependencies = listOf(SourceSets.allApple)
+                    dependencies = listOf(SourceSets.allDarwin)
             )
 
             val watchosArm32 = KodeinNativeTarget(
                     target = "watchosArm32",
                     nativeBuildOn = { isMacOsX },
-                    dependencies = listOf(SourceSets.allApple)
+                    dependencies = listOf(SourceSets.allDarwin)
             )
 
             val watchosArm64 = KodeinNativeTarget(
                     target = "watchosArm64",
                     nativeBuildOn = { isMacOsX },
-                    dependencies = listOf(SourceSets.allApple)
+                    dependencies = listOf(SourceSets.allDarwin)
             )
 
             val watchosX86 = KodeinNativeTarget(
                     target = "watchosX86",
                     nativeBuildOn = { isMacOsX },
-                    dependencies = listOf(SourceSets.allApple)
+                    dependencies = listOf(SourceSets.allDarwin)
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
@@ -223,14 +223,14 @@ class KodeinMPPExtension(val project: Project) {
             val allIos = listOf(iosArm32, iosArm64, iosX64)
             val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
             val allTvos = listOf(tvosArm64, tvosX64)
-            val allApple = allIos + allWatchos + allTvos
+            val allDarwin = allIos + allWatchos + allTvos
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = allDesktop + allEmbeddedLinux + allApple
+            val allPosix = allDesktop + allEmbeddedLinux + allDarwin
 
             val all = allPosix
 
@@ -303,7 +303,7 @@ class KodeinMPPExtension(val project: Project) {
                     name = "ios",
                     mainTarget = Targets.Native.iosX64,
                     excludedTargets = Targets.Native.all - Targets.Native.iosX64,
-                    intermediateSourceSets = listOf(SourceSets.allNative, SourceSets.allPosix, SourceSets.allApple, SourceSets.allIos)
+                    intermediateSourceSets = listOf(SourceSets.allNative, SourceSets.allPosix, SourceSets.allDarwin, SourceSets.allIos)
             )
     )
 
