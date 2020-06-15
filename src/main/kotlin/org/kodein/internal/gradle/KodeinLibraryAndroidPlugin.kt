@@ -6,10 +6,8 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.plugin
-import org.gradle.kotlin.dsl.task
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 @Suppress("UnstableApiUsage")
 class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
@@ -21,6 +19,8 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
             plugin("digital.wup.android-maven-publish")
             plugin<KodeinUploadPlugin>()
         }
+
+        extensions.getByName<KotlinProjectExtension>("kotlin").explicitApi()
 
         val ext = KodeinLibraryDependencyExtension(this)
         extensions.add("kodeinLib", ext)

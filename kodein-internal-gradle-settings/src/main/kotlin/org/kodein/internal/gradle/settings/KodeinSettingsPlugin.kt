@@ -15,8 +15,6 @@ class KodeinSettingsPlugin : Plugin<Settings> {
 
         val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
 
-        enableFeaturePreview("GRADLE_METADATA")
-
         pluginManagement {
             repositories {
                 mavenLocal()

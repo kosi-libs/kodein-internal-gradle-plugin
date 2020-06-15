@@ -4,10 +4,8 @@ plugins {
     `maven-publish`
     `java-library`
     `kotlin-dsl`
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.3.72"
 }
-
-val gradleKotlin = "1.3.21"
 
 repositories {
     jcenter()
@@ -22,7 +20,7 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$gradleKotlin")
+    implementation(kotlin("stdlib-jdk7"))
 
     api(project(":kodein-internal-gradle-versions"))
 
@@ -37,7 +35,7 @@ dependencies {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "3.6.0"
+    version = "3.7.0"
 
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {

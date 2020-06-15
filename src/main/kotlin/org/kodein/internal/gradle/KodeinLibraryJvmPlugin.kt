@@ -6,6 +6,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 @Suppress("UnstableApiUsage")
 class KodeinLibraryJvmPlugin : KtPlugin<Project> {
@@ -17,6 +18,8 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
             plugin("java-library")
             plugin<KodeinUploadPlugin>()
         }
+
+        extensions.getByName<KotlinProjectExtension>("kotlin").explicitApi()
 
         val ext = KodeinLibraryDependencyExtension(this)
         extensions.add("kodeinLib", ext)
