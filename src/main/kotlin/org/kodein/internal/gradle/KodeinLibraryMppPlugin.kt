@@ -20,7 +20,7 @@ class KodeinLibraryMppPlugin : KtPlugin<Project> {
 
         afterEvaluate {
             tasks["publishToMavenLocal"].doFirst {
-                val k = project.extensions["kodein"] as KodeinMPPExtension
+                val k = project.extensions["kodein"] as KodeinMppExtension
                 if (k.excludedTargets.isNotEmpty()) {
                     logger.warn("Publishing to maven local with excluded targets: ${k.excludedTargets.joinToString { it.name }}!")
                 }

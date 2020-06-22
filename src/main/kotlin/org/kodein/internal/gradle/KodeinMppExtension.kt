@@ -6,10 +6,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -20,15 +17,15 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 
 @Suppress("UNUSED_TYPEALIAS_PARAMETER")
-typealias KodeinJvmTarget = KodeinMPPExtension.KodeinTarget<KotlinJvmTarget>
-typealias KodeinJsTarget = KodeinMPPExtension.KodeinTarget<KotlinJsTarget>
-typealias KodeinNativeTarget = KodeinMPPExtension.KodeinTarget<KotlinNativeTarget>
-typealias KodeinAndroidTarget = KodeinMPPExtension.KodeinTarget<KotlinAndroidTarget>
+typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
+typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsTarget>
+typealias KodeinNativeTarget = KodeinMppExtension.KodeinTarget<KotlinNativeTarget>
+typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTarget>
 
 private val os = OperatingSystem.current()
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
-class KodeinMPPExtension(val project: Project) {
+class KodeinMppExtension(val project: Project) {
 
     data class KodeinSourceSet internal constructor(
             val name: String,
@@ -504,5 +501,9 @@ class KodeinMPPExtension(val project: Project) {
     }
 
     var enableCrossCompilation: Boolean = false
+
+    fun KotlinDependencyHandler.compileOnlyAndroidJar(version: Int = 19, laterVersionAllowed: Boolean = true) {
+        compileOnly(KodeinJvmExtension.androidJar(project, version, laterVersionAllowed))
+    }
 
 }

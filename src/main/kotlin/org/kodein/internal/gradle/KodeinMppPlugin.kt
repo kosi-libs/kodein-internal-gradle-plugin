@@ -1,17 +1,9 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.*
-import org.gradle.api.logging.LogLevel
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
-import org.gradle.api.publish.maven.tasks.GenerateMavenPom
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.api.publish.tasks.GenerateModuleMetadata
-import org.gradle.api.tasks.testing.AbstractTestTask
-import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 class KodeinMppPlugin : KtPlugin<Project> {
@@ -23,7 +15,7 @@ class KodeinMppPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        val ext = KodeinMPPExtension(this)
+        val ext = KodeinMppExtension(this)
         extensions.add("kodein", ext)
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
