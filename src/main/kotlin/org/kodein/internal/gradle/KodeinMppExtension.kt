@@ -502,8 +502,4 @@ class KodeinMppExtension(val project: Project) {
 
     var enableCrossCompilation: Boolean = false
 
-    fun KotlinDependencyHandler.compileOnlyAndroidJar(version: Int = 19, laterVersionAllowed: Boolean = true) {
-        compileOnly(KodeinJvmExtension.androidJar(project, version, laterVersionAllowed))
-    }
-
 }

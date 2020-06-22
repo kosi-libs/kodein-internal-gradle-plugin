@@ -33,8 +33,6 @@ class KodeinJvmPlugin : KtPlugin<Project> {
             plugin<KodeinVersionsPlugin>()
         }
 
-        extensions.add("kodeinLib", KodeinJvmExtension(this))
-
         dependencies {
             "implementation"("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
