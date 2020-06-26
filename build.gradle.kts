@@ -51,8 +51,15 @@ allprojects {
         val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
         val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
         val snapshotNumber: String? by project
+        val gitRef: String? by project
+        val eapLabel = gitRef ?.let {
+            when {
+                it.startsWith("snapshot/") -> it.split("/").last()
+                else -> it
+            }
+        } ?: "dev"
 
-        if (snapshotNumber != null) project.version = "${project.version}-dev-$snapshotNumber"
+        if (snapshotNumber != null) project.version = "${project.version}-$eapLabel-$snapshotNumber"
 
         publishing {
             publications {

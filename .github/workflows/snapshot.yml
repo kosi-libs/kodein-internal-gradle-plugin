@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - 'snapshot/[0-9]+.[0-9]+'
-      - 'kotlin/*'
+      - 'snapshot/*'
+      - 'kotlin-*'
 
 jobs:
   build-deploy:
@@ -24,8 +24,5 @@ jobs:
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_APIKEY: ${{ secrets.BINTRAY_APIKEY }}
           BINTRAY_USER_ORG: ${{ secrets.BINTRAY_USER_ORG }}
-        run: |
-          eapVersion=${github_ref#*kotlin/*}
-          [[ -z "$eapVersion" ]] && snapshotVersion="$GITHUB_RUN_NUMBER" || snapshotVersion="$eapVersion-$GITHUB_RUN_NUMBER"
-          ./gradlew publish -PsnapshotNumber=$snapshotVersion
+        run: ./gradlew publish -PsnapshotNumber="$GITHUB_RUN_NUMBER" -PgitRef="${GITHUB_REF#refs/heads/*}"
         shell: bash
