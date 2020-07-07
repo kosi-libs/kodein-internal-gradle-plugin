@@ -44,14 +44,6 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         val bintrayApiKey: String? = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
         val bintrayUserOrg: String? = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
         val bintrayDryRun: String? by project
-        val snapshotNumber: String? by project
-        val gitRef: String? by project
-        val eapLabel = gitRef ?.let {
-            when {
-                it.startsWith("snapshot/") -> it.split("/").last()
-                else -> it
-            }
-        } ?: "dev"
 
         if (bintrayUsername == null || bintrayApiKey == null) {
             logger.warn("$project: Ignoring bintrayUpload in because bintrayUsername and/or bintrayApiKey is not set in gradle.properties.")
@@ -62,7 +54,15 @@ class KodeinUploadPlugin : KtPlugin<Project> {
             if (ext.name.isEmpty() || ext.description.isEmpty()) {
                 error("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
             }
-            if (snapshotNumber != null) project.version = "${project.version}-$eapLabel-$snapshotNumber"
+
+            val snapshotNumber: String? by project
+            val gitRef: String? by project
+            val gitSha: String? by project
+
+            val eapBranch = gitRef?.split("/")?.last() ?: "dev"
+            val eapSuffix = gitSha?.let { "-${it.substring(0, 7)}" } ?: ""
+            if (snapshotNumber != null) version = "${project.version}-$eapBranch-$snapshotNumber$eapSuffix"
+
             val btSubject = bintrayUserOrg ?: bintrayUsername
             val btRepo = if (snapshotNumber != null) "kodein-dev" else rootExt.repo
             val btDryRun = bintrayDryRun == "true"
