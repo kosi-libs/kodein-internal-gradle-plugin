@@ -57,11 +57,9 @@ class KodeinUploadPlugin : KtPlugin<Project> {
 
             val snapshotNumber: String? by project
             val gitRef: String? by project
-            val gitSha: String? by project
 
             val eapBranch = gitRef?.split("/")?.last() ?: "dev"
-            val eapSuffix = gitSha?.let { "-${it.substring(0, 7)}" } ?: ""
-            if (snapshotNumber != null) version = "${project.version}-$eapBranch-$snapshotNumber$eapSuffix"
+            if (snapshotNumber != null) version = "${project.version}-$eapBranch-$snapshotNumber"
 
             val btSubject = bintrayUserOrg ?: bintrayUsername
             val btRepo = if (snapshotNumber != null) "kodein-dev" else rootExt.repo
