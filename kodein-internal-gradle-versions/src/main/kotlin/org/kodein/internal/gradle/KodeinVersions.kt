@@ -4,7 +4,7 @@ import org.gradle.api.*
 
 object KodeinVersions {
 
-    const val kotlin = "1.4-M2"
+    const val kotlin = "1.4-M3"
     const val androidBuildTools = "3.5.3"
 
 }
