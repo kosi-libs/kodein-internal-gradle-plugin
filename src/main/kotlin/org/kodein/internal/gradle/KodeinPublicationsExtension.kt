@@ -1,5 +1,7 @@
 package org.kodein.internal.gradle
 
-class KodeinPublicationsExtension {
+
+class KodeinPublicationsExtension() {
+
     var repo: String = ""
 }

@@ -1,8 +1,7 @@
 plugins {
-    `maven-publish`
-    `java-library`
-    id("org.gradle.kotlin.kotlin-dsl")
     kotlin("jvm")
+    id("org.gradle.kotlin.kotlin-dsl")
+    `maven-publish`
 }
 
 repositories {
@@ -14,4 +13,8 @@ dependencies {
     implementation(gradleKotlinDsl())
 
     implementation(project(":kodein-internal-gradle-versions"))
+}
+
+kotlin.target.compilations.all {
+    kotlinOptions.jvmTarget = "1.8"
 }

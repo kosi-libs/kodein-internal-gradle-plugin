@@ -1,19 +1,23 @@
 package org.kodein.internal.gradle
 
 import com.google.gson.Gson
-import org.apache.http.auth.UsernamePasswordCredentials
+import okhttp3.Credentials
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.ContentType
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.impl.client.HttpClients
-import org.gradle.api.*
-import org.gradle.api.publish.*
+import org.gradle.api.Project
+import org.gradle.api.publish.Publication
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.findPlugin
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.withType
 
 
 @Suppress("UnstableApiUsage")
@@ -32,98 +36,116 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         project.extensions.add(KodeinUploadExtension::class.java, "kodeinUpload", ext)
         evaluationDependsOn(rootProject.path)
 
-        val rootExt = rootProject.extensions.findByName("kodeinPublications") as? KodeinPublicationsExtension
-                ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
-
-        if (rootExt.repo.isEmpty()) {
-            logger.warn("$project: Cannot configure bintray upload because root project's kodeinPublications has not been configured (empty repo).")
-            return
-        }
-
-        val bintrayUsername: String? = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
-        val bintrayApiKey: String? = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
-        val bintrayUserOrg: String? = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
-        val bintrayDryRun: String? by project
-
-        if (bintrayUsername == null || bintrayApiKey == null) {
-            logger.warn("$project: Ignoring bintrayUpload in because bintrayUsername and/or bintrayApiKey is not set in gradle.properties.")
-            return
-        }
-
         afterEvaluate {
-            if (ext.name.isEmpty() || ext.description.isEmpty()) {
-                error("$project: Cannot configure bintray upload because kodeinUpload has not been configured (empty name and/or description).")
+            val root = rootProject.plugins.findPlugin(KodeinPublicationsPlugin::class)
+                    ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
+
+            val bintray = root.bintray?.takeIf {
+                if (ext.name.isEmpty() || ext.description.isEmpty()) {
+                    logger.warn("$project: Skipping bintray configuration as kodeinUpload has not been configured (empty name and/or description).")
+                    false
+                } else true
             }
 
-            val snapshotNumber: String? by project
-            val gitRef: String? by project
-
-            val eapBranch = gitRef?.split("/")?.last() ?: "dev"
-            if (snapshotNumber != null) version = "${project.version}-$eapBranch-$snapshotNumber"
-
-            val btSubject = bintrayUserOrg ?: bintrayUsername
-            val btRepo = if (snapshotNumber != null) "kodein-dev" else rootExt.repo
-            val btDryRun = bintrayDryRun == "true"
-
-            publishing {
-                repositories {
+            if (bintray != null) {
+                publishing.repositories {
                     maven {
                         name = "bintray"
-                        val isSnaphost = if (snapshotNumber != null) 1 else 0
-                        setUrl("https://api.bintray.com/maven/$btSubject/$btRepo/${ext.name}/;publish=$isSnaphost;override=$isSnaphost")
+                        setUrl("https://api.bintray.com/maven/${bintray.subject}/${bintray.repo}/${ext.name}/;publish=0")
                         credentials {
-                            username = bintrayUsername
-                            password = bintrayApiKey
+                            username = bintray.username
+                            password = bintray.apiKey
                         }
                     }
                 }
-            }
 
-            tasks["publishAllPublicationsToBintrayRepository"].doFirst {
-                if (project.findProperty("classpathFixes") != null) {
-                    error("Cannot publish to Bintray with classpath fixes!")
-                }
-                val excludeTargets = project.findProperty("excludeTargets")
-                if (excludeTargets != null) {
-                    logger.warn("UPLOADING TO BINTRAY WITH EXCLUDED TARGETS $excludeTargets")
-                }
-
-
-            }
-
-            val createPackage = tasks.maybeCreate("create${ext.name.capitalize()}PackageToBintrayRepository").apply {
-                onlyIf {
-                    !btDryRun && run {
-                        HttpClients.createDefault().use { client ->
-                            client.execute(HttpGet("https://api.bintray.com/packages/$btSubject/$btRepo/${ext.name}")).use {
+                val createPackage = tasks.maybeCreate("create${ext.name.capitalize()}PackageToBintrayRepository").apply {
+                    onlyIf {
+                        !bintray.dryRun && HttpClients.createDefault().use { client ->
+                            client.execute(HttpGet("https://api.bintray.com/packages/${bintray.subject}/${bintray.repo}/${ext.name}")).use {
                                 it.statusLine.statusCode == 404
                             }
                         }
                     }
-                }
-                doLast {
-                    val json = Gson().toJson(mapOf(
-                            "name" to ext.name,
-                            "desc" to ext.description,
-                            "licenses" to arrayOf("MIT"),
-                            "vcs_url" to "https://github.com/Kodein-Framework/${rootExt.repo}.git",
-                            "website_url" to "http://kodein.org",
-                            "issue_tracker_url" to "https://github.com/Kodein-Framework/${rootExt.repo}/issues"
-                    ))
-                    HttpClients.createDefault().use { client ->
-                        val post = HttpPost("https://api.bintray.com/packages/$btSubject/$btRepo").apply {
-                            entity = StringEntity(json, ContentType.APPLICATION_JSON)
-                            addHeader(BasicScheme().authenticate(UsernamePasswordCredentials(bintrayUsername, bintrayApiKey), this, null))
-                        }
-                        client.execute(post).use {
-                            check(it.statusLine.statusCode == 201) {
-                                "Could not create package (HTTP status code ${it.statusLine.statusCode}): " + it.entity.content.reader().readText()
-                            }
+                    doLast {
+                        val json = Gson().toJson(mapOf(
+                                "name" to ext.name,
+                                "desc" to ext.description,
+                                "licenses" to arrayOf("MIT"),
+                                "vcs_url" to "https://github.com/Kodein-Framework/${root.publication.repoName}.git",
+                                "website_url" to "http://kodein.org",
+                                "issue_tracker_url" to "https://github.com/Kodein-Framework/${root.publication.repoName}/issues"
+                        ))
+                        val request = Request.Builder()
+                                .url("https://api.bintray.com/packages/${bintray.subject}/${bintray.repo}")
+                                .post(json.toRequestBody("application/json".toMediaType()))
+                                .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
+                                .build()
+                        val response = OkHttpClient().newCall(request).execute()
+                        check(response.isSuccessful) {
+                            "Could not create package (HTTP status code ${response.code}): " + response.body?.string()
                         }
                     }
                 }
+
+                afterEvaluate {
+                    tasks.withType<PublishToMavenRepository>()
+                            .filter { it.repository.name != "bintray" }
+                            .applyEach {
+                                dependsOn(createPackage)
+
+                                onlyIf {
+                                    if (publication in disabledPublications) {
+                                        logger.warn("Publication ${publication.name} disabled")
+                                        false
+                                    } else {
+                                        logger.warn("${if (bintray.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                        inputs.files.forEach {
+                                            logger.warn("    - " + it.name)
+                                        }
+                                        !bintray.dryRun
+                                    }
+                                }
+
+                                doFirst {
+                                    if (project.findProperty("classpathFixes") != null) {
+                                        error("Cannot publish to Bintray with classpath fixes!")
+                                    }
+                                    val excludeTargets = project.findProperty("excludeTargets")
+                                    if (excludeTargets != null) {
+                                        logger.warn("Uploading to Bintray with excluded targets $excludeTargets")
+                                    }
+                                }
+                            }
+                }
+
+                tasks.create("postBintrayPublish") {
+                    onlyIf { !bintray.dryRun }
+                    doLast {
+                        val request = Request.Builder()
+                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/$version/publish")
+                                .post("{}".toRequestBody("application/json".toMediaType()))
+                                .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
+                                .build()
+                        OkHttpClient().newCall(request).execute()
+                    }
+                }
+
+                tasks.create("postBintrayDiscard") {
+                    onlyIf { !bintray.dryRun }
+                    doLast {
+                        val request = Request.Builder()
+                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/$version/publish")
+                                .post("{ \"discard\": true }".toRequestBody("application/json".toMediaType()))
+                                .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
+                                .build()
+                        OkHttpClient().newCall(request).execute()
+                    }
+                }
             }
+
             publishing.publications.withType<MavenPublication>().configureEach {
+                version = root.publication.version
                 pom {
                     description.set(ext.description)
                     licenses {
@@ -135,47 +157,27 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     url.set("http://kodein.org")
                     issueManagement {
                         system.set("Github")
-                        url.set("https://github.com/Kodein-Framework/${rootExt.repo}/issues")
+                        url.set("https://github.com/Kodein-Framework/${root.publication.repoName}/issues")
                     }
                     scm {
-                        connection.set("https://github.com/Kodein-Framework/${rootExt.repo}.git")
+                        connection.set("https://github.com/Kodein-Framework/${root.publication.repoName}.git")
                     }
                 }
             }
 
-            afterEvaluate {
-                tasks.withType<PublishToMavenRepository>().configureEach {
-                    if (this.repository.name == "bintray") {
-                        dependsOn(createPackage)
-                        onlyIf {
-                            if (publication in disabledPublications) {
-                                logger.warn("Publication ${publication.name} disabled")
-                                false
-                            } else {
-                                logger.warn("${if (btDryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                                inputs.files.forEach {
-                                    logger.warn("    - " + it.name)
-                                }
-                                !btDryRun
-                            }
+            tasks.withType<GenerateModuleMetadata>().configureEach {
+                onlyIf {
+                    publication.get() !in disabledPublications
+                }
+            }
+
+            tasks.create("hostOnlyPublish") {
+                group = "publishing"
+                tasks.withType<PublishToMavenRepository>()
+                        .filter { it.publication in hostOnlyPublications }
+                        .forEach {
+                            dependsOn(it)
                         }
-                    }
-                }
-
-                tasks.withType<GenerateModuleMetadata>().configureEach {
-                    onlyIf {
-                        publication.get() !in disabledPublications
-                    }
-                }
-
-                tasks.create("hostOnlyPublish") {
-                    group = "publishing"
-                    tasks.withType<PublishToMavenRepository>()
-                            .filter { it.publication in hostOnlyPublications }
-                            .forEach {
-                                dependsOn(it)
-                            }
-                }
             }
         }
 
