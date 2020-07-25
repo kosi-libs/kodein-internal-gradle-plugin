@@ -144,8 +144,8 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                 }
             }
 
+            project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
-                version = root.publication.version
                 pom {
                     description.set(ext.description)
                     licenses {
