@@ -123,7 +123,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     onlyIf { !bintray.dryRun }
                     doLast {
                         val request = Request.Builder()
-                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/$version/publish")
+                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/${root.publication.version}/publish")
                                 .post("{}".toRequestBody("application/json".toMediaType()))
                                 .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
                                 .build()
@@ -135,7 +135,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                     onlyIf { !bintray.dryRun }
                     doLast {
                         val request = Request.Builder()
-                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/$version/publish")
+                                .url("https://api.bintray.com/content/${bintray.subject}/${bintray.repo}/${ext.name}/${root.publication.version}/publish")
                                 .post("{ \"discard\": true }".toRequestBody("application/json".toMediaType()))
                                 .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
                                 .build()
