@@ -16,8 +16,8 @@ import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.kotlin.dsl.findPlugin
 import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
+import java.util.concurrent.TimeUnit
 
 
 @Suppress("UnstableApiUsage")
@@ -119,6 +119,12 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                             }
                 }
 
+                val httpClient = OkHttpClient.Builder()
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .writeTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
+                        .build()
+
                 tasks.create("postBintrayPublish") {
                     onlyIf { !bintray.dryRun }
                     doLast {
@@ -127,7 +133,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                                 .post("{}".toRequestBody("application/json".toMediaType()))
                                 .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
                                 .build()
-                        OkHttpClient().newCall(request).execute()
+                        httpClient.newCall(request).execute()
                     }
                 }
 
@@ -139,7 +145,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                                 .post("{ \"discard\": true }".toRequestBody("application/json".toMediaType()))
                                 .header("Authorization", Credentials.basic(bintray.username, bintray.apiKey))
                                 .build()
-                        OkHttpClient().newCall(request).execute()
+                        httpClient.newCall(request).execute()
                     }
                 }
             }
