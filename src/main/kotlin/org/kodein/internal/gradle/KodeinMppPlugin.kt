@@ -21,9 +21,6 @@ class KodeinMppPlugin : KtPlugin<Project> {
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
             sourceSets.apply {
                 getByName("commonMain") {
-                    dependencies {
-                        implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                    }
                     languageSettings.progressiveMode = true
                 }
                 getByName("commonTest") {

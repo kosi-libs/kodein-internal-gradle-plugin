@@ -40,27 +40,15 @@ class KodeinMppExtension(val project: Project) {
 
         val allJvm = KodeinSourceSet(
                 name = "allJvm",
-                mainConf = {
-                    dependencies {
-                        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
-                    }
-                },
                 testConf = {
                     dependencies {
-                        api("org.jetbrains.kotlin:kotlin-test")
                         api("org.jetbrains.kotlin:kotlin-test-junit")
-                        api("junit:junit:4.12")
                     }
                 }
         )
 
         val allJs = KodeinSourceSet(
                 name = "allJs",
-                mainConf = {
-                    dependencies {
-                        implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                    }
-                },
                 testConf = {
                     dependencies {
                         api("org.jetbrains.kotlin:kotlin-test-js")
@@ -187,6 +175,12 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allPosix)
             )
 
+            val linuxArm64 = KodeinNativeTarget(
+                    target = "linuxArm64",
+                    nativeBuildOn = { isLinux },
+                    dependencies = listOf(SourceSets.allPosix)
+            )
+
             val linuxMips32 = KodeinNativeTarget(
                     target = "linuxMips32",
                     nativeBuildOn = { isLinux },
@@ -224,7 +218,7 @@ class KodeinMppExtension(val project: Project) {
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
-            val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxMips32, linuxMipsel32)
+            val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64, linuxMips32, linuxMipsel32)
             val allLinux = allEmbeddedLinux + linuxX64
 
             val allPosix = allDesktop + allEmbeddedLinux + allDarwin

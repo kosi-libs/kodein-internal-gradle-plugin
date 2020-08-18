@@ -29,7 +29,7 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
 
         val sourcesJar = task<Jar>("sourcesJar") {
             archiveClassifier.set("sources")
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             from(android.sourceSets["main"].java.srcDirs)
         }
 

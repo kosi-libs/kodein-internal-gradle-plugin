@@ -15,7 +15,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.squareup.okhttp3:okhttp:4.8.0")
+        classpath("com.squareup.okhttp3:okhttp:4.8.1")
     }
 }
 
@@ -32,14 +32,12 @@ dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
 
-    implementation(kotlin("stdlib-jdk7"))
-
     api(project(":kodein-internal-gradle-versions"))
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
-    api("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
+    api("org.jetbrains.dokka:dokka-gradle-plugin:1.4.0-rc") //TODO: update when Dokka is updated
     api("digital.wup:android-maven-publish:3.6.3")
-    api("com.squareup.okhttp3:okhttp:4.8.0")
+    api("com.squareup.okhttp3:okhttp:4.8.1")
 }
 
 kotlin.target.compilations.all {
@@ -48,7 +46,7 @@ kotlin.target.compilations.all {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "3.7.0"
+    version = "4.0.0"
 
     afterEvaluate {
         val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")

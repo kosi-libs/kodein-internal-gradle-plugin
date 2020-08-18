@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.kotlin.dsl.findPlugin
@@ -37,6 +38,16 @@ class KodeinUploadPlugin : KtPlugin<Project> {
         evaluationDependsOn(rootProject.path)
 
         afterEvaluate {
+            tasks.withType<AbstractPublishToMaven>()
+                    .applyEach {
+                        onlyIf {
+                            if (publication in disabledPublications) {
+                                logger.warn("Publication ${publication.name} disabled")
+                                false
+                            } else true
+                        }
+                    }
+
             val root = rootProject.plugins.findPlugin(KodeinPublicationsPlugin::class)
                     ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
 
@@ -95,16 +106,11 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                                 dependsOn(createPackage)
 
                                 onlyIf {
-                                    if (publication in disabledPublications) {
-                                        logger.warn("Publication ${publication.name} disabled")
-                                        false
-                                    } else {
-                                        logger.warn("${if (bintray.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                                        inputs.files.forEach {
-                                            logger.warn("    - " + it.name)
-                                        }
-                                        !bintray.dryRun
+                                    logger.warn("${if (bintray.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                    inputs.files.forEach {
+                                        logger.warn("    - " + it.name)
                                     }
+                                    !bintray.dryRun
                                 }
 
                                 doFirst {
