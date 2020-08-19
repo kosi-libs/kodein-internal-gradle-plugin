@@ -101,7 +101,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
 
                 afterEvaluate {
                     tasks.withType<PublishToMavenRepository>()
-                            .filter { it.repository.name != "bintray" }
+                            .filter { it.repository.name == "bintray" }
                             .applyEach {
                                 dependsOn(createPackage)
 
