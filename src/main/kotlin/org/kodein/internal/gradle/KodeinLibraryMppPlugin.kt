@@ -13,7 +13,7 @@ class KodeinLibraryMppPlugin : KtPlugin<Project> {
         apply {
             plugin<KodeinMppPlugin>()
             plugin("org.gradle.maven-publish")
-            plugin<KodeinUploadPlugin>()
+            plugin<KodeinUploadModulePlugin>()
         }
 
         extensions.getByName<KotlinMultiplatformExtension>("kotlin").explicitApi()

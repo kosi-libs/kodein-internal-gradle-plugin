@@ -15,8 +15,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.squareup.okhttp3:okhttp:4.8.1")
+        classpath("com.squareup.okhttp3:okhttp:4.9.0")
     }
+}
+
+allprojects {
+    group = "org.kodein.internal.gradle"
+    version = "5.0.0"
 }
 
 repositories {
@@ -35,9 +40,9 @@ dependencies {
     api(project(":kodein-internal-gradle-versions"))
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
-    api("org.jetbrains.dokka:dokka-gradle-plugin:1.4.0-rc") //TODO: update when Dokka is updated
+    api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.kotlin}")
     api("digital.wup:android-maven-publish:3.6.3")
-    api("com.squareup.okhttp3:okhttp:4.8.1")
+    api("com.squareup.okhttp3:okhttp:4.9.0")
 }
 
 kotlin.target.compilations.all {
@@ -45,13 +50,10 @@ kotlin.target.compilations.all {
 }
 
 allprojects {
-    group = "org.kodein.internal.gradle"
-    version = "4.0.1"
-
     afterEvaluate {
-        val bintrayUsername = (properties["bintrayUsername"] as String?) ?: System.getenv("BINTRAY_USER")
-        val bintrayApiKey = (properties["bintrayApiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
-        val bintrayUserOrg = (properties["bintrayUserOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
+        val bintrayUsername = (properties["org.kodein.bintray.username"] as String?) ?: System.getenv("BINTRAY_USER")
+        val bintrayApiKey = (properties["org.kodein.bintray.apiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+        val bintrayUserOrg = (properties["org.kodein.bintray.userOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG")
         val hasBintray = bintrayUsername != null && bintrayApiKey != null
         if (!hasBintray) logger.warn("Skipping bintray configuration as bintrayUsername or bintrayApiKey is not defined")
 

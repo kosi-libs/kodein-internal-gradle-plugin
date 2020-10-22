@@ -42,10 +42,11 @@ class KodeinMppPlugin : KtPlugin<Project> {
                     languageSettings.progressiveMode = true
                 }
 
-                val upload = project.plugins.findPlugin(KodeinUploadPlugin::class)
+                val upload = project.plugins.findPlugin(KodeinUploadModulePlugin::class)
 
+                val enableCrossCompilation = project.properties["org.kodein.native.enableCrossCompilation"] == "true"
                 // https://youtrack.jetbrains.com/issue/KT-30498
-                if (!ext.enableCrossCompilation) {
+                if (!enableCrossCompilation) {
                     ext.crossTargets
                             .mapNotNull { targets.findByName(it) }
                             .applyEach {

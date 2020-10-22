@@ -17,14 +17,11 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
             plugin<KodeinAndroidPlugin>()
             plugin("maven-publish")
             plugin("digital.wup.android-maven-publish")
-            plugin<KodeinUploadPlugin>()
+            plugin<KodeinUploadModulePlugin>()
         }
 
         extensions.getByName<KotlinProjectExtension>("kotlin").explicitApi()
 
-        val ext = KodeinLibraryDependencyExtension(this)
-        extensions.add("kodeinLib", ext)
-        
         val android = this@applyPlugin.extensions.getByName("android") as LibraryExtension
 
         val sourcesJar = task<Jar>("sourcesJar") {
@@ -39,8 +36,6 @@ class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
                 create<MavenPublication>("Kodein") {
                     from(components["android"])
                     artifact(sourcesJar)
-
-                    ext.updatePom(this)
                 }
             }
         }

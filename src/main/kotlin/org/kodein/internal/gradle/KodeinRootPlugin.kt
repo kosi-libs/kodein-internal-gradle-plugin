@@ -9,7 +9,7 @@ class KodeinRootPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {
-            plugin<KodeinPublicationsPlugin>()
+            plugin<KodeinUploadRootPlugin>()
         }
 
         allprojects {

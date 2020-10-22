@@ -16,13 +16,10 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
             plugin<KodeinJvmPlugin>()
             plugin("maven-publish")
             plugin("java-library")
-            plugin<KodeinUploadPlugin>()
+            plugin<KodeinUploadModulePlugin>()
         }
 
         extensions.getByName<KotlinProjectExtension>("kotlin").explicitApi()
-
-        val ext = KodeinLibraryDependencyExtension(this)
-        extensions.add("kodeinLib", ext)
 
         val sourcesJar = task<Jar>("sourcesJar") {
             archiveClassifier.set("sources")
@@ -39,8 +36,6 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
                     create<MavenPublication>("Kodein") {
                         from(components["java"])
                         artifact(sourcesJar)
-
-                        ext.updatePom(this)
                     }
                 }
             }

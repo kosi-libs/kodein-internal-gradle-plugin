@@ -29,7 +29,6 @@ class KodeinJvmPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("kotlin-platform-jvm")
-            plugin("org.gradle.maven-publish")
             plugin<KodeinVersionsPlugin>()
         }
 

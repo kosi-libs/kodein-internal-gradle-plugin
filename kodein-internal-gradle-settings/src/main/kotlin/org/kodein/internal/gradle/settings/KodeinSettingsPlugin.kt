@@ -9,11 +9,18 @@ import org.kodein.internal.gradle.KodeinVersions
 @Suppress("UnstableApiUsage")
 class KodeinSettingsPlugin : Plugin<Settings> {
 
+    class Extension {
+        val foo = 42
+    }
+
     private fun Settings.applyPlugin() {
 
+        // https://github.com/gradle/gradle/issues/11412
         System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
 
         val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
+
+        extensions.add("kodein", Extension())
 
         pluginManagement {
             repositories {

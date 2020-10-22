@@ -8,10 +8,7 @@ import org.gradle.kotlin.dsl.plugin
 class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
-        val excludedTargets = (project.findProperty("excludeTargets") as String?)
-                ?.split(",")
-                ?.map { it.trim() }
-                ?: emptyList()
+        val excludedTargets = KodeinLocalPropertiesPlugin.on(this).getAsList("excludeTargets")
         val excludeAndroid = "android" in excludedTargets
 
         apply {

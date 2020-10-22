@@ -22,19 +22,23 @@ import java.util.concurrent.TimeUnit
 
 
 @Suppress("UnstableApiUsage")
-class KodeinUploadPlugin : KtPlugin<Project> {
+class KodeinUploadModulePlugin : KtPlugin<Project> {
 
     private val Project.publishing get() = extensions.getByName<PublishingExtension>("publishing")
-    private fun Project.publishing(action: PublishingExtension.() -> Unit) = publishing.apply(action)
 
     internal val disabledPublications = ArrayList<Publication>()
     internal val hostOnlyPublications = ArrayList<Publication>()
 
+    class Extension {
+        var name: String = ""
+        var description: String = ""
+    }
+
     override fun Project.applyPlugin() {
         apply { plugin("org.gradle.maven-publish") }
 
-        val ext = KodeinBintrayUploadExtension()
-        project.extensions.add(KodeinUploadExtension::class.java, "kodeinUpload", ext)
+        val ext = Extension()
+        project.extensions.add("kodeinUpload", ext)
         evaluationDependsOn(rootProject.path)
 
         afterEvaluate {
@@ -48,7 +52,7 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                         }
                     }
 
-            val root = rootProject.plugins.findPlugin(KodeinPublicationsPlugin::class)
+            val root = rootProject.plugins.findPlugin(KodeinUploadRootPlugin::class)
                     ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
 
             val bintray = root.bintray?.takeIf {
@@ -114,11 +118,11 @@ class KodeinUploadPlugin : KtPlugin<Project> {
                                 }
 
                                 doFirst {
-                                    if (project.findProperty("classpathFixes") != null) {
+                                    if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
                                         error("Cannot publish to Bintray with classpath fixes!")
                                     }
-                                    val excludeTargets = project.findProperty("excludeTargets")
-                                    if (excludeTargets != null) {
+                                    val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                                    if (excludeTargets.isNotEmpty()) {
                                         logger.warn("Uploading to Bintray with excluded targets $excludeTargets")
                                     }
                                 }
