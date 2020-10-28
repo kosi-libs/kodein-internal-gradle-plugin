@@ -20,9 +20,6 @@ class KodeinMppPlugin : KtPlugin<Project> {
 
         extensions.configure<KotlinMultiplatformExtension>("kotlin") {
             sourceSets.apply {
-                getByName("commonMain") {
-                    languageSettings.progressiveMode = true
-                }
                 getByName("commonTest") {
                     dependencies {
                         implementation("org.jetbrains.kotlin:kotlin-test-common")
@@ -35,6 +32,7 @@ class KodeinMppPlugin : KtPlugin<Project> {
                 targets.all {
                     compilations.all {
                         (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.8"
+                        kotlinOptions.allWarningsAsErrors = true
                     }
                 }
 

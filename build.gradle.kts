@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "5.0.2"
+    version = "5.1.0"
 }
 
 repositories {
@@ -47,6 +47,11 @@ dependencies {
 
 kotlin.target.compilations.all {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.allWarningsAsErrors = true
+}
+
+kotlin.sourceSets.all {
+    languageSettings.progressiveMode = true
 }
 
 allprojects {

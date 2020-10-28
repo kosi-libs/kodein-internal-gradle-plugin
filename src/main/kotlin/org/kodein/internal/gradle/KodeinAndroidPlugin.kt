@@ -41,7 +41,9 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
-            extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.forEach { it.languageSettings.progressiveMode = true }
+            extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.all {
+                languageSettings.progressiveMode = true
+            }
         }
 
         KodeinJvmPlugin.configureJvmTarget(this)
