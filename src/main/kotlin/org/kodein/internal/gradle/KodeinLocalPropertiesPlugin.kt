@@ -8,9 +8,9 @@ class KodeinLocalPropertiesPlugin : KtPlugin<Project> {
 
     class KodeinLocalProperties(private val project: Project, internal val local: Properties) {
         operator fun get(key: String): String? =
-            local.getProperty(key)
+            System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
+                    ?: local.getProperty(key)
                     ?: (project.properties["org.kodein.local.$key"] as? String)
-                    ?: System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
 
         fun isTrue(key: String): Boolean = get(key) == "true"
 

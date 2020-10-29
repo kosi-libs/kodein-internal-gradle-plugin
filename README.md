@@ -124,6 +124,16 @@ kodeinUpload {
 }
 ```
 
+You can set a module as part of the bintray package of another module.
+
+```kotlin
+kodeinUpload {
+    name = "artifact-name"
+    description = "Artifact description"
+    packageOf = ":another:module"
+}
+```
+
 
 ## Kodein local properties
 
@@ -131,9 +141,9 @@ Kodein local properties are personal properties that may change your local proje
 
 A Kodein local property `key` can be set:
 
+* In environment variables, named `KODEIN_LOCAL_${key.toUppercase()}`.
 * In a git ignored file `kodein.local.properties` at the root of the project repository with the key `key`.
 * In the personal `~/.gradle/gradle.properties` file, with the key `org.kodein.local.${key}`.
-* In environment variables, named `KODEIN_LOCAL_${key.toUppercase()}`.
 
 
 ## JVM module plugin
