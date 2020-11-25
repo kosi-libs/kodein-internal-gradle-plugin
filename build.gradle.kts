@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "5.1.0"
+    version = "5.2.0"
 }
 
 repositories {
@@ -40,7 +40,7 @@ dependencies {
     api(project(":kodein-internal-gradle-versions"))
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
-    api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.kotlin}")
+    api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.dokka}")
     api("digital.wup:android-maven-publish:3.6.3")
     api("com.squareup.okhttp3:okhttp:4.9.0")
 }
