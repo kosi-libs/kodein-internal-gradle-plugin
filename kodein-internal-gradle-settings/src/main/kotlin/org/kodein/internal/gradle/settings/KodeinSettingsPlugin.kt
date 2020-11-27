@@ -2,16 +2,32 @@ package org.kodein.internal.gradle.settings
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
+import org.gradle.api.internal.plugins.DslObject
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
 import org.kodein.internal.gradle.KodeinVersions
+import java.io.File
+import java.util.*
 
 @Suppress("UnstableApiUsage")
 class KodeinSettingsPlugin : Plugin<Settings> {
 
-    class Extension {
-        val foo = 42
+    private lateinit var settings: Settings
+
+    private val localProperties: Properties by lazy {
+        File("${settings.rootDir}/kodein.local.properties")
+            .takeIf { it.exists() }
+            ?.inputStream()
+            ?.use { Properties().apply { load(it) } }
+            ?: Properties()
+
     }
+
+    fun findLocalProperty(key: String): String? =
+        System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
+            ?: localProperties.getProperty(key)
+            ?: DslObject(settings).asDynamicObject.tryGetProperty("org.kodein.local.$key")
+                .takeIf { it.isFound } ?.value as String?
 
     private fun Settings.applyPlugin() {
 
@@ -19,8 +35,6 @@ class KodeinSettingsPlugin : Plugin<Settings> {
         System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
 
         val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
-
-        extensions.add("kodein", Extension())
 
         pluginManagement {
             repositories {
@@ -45,5 +59,12 @@ class KodeinSettingsPlugin : Plugin<Settings> {
         }
     }
 
-    override fun apply(settings: Settings) = settings.applyPlugin()
+    override fun apply(settings: Settings) {
+        this.settings = settings
+        settings.applyPlugin()
+    }
+
+    companion object {
+        fun get(settings: Settings): KodeinSettingsPlugin = settings.plugins.getPlugin(KodeinSettingsPlugin::class.java)
+    }
 }

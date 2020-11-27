@@ -19,9 +19,14 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 kotlinOptions.allWarningsAsErrors = true
             }
 
-            project.withConvention(JavaPluginConvention::class) {
+            withConvention(JavaPluginConvention::class) {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8
+            }
+
+            tasks.create("jvmTest") {
+                group = "verification"
+                dependsOn("test")
             }
         }
 
