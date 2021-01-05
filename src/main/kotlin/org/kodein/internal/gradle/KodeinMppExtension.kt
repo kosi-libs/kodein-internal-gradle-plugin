@@ -181,18 +181,6 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = listOf(SourceSets.allPosix)
             )
 
-            val linuxMips32 = KodeinNativeTarget(
-                    name = "linuxMips32",
-                    nativeBuildOn = { isLinux },
-                    dependencies = listOf(SourceSets.allPosix)
-            )
-
-            val linuxMipsel32 = KodeinNativeTarget(
-                    name = "linuxMipsel32",
-                    nativeBuildOn = { isLinux },
-                    dependencies = listOf(SourceSets.allPosix)
-            )
-
             val linuxX64 = KodeinNativeTarget(
                     name = "linuxX64",
                     nativeBuildOn = { isLinux },
@@ -218,7 +206,7 @@ class KodeinMppExtension(val project: Project) {
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
-            val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64, linuxMips32, linuxMipsel32)
+            val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64)
             val allLinux = allEmbeddedLinux + linuxX64
 
             val allPosix = allDesktop + allEmbeddedLinux + allDarwin
