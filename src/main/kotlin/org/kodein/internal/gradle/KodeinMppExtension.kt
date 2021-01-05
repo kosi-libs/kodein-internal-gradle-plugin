@@ -196,7 +196,7 @@ class KodeinMppExtension(val project: Project) {
             val mingwX64 = KodeinNativeTarget(
                     name = "mingwX64",
                     nativeBuildOn = { isWindows },
-                    dependencies = listOf(SourceSets.allPosix)
+                    dependencies = listOf(SourceSets.allNative)
             )
 
             val allIos = listOf(iosArm32, iosArm64, iosX64)
@@ -209,9 +209,9 @@ class KodeinMppExtension(val project: Project) {
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = allDesktop + allEmbeddedLinux + allDarwin
+            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin
 
-            val all = allPosix
+            val all = allPosix + mingwX64
 
             val host = when {
                 os.isLinux -> linuxX64
