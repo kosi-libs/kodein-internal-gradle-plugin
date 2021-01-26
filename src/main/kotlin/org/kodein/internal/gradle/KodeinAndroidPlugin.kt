@@ -13,7 +13,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             compileSdkVersion(30)
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                minSdkVersion(16)
+                minSdkVersion(21)
             }
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_1_8
