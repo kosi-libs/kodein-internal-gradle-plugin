@@ -7,6 +7,7 @@ object KodeinVersions {
     const val kotlin = "1.4.21"
     const val dokka = "1.4.20"
     const val androidBuildTools = "4.0.2"
+    const val androidNdk = "21.3.6528147"
 
 }
 
