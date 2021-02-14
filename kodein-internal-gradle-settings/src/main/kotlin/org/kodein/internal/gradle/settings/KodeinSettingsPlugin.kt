@@ -39,7 +39,7 @@ class KodeinSettingsPlugin : Plugin<Settings> {
         pluginManagement {
             repositories {
                 mavenLocal()
-                jcenter()
+                mavenCentral()
                 google()
                 maven(url = "https://plugins.gradle.org/m2/")
                 maven(url = "https://dl.bintray.com/kodein-framework/Kodein-Internal-Gradle")

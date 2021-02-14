@@ -12,7 +12,7 @@ plugins {
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath("com.squareup.okhttp3:okhttp:4.9.0")
@@ -21,11 +21,10 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "5.5.0"
+    version = "5.6.0"
 }
 
 repositories {
-    jcenter()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")

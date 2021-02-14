@@ -15,7 +15,7 @@ class KodeinRootPlugin : KtPlugin<Project> {
         allprojects {
             repositories {
                 mavenLocal()
-                jcenter()
+                mavenCentral()
                 google()
                 maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
                 maven(url = "https://dl.bintray.com/kodein-framework/kodein-dev")

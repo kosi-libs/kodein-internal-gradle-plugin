@@ -11,7 +11,7 @@ kotlinDslPluginOptions {
 
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 task<Sync>("syncVersionSources") {
