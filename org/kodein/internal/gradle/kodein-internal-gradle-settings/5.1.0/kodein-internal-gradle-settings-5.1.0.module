@@ -1,0 +1,74 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "5.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "kxvmbhlnujfvppskunil62gcf4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-5.1.0.jar",
+          "url": "kodein-internal-gradle-settings-5.1.0.jar",
+          "size": 14817,
+          "sha512": "d967ace081849fee642c3596f06d82746de0099d0fc0529f6d02bde31cf26bb7165ae929c9ad53b4564db5311c493a6fc7acd31e86d1122f5a9da66c326681ec",
+          "sha256": "edf6546b1b08ccde391b0e160d957b570e898493b1309e7a5b7e9a8e17fe5da4",
+          "sha1": "3a964db6cef3d87bf2c91f9d6864f94a26d11ccf",
+          "md5": "b090bd123740a832e69d6bceadbe5cb1"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "5.1.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-5.1.0.jar",
+          "url": "kodein-internal-gradle-settings-5.1.0.jar",
+          "size": 14817,
+          "sha512": "d967ace081849fee642c3596f06d82746de0099d0fc0529f6d02bde31cf26bb7165ae929c9ad53b4564db5311c493a6fc7acd31e86d1122f5a9da66c326681ec",
+          "sha256": "edf6546b1b08ccde391b0e160d957b570e898493b1309e7a5b7e9a8e17fe5da4",
+          "sha1": "3a964db6cef3d87bf2c91f9d6864f94a26d11ccf",
+          "md5": "b090bd123740a832e69d6bceadbe5cb1"
+        }
+      ]
+    }
+  ]
+}
