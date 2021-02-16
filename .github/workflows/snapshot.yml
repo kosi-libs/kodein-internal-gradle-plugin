@@ -24,22 +24,8 @@ jobs:
           java-version: 11
       - name: Build
         run: ./gradlew build
-      - name: Upload
-        env:
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_APIKEY: ${{ secrets.BINTRAY_APIKEY }}
-          BINTRAY_USER_ORG: ${{ secrets.BINTRAY_USER_ORG }}
-        run: ./gradlew publish -PsnapshotNumber=${{ github.run_number }} -PgitRef=${{ github.ref }}
-      - name: Discard
-        if: ${{ failure() || cancelled() }}
-        env:
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_APIKEY: ${{ secrets.BINTRAY_APIKEY }}
-          BINTRAY_USER_ORG: ${{ secrets.BINTRAY_USER_ORG }}
-        run: ./gradlew postBintrayDiscard -PsnapshotNumber=${{ github.run_number }} -PgitRef=${{ github.ref }}
       - name: Publish
         env:
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_APIKEY: ${{ secrets.BINTRAY_APIKEY }}
-          BINTRAY_USER_ORG: ${{ secrets.BINTRAY_USER_ORG }}
-        run: ./gradlew postBintrayPublish -PsnapshotNumber=${{ github.run_number }} -PgitRef=${{ github.ref }}
+          GIT_USER: ${{ secrets.GIT_USER }}
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+        run: ./gradlew publishToMavenLocal publishToGithub -PsnapshotNumber=${{ github.run_number }} -PgitRef=${{ github.ref }}
