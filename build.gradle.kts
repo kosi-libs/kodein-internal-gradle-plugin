@@ -1,4 +1,5 @@
 import okhttp3.*
+import org.jetbrains.kotlin.fir.resolve.dfa.toEqBoolean
 import org.kodein.internal.gradle.*
 
 plugins {
@@ -20,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "5.6.0"
+    version = "5.6.0-SNAPSHOT"
 }
 
 repositories {
@@ -96,6 +97,11 @@ task("validateVersionBeforeGitPublish") {
     group = "publishing"
     doLast {
         val publishingVersion = getPublishingVersion()
+
+        // Allow snapshots to be overridden
+        if(!publishingVersion.matches("""^(\d*)\.(\d*)\.(\d*)$""".toRegex())) return@doLast
+
+        // Verify that the SemVer version does not exist on the mvn-repo branch
         val url = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/"
         val request = Request.Builder()
             .url("$url/raw/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/$publishingVersion")
@@ -108,6 +114,11 @@ task("validateVersionBeforeGitPublish") {
 
 task("copyMavenLocalArtifacts") {
     group = "publishing"
+    dependsOn(
+        "publishToMavenLocal",
+        ":kodein-internal-gradle-versions:publishToMavenLocal",
+        ":kodein-internal-gradle-settings:publishToMavenLocal"
+    )
     doLast {
         val dest = File("$projectDir/build/mvn-repo")
         dest.deleteRecursively()
@@ -130,7 +141,7 @@ task("copyMavenLocalArtifacts") {
                     }
             }
 
-        dest.listFiles() ?: error("Nothing to publish. Try to call publishToMavenLocal first.")
+        dest.listFiles() ?: error("Nothing to publish.")
     }
 }
 
@@ -155,7 +166,7 @@ gitPublish {
         include("**/**")
     }
     val head = grgit.head()
-    commitMessage.set("${head.abbreviatedId}: ${getPublishingVersion()}")
+    commitMessage.set("${head.abbreviatedId}: ${getPublishingVersion()} : ${head.fullMessage}")
 }
 
 task("publishToGithub") {
