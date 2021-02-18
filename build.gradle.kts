@@ -101,9 +101,10 @@ task("validateVersionBeforeGitPublish") {
         if(!publishingVersion.matches("""^(\d*)\.(\d*)\.(\d*)$""".toRegex())) return@doLast
 
         // Verify that the SemVer version does not exist on the mvn-repo branch
-        val url = "https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/"
+        //  https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/5.5.0/kodein-internal-gradle-plugin-5.5.0.pom
+        val url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin"
         val request = Request.Builder()
-            .url("$url/raw/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/$publishingVersion")
+            .url("$url/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/$publishingVersion/kodein-internal-gradle-plugin-$publishingVersion.pom")
             .get()
             .build()
         val res = OkHttpClient().newCall(request).execute()
@@ -111,37 +112,18 @@ task("validateVersionBeforeGitPublish") {
     }
 }
 
-task("copyMavenLocalArtifacts") {
+tasks.create<Sync>("copyMavenLocalArtifacts") {
     group = "publishing"
-    dependsOn(
-        "publishToMavenLocal",
-        ":kodein-internal-gradle-versions:publishToMavenLocal",
-        ":kodein-internal-gradle-settings:publishToMavenLocal"
-    )
-    doLast {
-        val dest = File("$projectDir/build/mvn-repo")
-        dest.deleteRecursively()
+    val publishingVersion = getPublishingVersion()
+    val userHome = System.getProperty("user.home")
+    val groupDir = project.group.toString().replace('.', '/')
+    val localRepository = "$userHome/.m2/repository/$groupDir/"
 
-        val userHome = System.getProperty("user.home")
-        val localRepository = "$userHome/.m2/repository/org/kodein/internal/gradle/"
-        val dir = File(localRepository)
-
-        val publishingVersion = getPublishingVersion()
-
-        (dir.listFiles() ?: error("$localRepository is empty."))
-            .filter { it.isDirectory }
-            .forEach { projectDir ->
-                File(projectDir, publishingVersion).listFiles()
-                    ?.filter { it.isFile }
-                    ?.forEach {
-                        val destProjectDir = File(dest, "org/kodein/internal/gradle/${projectDir.name}/${version}")
-                        destProjectDir.mkdirs()
-                        it.copyTo(File(destProjectDir, it.name))
-                    }
-            }
-
-        dest.listFiles() ?: error("Nothing to publish.")
+    from(localRepository) {
+        include("*/$publishingVersion/**")
     }
+
+    into("$buildDir/mvn-repo/$groupDir/")
 }
 
 val (gitUser, gitPassword) = (project.findProperty("com.github.http.auth") as? String)?.run {
@@ -158,20 +140,15 @@ if(gitUser != null && gitPassword != null) {
 gitPublish {
     repoUri.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git")
     branch.set("mvn-repo")
-    contents.apply {
-        from("$projectDir/build/mvn-repo")
-    }
+    contents.from("$buildDir/mvn-repo")
     preserve {
-        include("**/**")
+        include("**")
     }
     val head = grgit.head()
     commitMessage.set("${head.abbreviatedId}: ${getPublishingVersion()} : ${head.fullMessage}")
 }
 
-task("publishToGithub") {
-    group = "publishing"
-    dependsOn("validateVersionBeforeGitPublish", "copyMavenLocalArtifacts", "gitPublishPush")
-}
+tasks["gitPublishPush"].dependsOn("copyMavenLocalArtifacts")
 
 tasks["gitPublishCommit"].doFirst {
     if (!grgit.status().isClean) {
