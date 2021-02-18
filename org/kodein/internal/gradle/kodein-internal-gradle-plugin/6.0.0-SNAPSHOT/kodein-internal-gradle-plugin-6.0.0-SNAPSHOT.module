@@ -1,0 +1,139 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-plugin",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "2xm2dtrpuzdvzm3hsz5enflasu"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "1.4.30"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.4.20"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "okhttp",
+          "version": {
+            "requires": "4.9.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
+          "size": 250804,
+          "sha512": "72cc9b291e1ef2c2ea708806baf3925951c0049185915ffcacd3024b1b257388a8773f7dec8f257f6faa2ad9bbe3dd71ba515ca7231a8e3f450cd44718bda5cf",
+          "sha256": "039f23b54271be36cdcd348a2640bb32aac322e68f84165aafefca9a99114e92",
+          "sha1": "89de41d0dfaf35cb9e787e5fac1d5025f89fb59e",
+          "md5": "2cd8c20c84918895f88372fb72c216e4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "1.4.30"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.4.20"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "okhttp",
+          "version": {
+            "requires": "4.9.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
+          "size": 250804,
+          "sha512": "72cc9b291e1ef2c2ea708806baf3925951c0049185915ffcacd3024b1b257388a8773f7dec8f257f6faa2ad9bbe3dd71ba515ca7231a8e3f450cd44718bda5cf",
+          "sha256": "039f23b54271be36cdcd348a2640bb32aac322e68f84165aafefca9a99114e92",
+          "sha1": "89de41d0dfaf35cb9e787e5fac1d5025f89fb59e",
+          "md5": "2cd8c20c84918895f88372fb72c216e4"
+        }
+      ]
+    }
+  ]
+}
