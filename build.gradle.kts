@@ -1,5 +1,4 @@
 import okhttp3.*
-import org.jetbrains.kotlin.fir.resolve.dfa.toEqBoolean
 import org.kodein.internal.gradle.*
 
 plugins {
@@ -21,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "5.6.0-SNAPSHOT"
+    version = "6.0.0-SNAPSHOT"
 }
 
 repositories {
