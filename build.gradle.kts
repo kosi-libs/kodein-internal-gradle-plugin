@@ -24,11 +24,12 @@ allprojects {
 }
 
 repositories {
+    mavenLocal()
+    mavenCentral()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     maven(url = "https://ajoberstar.github.io/bintray-backup/")
-    mavenLocal()
 }
 
 dependencies {
@@ -39,7 +40,6 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
     api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.dokka}")
-    api("com.squareup.okhttp3:okhttp:4.9.0")
 }
 
 kotlin.target.compilations.all {

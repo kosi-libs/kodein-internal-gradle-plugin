@@ -6,55 +6,79 @@ import org.gradle.kotlin.dsl.provideDelegate
 
 class KodeinUploadRootPlugin : Plugin<Project> {
 
-    class Extension() {
-
-        var repo: String = ""
-    }
-
     private lateinit var project: Project
 
-    private val ext = Extension()
-
     inner class PublicationConfig {
-        val snapshotNumber = project.properties["snapshotNumber"] as? String
+        private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
+        private val snapshotNumber = (project.properties["snapshotNumber"] as? String)?.let {
+            // Deploy a release artifact (version not ending in -SNAPSHOT) to a snapshot repository is not allowed
+            "$it-SNAPSHOT"
+        }
+        val repositoryUrl: String = when {
+            snapshotNumber != null -> "https://oss.sonatype.org/content/repositories/snapshots/"
+            repositoryId != null -> "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
+            //
+            else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
+        }
+
         val version = run {
             val eapBranch = (project.properties["gitRef"] as? String)?.split("/")?.last() ?: "dev"
             if (snapshotNumber != null) "${project.version}-$eapBranch-$snapshotNumber" else project.version.toString()
         }
-        val repoName = ext.repo.ifEmpty { "UNDEFINED" }
+
+        val projectName = project.name.ifEmpty { "UNDEFINED" }
     }
 
     val publication by lazy { PublicationConfig() }
 
-    inner class BintrayConfig(
+    inner class SonatypeConfig(
             val username: String,
-            val apiKey: String,
-            val userOrg: String?,
+            val password: String,
             val dryRun: Boolean
-    ) {
-        val subject = userOrg ?: username
-        val repo = if (publication.snapshotNumber != null) "kodein-dev" else publication.repoName
-    }
-
-    val bintray: BintrayConfig? by lazy {
-        val bintrayUsername: String? = (project.properties["org.kodein.bintray.username"] as String?) ?: System.getenv("BINTRAY_USER")
-        val bintrayApiKey: String? = (project.properties["org.kodein.bintray.apiKey"] as String?) ?: System.getenv("BINTRAY_APIKEY")
+    )
+    val sonatypeConfig: SonatypeConfig? by lazy {
+        val username: String? = (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
+        val password: String? = (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
+        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as Boolean?) ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
 
         when {
-            bintrayUsername == null || bintrayApiKey == null -> {
-                project.logger.warn("$project: Skipping bintray configuration as the `org.kodein.bintray.username` or `org.kodein.bintray.api_key` property is not defined.")
-                null
-            }
-            ext.repo.isEmpty() -> {
-                project.logger.warn("$project: Skipping bintray configuration as root project's kodeinPublications has not been configured (empty repo).")
+            username == null || password == null -> {
+                project.logger.warn("$project: Skipping maven publication configuration as the `org.kodein.sonatype.username` or `org.kodein.sonatype.password` property is not defined.")
                 null
             }
             else -> {
-                BintrayConfig(
-                        username = bintrayUsername,
-                        apiKey = bintrayApiKey,
-                        userOrg = (project.properties["org.kodein.bintray.userOrg"] as String?) ?: System.getenv("BINTRAY_USER_ORG"),
-                        dryRun = KodeinLocalPropertiesPlugin.on(project).isTrue("bintrayDryRun")
+                SonatypeConfig(
+                        username = username,
+                        password = password,
+                        dryRun = dryRun
+                )
+            }
+        }
+    }
+
+    inner class SigningConfig(val signingKey: String, val signingPassword: String)
+    val signingConfig: SigningConfig? by lazy {
+        val signingKey: String? = (project.properties["org.kodein.signing.key"] as String?) ?: System.getenv("GPG_PRIVATE_KEY")
+        val signingPassword: String? = (project.properties["org.kodein.signing.password"] as String?) ?: System.getenv("GPG_PRIVATE_PASSWORD")
+        val skipSigning: Boolean = (KodeinLocalPropertiesPlugin.on(project).isTrue("org.kodein.signing.skip"))
+
+        when {
+            signingKey == null || signingPassword == null || skipSigning -> {
+                project.logger.warn(
+                    buildString {
+                        append("$project: Skipping signing publication configuration")
+                        if (skipSigning)
+                            append(" because of the defined parameter: `org.kodein.signing.skip = true`.")
+                        else
+                            append(" as the `org.kodein.signing.key` or `org.kodein.signing.password` property is not defined.")
+                    }
+                )
+                null
+            }
+            else -> {
+                SigningConfig(
+                    signingKey = signingKey,
+                    signingPassword = signingPassword
                 )
             }
         }
@@ -62,7 +86,6 @@ class KodeinUploadRootPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         this.project = project
-        project.extensions.add("kodeinPublications", ext)
     }
 
 }

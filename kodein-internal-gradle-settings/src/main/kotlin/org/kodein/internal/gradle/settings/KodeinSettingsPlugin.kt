@@ -40,11 +40,10 @@ class KodeinSettingsPlugin : Plugin<Settings> {
             repositories {
                 mavenLocal()
                 mavenCentral()
+                jcenter()
                 google()
                 maven(url = "https://plugins.gradle.org/m2/")
-                maven(url = "https://dl.bintray.com/kodein-framework/Kodein-Internal-Gradle")
-                maven(url = "https://dl.bintray.com/kodein-framework/kodein-dev")
-                maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
+                maven(url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo")
             }
 
             resolutionStrategy {
