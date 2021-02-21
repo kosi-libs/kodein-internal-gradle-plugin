@@ -14,11 +14,12 @@ class KodeinUploadRootPlugin : Plugin<Project> {
             // Deploy a release artifact (version not ending in -SNAPSHOT) to a snapshot repository is not allowed
             "$it-SNAPSHOT"
         }
-        val repositoryUrl: String = when {
-            snapshotNumber != null -> "https://oss.sonatype.org/content/repositories/snapshots/"
-            repositoryId != null -> "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
-            //
-            else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
+        val repositoryUrl: String by lazy {
+            when {
+                snapshotNumber != null -> "https://oss.sonatype.org/content/repositories/snapshots/"
+                repositoryId != null -> "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
+                else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
+            }
         }
 
         val version = run {
