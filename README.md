@@ -70,46 +70,36 @@ Each Kodein project must have a no-source root module with the `org.kodein.root`
 * Applies the `org.kodein.upload.root` plugin.
 
 
-## Bintray:
+## MavenCentral (OSSRH):
 
 ### Benefits
 
-* Read Bintray's configuration values once and cache them in root module.
-* Configures bintray upload with `maven-publish` plugin (recommended way with KMP).
-* Uses OkHttp to create the package in Bintray if it doesn't exist.
-* Adds the `postBintrayPublish` task, which publishes the artifact from the Bintray staging area (to be used by CI when upload succeeded).
-* Adds the `postBintrayDiscard` task, which discards the artifact from the Bintray staging area (to be used by CI when build or upload fails).
+* Read Nexus Sonatype's configuration values once and cache them in root module.
+* Configures sonatype (releases or snapshots) with `maven-publish` plugin (recommended way with KMP).
+* Configures GPG signing for publication.
 * Adds standard information to POM.
 * Disables publications on cross and excluded targets (see MP module plugin).
 * Creates the `hostOnlyPublish` task which publishes only locally built native targets.
 
 ### Configuration
 
-Bintray publishing and configuration is automatically disabled if the configuration values are not set.
+MavenCentral publishing and configuration is automatically disabled if the configuration values are not set.
 
 You can set the bintray configuration values:
 
 * In your global **`~/.gradle/gradle.properties`**:
   ```properties
-  org.kodein.bintray.username = bintray-username
-  org.kodein.bintray.apiKey = bintray-api-key
-  org.kodein.bintray.userOrg = bintray-user-org
+  org.kodein.sonatype.username = bintray-username
+  org.kodein.sonatype.password = bintray-api-key
   ```
-* In environment variables `BINTRAY_USER`, `BINTRAY_APIKEY` and `BINTRAY_USER_ORG`.
+* In environment variables `SONATYPE_USERNAME` and `SONATYPE_PASSWORD`.
 
-If the kodein local property `bintrayDryRun` is `true`, the upload emulates the upload without actually uploading the items.
+If the kodein local property `ossrh.dryRun` is `true`, the upload emulates the upload without actually uploading the items.
+(or even through the `org.kodein.sonatype.dryRun` gradle parameter).
 
 ### Root module
 
 Apply the `org.kodein.root` plugin (or the "bare" `org.kodein.upload.root` plugin).
-
-Configure the bintray repository used for all publications:
-
-```kotlin
-kodeinPublications {
-    repo = "repository"
-}
-```
 
 ### Artifact module
 
@@ -123,17 +113,6 @@ kodeinUpload {
     description = "Artifact description"
 }
 ```
-
-You can set a module as part of the bintray package of another module.
-
-```kotlin
-kodeinUpload {
-    name = "artifact-name"
-    description = "Artifact description"
-    packageOf = ":another:module"
-}
-```
-
 
 ## Kodein local properties
 
