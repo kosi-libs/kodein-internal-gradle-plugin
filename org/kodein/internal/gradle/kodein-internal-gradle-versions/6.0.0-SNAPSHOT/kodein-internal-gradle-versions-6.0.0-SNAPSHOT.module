@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.7",
-      "buildId": "kpdjtamzgve5bfvfubu7zrysxu"
+      "buildId": "xwdpyoo7qzewvns6u354jp5ofu"
     }
   },
   "variants": [
@@ -31,10 +31,10 @@
           "name": "kodein-internal-gradle-versions-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-versions-6.0.0-SNAPSHOT.jar",
           "size": 3147,
-          "sha512": "a4ddd0f8117c5270536330a0e2560f3a6012c4b0a160f6b1da189c3601713817fd2d3f3eed89679f6884aaa8363a2aee8bab73956f16f344c1783e68b7e4fafe",
-          "sha256": "f94084e3804b4265f8546e22b659820e57b53781ba7fd72b90ad0b1d70ab8cf3",
-          "sha1": "285bddce29797849fdb2819ae0936e2133f97bf6",
-          "md5": "641be1870aa5cf684aa5c9e6b6c3f966"
+          "sha512": "0f2ba920093cfa7086faea32c4ed6efcdc26732eda5d8e82b3585cbe55a90892d7e3609882a29214158f7c15e34b69e308c234499f3d0a501ae614e1152437ac",
+          "sha256": "1dfcffd6f5210294c0a92f76a931481d9194f8c2ff4bdd85f106e707ebff7fb3",
+          "sha1": "787fc2c426616118a39e1356b6469e7bd5cfe978",
+          "md5": "461ee292078da2d11382ed43161495f1"
         }
       ]
     },
@@ -54,10 +54,10 @@
           "name": "kodein-internal-gradle-versions-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-versions-6.0.0-SNAPSHOT.jar",
           "size": 3147,
-          "sha512": "a4ddd0f8117c5270536330a0e2560f3a6012c4b0a160f6b1da189c3601713817fd2d3f3eed89679f6884aaa8363a2aee8bab73956f16f344c1783e68b7e4fafe",
-          "sha256": "f94084e3804b4265f8546e22b659820e57b53781ba7fd72b90ad0b1d70ab8cf3",
-          "sha1": "285bddce29797849fdb2819ae0936e2133f97bf6",
-          "md5": "641be1870aa5cf684aa5c9e6b6c3f966"
+          "sha512": "0f2ba920093cfa7086faea32c4ed6efcdc26732eda5d8e82b3585cbe55a90892d7e3609882a29214158f7c15e34b69e308c234499f3d0a501ae614e1152437ac",
+          "sha256": "1dfcffd6f5210294c0a92f76a931481d9194f8c2ff4bdd85f106e707ebff7fb3",
+          "sha1": "787fc2c426616118a39e1356b6469e7bd5cfe978",
+          "md5": "461ee292078da2d11382ed43161495f1"
         }
       ]
     }
