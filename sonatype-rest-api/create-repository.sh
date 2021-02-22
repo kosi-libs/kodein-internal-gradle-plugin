@@ -37,12 +37,19 @@ then
       exit 1
 fi
 
-stagedRepositoryId=$(
-  curl -s --request POST -u $username:$password \
-    --url https://oss.sonatype.org/service/local/staging/profiles/$profileId/start \
+jsonOutput=$(
+  curl -s --request POST -u "$username:$password" \
+    --url https://oss.sonatype.org/service/local/staging/profiles/"$profileId"/start \
     --header 'Accept: application/json' \
     --header 'Content-Type: application/json' \
-    --data '{ "data": {"description" : "'$description'"} }' | jq -r '.data.stagedRepositoryId'
+    --data '{ "data": {"description" : "'"$description"'"} }'
 )
 
-echo "::set-output name=repository-id::$stagedRepositoryId"
+stagedRepositoryId=$(echo "$jsonOutput" | jq -r '.data.stagedRepositoryId')
+
+if [ -z "$stagedRepositoryId" ]; then
+  echo "error while creating the staging repository."
+  exit 1
+else
+  echo "::set-output name=repository-id::$stagedRepositoryId"
+fi

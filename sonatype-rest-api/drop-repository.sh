@@ -32,11 +32,11 @@ then
       exit 1
 fi
 
-response=$(curl -s --request POST -u $username:$password \
+response=$(curl -s --request POST -u "$username:$password" \
   --url https://oss.sonatype.org/service/local/staging/bulk/drop \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \
-  --data '{ "data" : {"stagedRepositoryIds":["'$stagedRepositoryId'"], "description":"Drop '$stagedRepositoryId'." } }')
+  --data '{ "data" : {"stagedRepositoryIds":["'"$stagedRepositoryId"'"], "description":"Drop '"$stagedRepositoryId"'." } }')
 
 if [ ! -z "$response" ]; then
     echo "error while dropping repository $stagedRepositoryId : $response"
