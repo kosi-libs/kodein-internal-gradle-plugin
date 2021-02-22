@@ -10,7 +10,7 @@ class KodeinUploadRootPlugin : Plugin<Project> {
 
     inner class PublicationConfig {
         private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
-        private val snapshotNumber = (project.properties["snapshotNumber"] as? String)?.let {
+        internal val snapshotNumber = (project.properties["snapshotNumber"] as? String)?.let {
             // Deploy a release artifact (version not ending in -SNAPSHOT) to a snapshot repository is not allowed
             "$it-SNAPSHOT"
         }
@@ -64,12 +64,12 @@ class KodeinUploadRootPlugin : Plugin<Project> {
         val skipSigning: Boolean = (KodeinLocalPropertiesPlugin.on(project).isTrue("org.kodein.signing.skip"))
 
         when {
-            signingKey == null || signingPassword == null || skipSigning -> {
+            signingKey == null || signingPassword == null || skipSigning || publication.snapshotNumber != null -> {
                 project.logger.warn(
                     buildString {
                         append("$project: Skipping signing publication configuration")
-                        if (skipSigning)
-                            append(" because of the defined parameter: `org.kodein.signing.skip = true`.")
+                        if ( skipSigning || publication.snapshotNumber != null)
+                            append(" either because of the defined parameter: `org.kodein.signing.skip = true` or publishing a snapshot.")
                         else
                             append(" as the `org.kodein.signing.key` or `org.kodein.signing.password` property is not defined.")
                     }
