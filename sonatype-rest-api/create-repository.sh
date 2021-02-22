@@ -45,4 +45,4 @@ stagedRepositoryId=$(
     --data '{ "data": {"description" : "'$description'"} }' | jq -r '.data.stagedRepositoryId'
 )
 
-echo $stagedRepositoryId
+echo "::set-output name=repository-id::$stagedRepositoryId"
