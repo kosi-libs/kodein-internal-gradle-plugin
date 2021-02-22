@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.7",
-      "buildId": "sjxprfn2vzhxtgaip3hvwv776i"
+      "buildId": "kpdjtamzgve5bfvfubu7zrysxu"
     }
   },
   "variants": [
@@ -60,11 +60,11 @@
         {
           "name": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
-          "size": 245030,
-          "sha512": "4bc9c534d06c78bb28523cdc9ec219ef05d5ee6a65d9b7ebb7a6d348067a3b109e9300c918cd39fefe96ec8e48abe2599514795c3072702e744d1ed8615d642e",
-          "sha256": "4f5b43023f5ba33ddd25bbeb75f3ce997b083a14f23acecae0f18c6dafd2d3b1",
-          "sha1": "3b86fa656dd3ec2850e35346b8abeb27bc0276e4",
-          "md5": "6fcb0bad075e109c3213f82eca1ed8b6"
+          "size": 244963,
+          "sha512": "98033f25161658eacd6c078f2f1472f76f26a2cc4272f123d4bea066764c36cd2a477ac9e44c5953d0994de6bf2dda802ebdc0aff71adbc2a09eebf7fd64eaf5",
+          "sha256": "400922dd2e2d3d629293ff256993676e0a4e346ccef58875654d0b94d3b92fd3",
+          "sha1": "8ba69db41dab9c9268d20fcd48f5324013bdb5a9",
+          "md5": "6fa971ed23e8acd53b0ecea1596e0153"
         }
       ]
     },
@@ -113,11 +113,11 @@
         {
           "name": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.0.0-SNAPSHOT.jar",
-          "size": 245030,
-          "sha512": "4bc9c534d06c78bb28523cdc9ec219ef05d5ee6a65d9b7ebb7a6d348067a3b109e9300c918cd39fefe96ec8e48abe2599514795c3072702e744d1ed8615d642e",
-          "sha256": "4f5b43023f5ba33ddd25bbeb75f3ce997b083a14f23acecae0f18c6dafd2d3b1",
-          "sha1": "3b86fa656dd3ec2850e35346b8abeb27bc0276e4",
-          "md5": "6fcb0bad075e109c3213f82eca1ed8b6"
+          "size": 244963,
+          "sha512": "98033f25161658eacd6c078f2f1472f76f26a2cc4272f123d4bea066764c36cd2a477ac9e44c5953d0994de6bf2dda802ebdc0aff71adbc2a09eebf7fd64eaf5",
+          "sha256": "400922dd2e2d3d629293ff256993676e0a4e346ccef58875654d0b94d3b92fd3",
+          "sha1": "8ba69db41dab9c9268d20fcd48f5324013bdb5a9",
+          "md5": "6fa971ed23e8acd53b0ecea1596e0153"
         }
       ]
     }
