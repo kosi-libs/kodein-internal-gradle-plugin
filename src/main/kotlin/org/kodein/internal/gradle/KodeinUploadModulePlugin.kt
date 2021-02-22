@@ -152,7 +152,6 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 signing.apply {
                     useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword)
                     sign(publishing.publications)
-                    sign(tasks.getByName("hostOnlyPublish"))
                 }
             }
         }
