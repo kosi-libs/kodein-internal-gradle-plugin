@@ -38,11 +38,11 @@ then
 fi
 
 stagedRepositoryId=$(
-curl -s --request POST -u $username:$password \
-  --url https://oss.sonatype.org/service/local/staging/profiles/$profileId/start \
-  --header 'Accept: application/json' \
-  --header 'Content-Type: application/json' \
-  --data '{ "data": {"description" : "'$description'"} }' | jq -r '.data.stagedRepositoryId'
+  curl -s --request POST -u $username:$password \
+    --url https://oss.sonatype.org/service/local/staging/profiles/$profileId/start \
+    --header 'Accept: application/json' \
+    --header 'Content-Type: application/json' \
+    --data '{ "data": {"description" : "'$description'"} }' | jq -r '.data.stagedRepositoryId'
 )
 
 echo $stagedRepositoryId

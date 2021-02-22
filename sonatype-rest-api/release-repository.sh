@@ -32,11 +32,13 @@ then
       exit 1
 fi
 
-closing=$(curl -s --request POST -u $username:$password \
-  --url https://oss.sonatype.org/service/local/staging/bulk/close \
-  --header 'Accept: application/json' \
-  --header 'Content-Type: application/json' \
-  --data '{ "data" : {"stagedRepositoryIds":["'$stagedRepositoryId'"], "description":"Close '$stagedRepositoryId'." } }')
+closing=$(
+  curl -s --request POST -u $username:$password \
+    --url https://oss.sonatype.org/service/local/staging/bulk/close \
+    --header 'Accept: application/json' \
+    --header 'Content-Type: application/json' \
+    --data '{ "data" : {"stagedRepositoryIds":["'$stagedRepositoryId'"], "description":"Close '$stagedRepositoryId'." } }'
+)
   # todo discuss autoReleaseAfterClose
 
 if [ ! -z "$closing" ]; then

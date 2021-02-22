@@ -114,6 +114,11 @@ task("validateVersionBeforeGitPublish") {
 
 tasks.create<Sync>("copyMavenLocalArtifacts") {
     group = "publishing"
+    dependsOn(
+        "publishToMavenLocal",
+        ":kodein-internal-gradle-versions:publishToMavenLocal",
+        ":kodein-internal-gradle-settings:publishToMavenLocal"
+    )
     val publishingVersion = getPublishingVersion()
     val userHome = System.getProperty("user.home")
     val groupDir = project.group.toString().replace('.', '/')
