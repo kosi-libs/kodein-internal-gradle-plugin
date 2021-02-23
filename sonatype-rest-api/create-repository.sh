@@ -3,7 +3,7 @@
 username=
 password=
 profileId=
-description="creating staging repository."
+description="Creating staging repository."
 
 while [ "$1" != "" ]; do
     case $1 in
