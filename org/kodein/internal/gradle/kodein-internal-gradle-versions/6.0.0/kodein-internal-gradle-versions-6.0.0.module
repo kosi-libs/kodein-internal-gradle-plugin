@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.7",
-      "buildId": "izzhweihtnanni3haviszdo7z4"
+      "buildId": "ayimeqlslnajnkcs2l5mgvkplm"
     }
   },
   "variants": [
@@ -31,10 +31,10 @@
           "name": "kodein-internal-gradle-versions-6.0.0.jar",
           "url": "kodein-internal-gradle-versions-6.0.0.jar",
           "size": 3147,
-          "sha512": "8e3bac2a28f6e660b2ee8da034a2a70934a7139a4968c0ea90fdc85de23f0787ca189c02566252d876428697bc2f027175ac19f3eeb4fb252a3efb1a02c25642",
-          "sha256": "d3af3d08a8518ebcc3a47564cd55c893489f86b3cea88214750361768dfc2e04",
-          "sha1": "466d2afeb7bc206b6fe8b61d988e15af742be938",
-          "md5": "0cfaae624adcf217403e609fa1f37150"
+          "sha512": "993a8e8df7331b0f94eeae5648c793080c547b94272df4b9aa435f353769a62a2c4e99c1919e07be38d4c54d38fded4a6a329416cdb65dad14c06e68bbba1ac2",
+          "sha256": "ea51ae2b09189e56723436e26d17a000eb95dd0676f2f40437e0076054450825",
+          "sha1": "dae985a46b3aa3b4f87f6b762f020ad5b15fcc90",
+          "md5": "6b82fcdc081d4bd0161ca42a4dad1157"
         }
       ]
     },
@@ -54,10 +54,10 @@
           "name": "kodein-internal-gradle-versions-6.0.0.jar",
           "url": "kodein-internal-gradle-versions-6.0.0.jar",
           "size": 3147,
-          "sha512": "8e3bac2a28f6e660b2ee8da034a2a70934a7139a4968c0ea90fdc85de23f0787ca189c02566252d876428697bc2f027175ac19f3eeb4fb252a3efb1a02c25642",
-          "sha256": "d3af3d08a8518ebcc3a47564cd55c893489f86b3cea88214750361768dfc2e04",
-          "sha1": "466d2afeb7bc206b6fe8b61d988e15af742be938",
-          "md5": "0cfaae624adcf217403e609fa1f37150"
+          "sha512": "993a8e8df7331b0f94eeae5648c793080c547b94272df4b9aa435f353769a62a2c4e99c1919e07be38d4c54d38fded4a6a329416cdb65dad14c06e68bbba1ac2",
+          "sha256": "ea51ae2b09189e56723436e26d17a000eb95dd0676f2f40437e0076054450825",
+          "sha1": "dae985a46b3aa3b4f87f6b762f020ad5b15fcc90",
+          "md5": "6b82fcdc081d4bd0161ca42a4dad1157"
         }
       ]
     }
