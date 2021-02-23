@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.7",
-      "buildId": "wyusjgozefeglixi5tzrybulf4"
+      "buildId": "izzhweihtnanni3haviszdo7z4"
     }
   },
   "variants": [
@@ -31,10 +31,10 @@
           "name": "kodein-internal-gradle-settings-6.0.0.jar",
           "url": "kodein-internal-gradle-settings-6.0.0.jar",
           "size": 16410,
-          "sha512": "25f144dd3c9e71334232cc5ef0d2001add78a89238413e3484e3aac10142d41dc03f8a9f47c2b378868dd7789029236da4fe7fea1ff535b3b447a1e0da673d2b",
-          "sha256": "5e856f2c2965f40b76a973ec88d90055baad6948350df7a5feab73845b9bd65e",
-          "sha1": "0e45b20983309800162499abc030eb238dbb9d84",
-          "md5": "a2ed4b5a7c22a4d9bac32021d9148d1b"
+          "sha512": "dc14a28c0fdd2bff3defb764045f4f0f62ba90737762bc572769d30c93ae055e2cf4db1e9bacd7eb9016c61f51cd7904b5f6a55eae1e232cec003c15608d93bf",
+          "sha256": "c0efcc0ad8547343112e358ed7291e6f0533a0ba93c6c8700dc532e2c05ef3fa",
+          "sha1": "92b4743ad71aaf04e10560cc2f01416c7d02091a",
+          "md5": "1f4470106146ac115bc1c0a4fa728356"
         }
       ]
     },
@@ -63,10 +63,10 @@
           "name": "kodein-internal-gradle-settings-6.0.0.jar",
           "url": "kodein-internal-gradle-settings-6.0.0.jar",
           "size": 16410,
-          "sha512": "25f144dd3c9e71334232cc5ef0d2001add78a89238413e3484e3aac10142d41dc03f8a9f47c2b378868dd7789029236da4fe7fea1ff535b3b447a1e0da673d2b",
-          "sha256": "5e856f2c2965f40b76a973ec88d90055baad6948350df7a5feab73845b9bd65e",
-          "sha1": "0e45b20983309800162499abc030eb238dbb9d84",
-          "md5": "a2ed4b5a7c22a4d9bac32021d9148d1b"
+          "sha512": "dc14a28c0fdd2bff3defb764045f4f0f62ba90737762bc572769d30c93ae055e2cf4db1e9bacd7eb9016c61f51cd7904b5f6a55eae1e232cec003c15608d93bf",
+          "sha256": "c0efcc0ad8547343112e358ed7291e6f0533a0ba93c6c8700dc532e2c05ef3fa",
+          "sha1": "92b4743ad71aaf04e10560cc2f01416c7d02091a",
+          "md5": "1f4470106146ac115bc1c0a4fa728356"
         }
       ]
     }
