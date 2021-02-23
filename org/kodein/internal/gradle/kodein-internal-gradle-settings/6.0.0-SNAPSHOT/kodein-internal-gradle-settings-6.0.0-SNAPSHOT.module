@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.7",
-      "buildId": "4iktlfqxoncudgar4wqgadjkwa"
+      "buildId": "eocqsoifyzd6rggclifwpbsvia"
     }
   },
   "variants": [
@@ -30,11 +30,11 @@
         {
           "name": "kodein-internal-gradle-settings-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-settings-6.0.0-SNAPSHOT.jar",
-          "size": 16350,
-          "sha512": "d5ea991cb5d0932d5ce41f8b75b9c57188042aa1cb03345efb38686d420fc8fb4397636b2169b148ad1fa1e88610d8f16882bd4324c00831ce5f7ca358a8203d",
-          "sha256": "af3f972b4ca4fb9ff840ca0f26fabee9a5a96415505be7966d2444025bcd77c5",
-          "sha1": "b5c2d21b4e270405162827917d8f41679097811d",
-          "md5": "fe5a965de7bd042e115505533338d1f1"
+          "size": 16410,
+          "sha512": "4947973acc52ad49e30a22d5246a8beb43bc45d7607656b5e500038abafdf26c9793a6cc4525cffc82dccede7d08be5e321af02f37af509a1546c0bb37a7f63c",
+          "sha256": "ef626a0018288681f43acf1e8756ba2455a82624ee81af6bd65cdb30eca45192",
+          "sha1": "fb5726f51221a0811b5b314f8cb24d4a0b5df11a",
+          "md5": "04a72517ccc4bcc822dc6bc8efc00556"
         }
       ]
     },
@@ -62,11 +62,11 @@
         {
           "name": "kodein-internal-gradle-settings-6.0.0-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-settings-6.0.0-SNAPSHOT.jar",
-          "size": 16350,
-          "sha512": "d5ea991cb5d0932d5ce41f8b75b9c57188042aa1cb03345efb38686d420fc8fb4397636b2169b148ad1fa1e88610d8f16882bd4324c00831ce5f7ca358a8203d",
-          "sha256": "af3f972b4ca4fb9ff840ca0f26fabee9a5a96415505be7966d2444025bcd77c5",
-          "sha1": "b5c2d21b4e270405162827917d8f41679097811d",
-          "md5": "fe5a965de7bd042e115505533338d1f1"
+          "size": 16410,
+          "sha512": "4947973acc52ad49e30a22d5246a8beb43bc45d7607656b5e500038abafdf26c9793a6cc4525cffc82dccede7d08be5e321af02f37af509a1546c0bb37a7f63c",
+          "sha256": "ef626a0018288681f43acf1e8756ba2455a82624ee81af6bd65cdb30eca45192",
+          "sha1": "fb5726f51221a0811b5b314f8cb24d4a0b5df11a",
+          "md5": "04a72517ccc4bcc822dc6bc8efc00556"
         }
       ]
     }
