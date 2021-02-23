@@ -44,6 +44,8 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 google()
                 maven(url = "https://plugins.gradle.org/m2/")
                 maven(url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo")
+                maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
+                maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
             }
 
             resolutionStrategy {
