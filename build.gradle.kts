@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.0.0"
+    version = "6.1.0-SNAPSHOT"
 }
 
 repositories {
@@ -114,6 +114,7 @@ task("validateVersionBeforeGitPublish") {
 
 tasks.create<Sync>("copyMavenLocalArtifacts") {
     group = "publishing"
+    dependsOn("validateVersionBeforeGitPublish")
     val publishingVersion = getPublishingVersion()
     val userHome = System.getProperty("user.home")
     val groupDir = project.group.toString().replace('.', '/')
