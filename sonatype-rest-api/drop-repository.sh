@@ -28,7 +28,7 @@ done
 
 if test -z "$username" || test -z "$password" || test -z "$stagedRepositoryId"
 then
-      echo "missing parameter(s) for sonatype 'username' | 'password' | 'stagedRepositoryId'."
+      echo "Missing parameter(s) for sonatype 'username' | 'password' | 'stagedRepositoryId'."
       exit 1
 fi
 
@@ -39,6 +39,6 @@ response=$(curl -s --request POST -u "$username:$password" \
   --data '{ "data" : {"stagedRepositoryIds":["'"$stagedRepositoryId"'"], "description":"Drop '"$stagedRepositoryId"'." } }')
 
 if [ ! -z "$response" ]; then
-    echo "error while dropping repository $stagedRepositoryId : $response"
+    echo "Error while dropping repository $stagedRepositoryId : $response."
     exit 1
 fi

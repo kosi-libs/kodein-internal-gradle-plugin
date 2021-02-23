@@ -33,7 +33,7 @@ done
 
 if test -z "$username" || test -z "$password" || test -z "$profileId"
 then
-      echo "missing parameter(s) for sonatype 'username' | 'password' | 'profileId'."
+      echo "Missing parameter(s) for sonatype 'username' | 'password' | 'profileId'."
       exit 1
 fi
 
@@ -48,7 +48,7 @@ jsonOutput=$(
 stagedRepositoryId=$(echo "$jsonOutput" | jq -r '.data.stagedRepositoryId')
 
 if [ -z "$stagedRepositoryId" ]; then
-  echo "error while creating the staging repository."
+  echo "Error while creating the staging repository."
   exit 1
 else
   echo "::set-output name=repository-id::$stagedRepositoryId"
