@@ -1,0 +1,125 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-plugin",
+    "version": "6.0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "vlh5wy456beh7giziwosl26xci"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.0.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "1.4.31"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-6.0.1.jar",
+          "url": "kodein-internal-gradle-plugin-6.0.1.jar",
+          "size": 245110,
+          "sha512": "c8cd07c744fea23f35d5650caf4a060b5637875f841a6f80aebe446ff8ad2a7479d29d8b58187840adcc5f923a88daf17446a284056efcfa20f161940bcd849f",
+          "sha256": "7bd917a0082585dd21d3f0ad5c588bc354aa83a205b99df6577fe9c45aa9072b",
+          "sha1": "43afefd88273948f14f0b4d69be4b11467148996",
+          "md5": "620799607792aef1281aaa1d82b9be41"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.0.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "1.4.31"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-6.0.1.jar",
+          "url": "kodein-internal-gradle-plugin-6.0.1.jar",
+          "size": 245110,
+          "sha512": "c8cd07c744fea23f35d5650caf4a060b5637875f841a6f80aebe446ff8ad2a7479d29d8b58187840adcc5f923a88daf17446a284056efcfa20f161940bcd849f",
+          "sha256": "7bd917a0082585dd21d3f0ad5c588bc354aa83a205b99df6577fe9c45aa9072b",
+          "sha1": "43afefd88273948f14f0b4d69be4b11467148996",
+          "md5": "620799607792aef1281aaa1d82b9be41"
+        }
+      ]
+    }
+  ]
+}
