@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.withType
 
-internal interface KtPlugin<T> : Plugin<T> {
+internal interface KtPlugin<T : Project> : Plugin<T> {
     fun T.applyPlugin()
     override fun apply(target: T) = target.applyPlugin()
 }
