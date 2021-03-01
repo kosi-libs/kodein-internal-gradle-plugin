@@ -7,11 +7,11 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.findPlugin
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
+import org.jetbrains.dokka.gradle.DokkaTask
 import kotlin.collections.ArrayList
 
 
@@ -31,6 +31,7 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {
+            plugin("org.jetbrains.dokka")
             plugin("org.gradle.maven-publish")
             plugin("org.gradle.signing")
         }
@@ -97,9 +98,19 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            // Empty javadoc ; TODO replace with Dokka
-            val javadocJar = tasks.register("javadocJar", Jar::class.java) {
+            val dokkaOutputDir = "$buildDir/dokka"
+            tasks.getByName<DokkaTask>("dokkaHtml") {
+                outputDirectory.set(file(dokkaOutputDir))
+            }
+
+            val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
+                delete(dokkaOutputDir)
+            }
+
+            val javadocJar = tasks.register<Jar>("javadocJar") {
+                dependsOn(deleteDokkaOutputDir, tasks.getByName<DokkaTask>("dokkaHtml"))
                 archiveClassifier.set("javadoc")
+                from(dokkaOutputDir)
             }
 
             project.version = root.publication.version
