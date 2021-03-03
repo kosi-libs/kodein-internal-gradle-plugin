@@ -149,7 +149,7 @@ gitPublish {
     commitMessage.set("${head.abbreviatedId}: ${getPublishingVersion()} : ${head.fullMessage}")
 }
 
-tasks["gitPublishPush"].dependsOn("copyMavenLocalArtifacts")
+tasks["gitPublishCopy"].dependsOn("copyMavenLocalArtifacts")
 
 tasks["gitPublishCommit"].doFirst {
     if (!grgit.status().isClean) {
