@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.2.0-SNAPSHOT"
+    version = "6.3.0"
 }
 
 repositories {
@@ -30,6 +30,7 @@ repositories {
     maven(url = "https://plugins.gradle.org/m2/")
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     maven(url = "https://ajoberstar.github.io/bintray-backup/")
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
 }
 
 dependencies {
@@ -40,6 +41,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
     api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.dokka}")
+    api("org.jetbrains.dokka:dokka-core:${KodeinVersions.dokka}")
 }
 
 kotlin.target.compilations.all {

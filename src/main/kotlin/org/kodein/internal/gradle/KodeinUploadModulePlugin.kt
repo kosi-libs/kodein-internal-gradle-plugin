@@ -11,8 +11,8 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTask
-import kotlin.collections.ArrayList
 
 
 @Suppress("UnstableApiUsage")
@@ -98,9 +98,25 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            val dokkaOutputDir = "$buildDir/dokka"
-            tasks.getByName<DokkaTask>("dokkaHtml") {
+            val dokkaOutputDir = buildDir.resolve("dokka")
+            tasks.withType<DokkaTask>().configureEach {
                 outputDirectory.set(file(dokkaOutputDir))
+                dokkaSourceSets {
+                    configureEach {
+                        val platformName = when(platform.get()) {
+                            Platform.jvm -> "jvm"
+                            Platform.js -> "js"
+                            Platform.native -> "native"
+                            Platform.common -> "common"
+                        }
+                        displayName.set(platformName)
+
+                        perPackageOption {
+                            matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
+                            suppress.set(true)
+                        }
+                    }
+                }
             }
 
             val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
