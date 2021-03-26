@@ -20,6 +20,7 @@ class KodeinRootPlugin : KtPlugin<Project> {
                 google()
                 maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
                 maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
+                maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
             }
         }
     }
