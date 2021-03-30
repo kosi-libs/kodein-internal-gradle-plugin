@@ -18,7 +18,7 @@ class KodeinRootPlugin : KtPlugin<Project> {
                 mavenCentral()
                 jcenter()
                 google()
-                maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
+                maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
                 maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
             }

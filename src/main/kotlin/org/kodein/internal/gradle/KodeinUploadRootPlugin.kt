@@ -10,13 +10,11 @@ class KodeinUploadRootPlugin : Plugin<Project> {
 
     inner class PublicationConfig {
         private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
-        internal val snapshotNumber = (project.properties["snapshotNumber"] as? String)?.let {
-            // Deploy a release artifact (version not ending in -SNAPSHOT) to a snapshot repository is not allowed
-            "$it-SNAPSHOT"
-        }
+        internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
+
         val repositoryUrl: String by lazy {
             when {
-                snapshotNumber != null -> "https://oss.sonatype.org/content/repositories/snapshots/"
+                snapshot -> "https://oss.sonatype.org/content/repositories/snapshots/"
                 repositoryId != null -> "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
                 else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
             }
@@ -24,7 +22,7 @@ class KodeinUploadRootPlugin : Plugin<Project> {
 
         val version = run {
             val eapBranch = (project.properties["gitRef"] as? String)?.split("/")?.last() ?: "dev"
-            if (snapshotNumber != null) "${project.version}-$eapBranch-$snapshotNumber" else project.version.toString()
+            if (snapshot) "${project.version}-$eapBranch-SNAPSHOT" else project.version.toString()
         }
 
         val projectName = project.name.ifEmpty { "UNDEFINED" }
@@ -64,11 +62,11 @@ class KodeinUploadRootPlugin : Plugin<Project> {
         val skipSigning: Boolean = (KodeinLocalPropertiesPlugin.on(project).isTrue("org.kodein.signing.skip"))
 
         when {
-            signingKey == null || signingPassword == null || skipSigning || publication.snapshotNumber != null -> {
+            signingKey == null || signingPassword == null || skipSigning || publication.snapshot -> {
                 project.logger.warn(
                     buildString {
                         append("$project: Skipping signing publication configuration")
-                        if ( skipSigning || publication.snapshotNumber != null)
+                        if (skipSigning || publication.snapshot)
                             append(" either because of the defined parameter: `org.kodein.signing.skip = true` or publishing a snapshot.")
                         else
                             append(" as the `org.kodein.signing.key` or `org.kodein.signing.password` property is not defined.")
