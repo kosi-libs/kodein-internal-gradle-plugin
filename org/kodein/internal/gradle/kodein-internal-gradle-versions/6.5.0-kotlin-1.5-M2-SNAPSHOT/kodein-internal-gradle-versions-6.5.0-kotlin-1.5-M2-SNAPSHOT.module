@@ -1,0 +1,65 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-versions",
+    "version": "6.5.0-kotlin-1.5-M2-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.8.3",
+      "buildId": "24e5ip3ff5etlhr5d2654hru4u"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
+          "size": 3161,
+          "sha512": "027968e76a9628b79597f102918463011b9108fbe254c990a5f15680080fef2c55af8fc3cd8055b1c67413d6875d68984be82ee6b22ea43089024636841194b1",
+          "sha256": "f78301d6597d605c9b40f6c5ceb676fd066f94907c1f4d38c152b7ebde5de25c",
+          "sha1": "5fb7ddf4247b184361a87700b1633b5242dd883a",
+          "md5": "b7e6fb1056d05bbc04fff1dc87c48a15"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
+          "size": 3161,
+          "sha512": "027968e76a9628b79597f102918463011b9108fbe254c990a5f15680080fef2c55af8fc3cd8055b1c67413d6875d68984be82ee6b22ea43089024636841194b1",
+          "sha256": "f78301d6597d605c9b40f6c5ceb676fd066f94907c1f4d38c152b7ebde5de25c",
+          "sha1": "5fb7ddf4247b184361a87700b1633b5242dd883a",
+          "md5": "b7e6fb1056d05bbc04fff1dc87c48a15"
+        }
+      ]
+    }
+  ]
+}
