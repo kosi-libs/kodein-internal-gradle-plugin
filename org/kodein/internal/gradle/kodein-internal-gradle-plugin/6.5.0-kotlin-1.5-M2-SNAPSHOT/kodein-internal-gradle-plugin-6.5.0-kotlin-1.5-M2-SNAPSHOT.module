@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8.3",
-      "buildId": "24e5ip3ff5etlhr5d2654hru4u"
+      "buildId": "ayqyaunrwzdsnieby6vdfn5rmy"
     }
   },
   "variants": [
@@ -67,11 +67,11 @@
         {
           "name": "kodein-internal-gradle-plugin-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
-          "size": 257435,
-          "sha512": "cd00d57fc2921236ee77829c718ff2af7c4682c384e6bae7c09a54d6fe432f82419fa0544e0ee182217485acc28264f613e07f4a26abb946c16bb9b4bd9d4fa9",
-          "sha256": "6e5413e63e5627d9a262c504dcdabf646b7ed8e999e6ab3be3ba3c44d7adccc1",
-          "sha1": "42848aac7684b04e4d548d807e60a0ded49f752d",
-          "md5": "c7cb7ebfc1f9ff4e0bb819a638b97bcc"
+          "size": 257389,
+          "sha512": "b1ee0e0ad72651f65e6fd70a83d6dd0fd3052971b80cb26a4ee2306dd906a008ae6185fe1b9b221f5877de9ecc55c99c37ae078b2ac16c70804916bada82335b",
+          "sha256": "49290019626f620e5923d1e03263bdafbf6fe84f8bd2b8b48a30615d8313e01e",
+          "sha1": "26bc308d12425bdfb8ccfb1fee49611372a2b909",
+          "md5": "4993da58e16a738499c1a2efb4a1060a"
         }
       ]
     },
@@ -127,11 +127,11 @@
         {
           "name": "kodein-internal-gradle-plugin-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
-          "size": 257435,
-          "sha512": "cd00d57fc2921236ee77829c718ff2af7c4682c384e6bae7c09a54d6fe432f82419fa0544e0ee182217485acc28264f613e07f4a26abb946c16bb9b4bd9d4fa9",
-          "sha256": "6e5413e63e5627d9a262c504dcdabf646b7ed8e999e6ab3be3ba3c44d7adccc1",
-          "sha1": "42848aac7684b04e4d548d807e60a0ded49f752d",
-          "md5": "c7cb7ebfc1f9ff4e0bb819a638b97bcc"
+          "size": 257389,
+          "sha512": "b1ee0e0ad72651f65e6fd70a83d6dd0fd3052971b80cb26a4ee2306dd906a008ae6185fe1b9b221f5877de9ecc55c99c37ae078b2ac16c70804916bada82335b",
+          "sha256": "49290019626f620e5923d1e03263bdafbf6fe84f8bd2b8b48a30615d8313e01e",
+          "sha1": "26bc308d12425bdfb8ccfb1fee49611372a2b909",
+          "md5": "4993da58e16a738499c1a2efb4a1060a"
         }
       ]
     }

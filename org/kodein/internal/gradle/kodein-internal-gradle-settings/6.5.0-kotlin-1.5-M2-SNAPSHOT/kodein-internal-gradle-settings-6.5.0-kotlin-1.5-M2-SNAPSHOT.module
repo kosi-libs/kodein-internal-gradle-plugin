@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8.3",
-      "buildId": "24e5ip3ff5etlhr5d2654hru4u"
+      "buildId": "ayqyaunrwzdsnieby6vdfn5rmy"
     }
   },
   "variants": [
@@ -30,11 +30,11 @@
         {
           "name": "kodein-internal-gradle-settings-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-settings-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
-          "size": 16525,
-          "sha512": "9dec054677c9eecda6793ddf4c2e89fd88181da791309657b3362b8e47b760ca7d922779dc06497a19b8665371deca0bb2bfae083802b201342978f5dc4f9417",
-          "sha256": "a89a9598f755111bff4b190a7161a6f05b8161e70675010ec8f7bc85ce387955",
-          "sha1": "31f5c09829773561551b78680401a80e4bf0bc78",
-          "md5": "5ddc7bfbd1786526f8b369ca54946e5f"
+          "size": 16484,
+          "sha512": "5729b9a599f01c15f13df1f1ea2183ddff2c11c2d40bf0c405f12b24eb484aa2596a99473d772ba9a87ef7dd97ed085afb8ca0c9f5acbf4cc340f7ba82f28364",
+          "sha256": "718012ba61704615b839c7c43479071fec030fe95741af703589a22b114d63c3",
+          "sha1": "c1a9a1967546028f0ef2de1111baeb2ad8ee7ea1",
+          "md5": "8b0a06d97032f66691494b6ab62ff354"
         }
       ]
     },
@@ -62,11 +62,11 @@
         {
           "name": "kodein-internal-gradle-settings-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-settings-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
-          "size": 16525,
-          "sha512": "9dec054677c9eecda6793ddf4c2e89fd88181da791309657b3362b8e47b760ca7d922779dc06497a19b8665371deca0bb2bfae083802b201342978f5dc4f9417",
-          "sha256": "a89a9598f755111bff4b190a7161a6f05b8161e70675010ec8f7bc85ce387955",
-          "sha1": "31f5c09829773561551b78680401a80e4bf0bc78",
-          "md5": "5ddc7bfbd1786526f8b369ca54946e5f"
+          "size": 16484,
+          "sha512": "5729b9a599f01c15f13df1f1ea2183ddff2c11c2d40bf0c405f12b24eb484aa2596a99473d772ba9a87ef7dd97ed085afb8ca0c9f5acbf4cc340f7ba82f28364",
+          "sha256": "718012ba61704615b839c7c43479071fec030fe95741af703589a22b114d63c3",
+          "sha1": "c1a9a1967546028f0ef2de1111baeb2ad8ee7ea1",
+          "md5": "8b0a06d97032f66691494b6ab62ff354"
         }
       ]
     }
