@@ -28,7 +28,6 @@ repositories {
     mavenCentral()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     maven(url = "https://ajoberstar.github.io/bintray-backup/")
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
 }
