@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8.3",
-      "buildId": "b32l3npyn5b5bi6tzvk73kqrse"
+      "buildId": "2padelw4bfa4tmxyx7s4p3qlbm"
     }
   },
   "variants": [
@@ -31,10 +31,10 @@
           "name": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "size": 3161,
-          "sha512": "027968e76a9628b79597f102918463011b9108fbe254c990a5f15680080fef2c55af8fc3cd8055b1c67413d6875d68984be82ee6b22ea43089024636841194b1",
-          "sha256": "f78301d6597d605c9b40f6c5ceb676fd066f94907c1f4d38c152b7ebde5de25c",
-          "sha1": "5fb7ddf4247b184361a87700b1633b5242dd883a",
-          "md5": "b7e6fb1056d05bbc04fff1dc87c48a15"
+          "sha512": "6b445911cf0312e4190a7430dda93130258abbfce4ce12d1732f8a69cab0698fbdec143fcd377cbb1a264091953b4e52cd883062889da8f2eb5dc55411f3edef",
+          "sha256": "48f7e367976e064b23e07112d876b18126ff30129d7e07d7f4ddf454cf4e7cf5",
+          "sha1": "12d94fb53d897e0352ddc1a823f9e7daf2fe1b91",
+          "md5": "689fb2a8564ee1940a02b50f2928d1fc"
         }
       ]
     },
@@ -54,10 +54,10 @@
           "name": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-versions-6.5.0-kotlin-1.5-M2-SNAPSHOT.jar",
           "size": 3161,
-          "sha512": "027968e76a9628b79597f102918463011b9108fbe254c990a5f15680080fef2c55af8fc3cd8055b1c67413d6875d68984be82ee6b22ea43089024636841194b1",
-          "sha256": "f78301d6597d605c9b40f6c5ceb676fd066f94907c1f4d38c152b7ebde5de25c",
-          "sha1": "5fb7ddf4247b184361a87700b1633b5242dd883a",
-          "md5": "b7e6fb1056d05bbc04fff1dc87c48a15"
+          "sha512": "6b445911cf0312e4190a7430dda93130258abbfce4ce12d1732f8a69cab0698fbdec143fcd377cbb1a264091953b4e52cd883062889da8f2eb5dc55411f3edef",
+          "sha256": "48f7e367976e064b23e07112d876b18126ff30129d7e07d7f4ddf454cf4e7cf5",
+          "sha1": "12d94fb53d897e0352ddc1a823f9e7daf2fe1b91",
+          "md5": "689fb2a8564ee1940a02b50f2928d1fc"
         }
       ]
     }

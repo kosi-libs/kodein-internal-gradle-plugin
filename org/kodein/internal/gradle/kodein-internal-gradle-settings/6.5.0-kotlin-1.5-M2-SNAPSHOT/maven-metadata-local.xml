@@ -7,28 +7,28 @@
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
-    <lastUpdated>20210330090125</lastUpdated>
+    <lastUpdated>20210330111926</lastUpdated>
     <snapshotVersions>
+      <snapshotVersion>
+        <extension>module</extension>
+        <value>6.5.0-kotlin-1.5-M2-SNAPSHOT</value>
+        <updated>20210330111926</updated>
+      </snapshotVersion>
       <snapshotVersion>
         <extension>jar</extension>
         <value>6.5.0-kotlin-1.5-M2-SNAPSHOT</value>
-        <updated>20210330090125</updated>
+        <updated>20210330111926</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
         <value>6.5.0-kotlin-1.5-M2-SNAPSHOT</value>
-        <updated>20210330090125</updated>
+        <updated>20210330111926</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
         <value>6.5.0-kotlin-1.5-M2-SNAPSHOT</value>
-        <updated>20210330090125</updated>
-      </snapshotVersion>
-      <snapshotVersion>
-        <extension>module</extension>
-        <value>6.5.0-kotlin-1.5-M2-SNAPSHOT</value>
-        <updated>20210330090125</updated>
+        <updated>20210330111926</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
