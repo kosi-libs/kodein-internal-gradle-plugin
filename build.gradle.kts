@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.4.1"
+    version = "6.4.2"
 }
 
 repositories {
@@ -129,10 +129,11 @@ tasks.create<Sync>("copyMavenLocalArtifacts") {
     into("$buildDir/mvn-repo/$groupDir/")
 }
 
-val (gitUser, gitPassword) = (project.findProperty("com.github.http.auth") as? String)?.run {
+val gitPair: Pair<String?, String?> = (project.findProperty("com.github.http.auth") as? String)?.run {
     val auth = split(":")
     auth[0] to auth[1]
-} ?: System.getenv("GIT_USER") as String? to System.getenv("GIT_PASSWORD") as String?
+} ?: System.getenv("GIT_USER") to System.getenv("GIT_PASSWORD")
+val (gitUser, gitPassword) = gitPair
 if(gitUser != null && gitPassword != null) {
     System.setProperty("org.ajoberstar.grgit.auth.username", gitUser)
     System.setProperty("org.ajoberstar.grgit.auth.password", gitPassword)

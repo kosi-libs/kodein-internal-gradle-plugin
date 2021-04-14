@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 
 @Suppress("UnstableApiUsage")
@@ -119,6 +120,10 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
+            // https://github.com/Kotlin/dokka/issues/1455
+            tasks.withType<DokkaTask>().configureEach { dependsOn("assemble") }
+            tasks.withType<DokkaTaskPartial>().configureEach { dependsOn("assemble") }
+
             val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
                 delete(dokkaOutputDir)
             }
@@ -128,6 +133,15 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)
             }
+
+            tasks.getByName("dokkaGfm").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaGfmPartial").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaHtml").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaHtmlPartial").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaJavadoc").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaJavadocPartial").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaJekyll").dependsOn(tasks.getByName("build"))
+            tasks.getByName("dokkaJekyllPartial").dependsOn(tasks.getByName("build"))
 
             project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
