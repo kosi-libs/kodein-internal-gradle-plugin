@@ -1,0 +1,65 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-versions",
+    "version": "6.4.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.8.3",
+      "buildId": "owtdtu7bmbejrfvi2goofsjoa4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.4.2.jar",
+          "url": "kodein-internal-gradle-versions-6.4.2.jar",
+          "size": 3155,
+          "sha512": "8b317583df7781745887065d6bef8a02796f0d48a38995af112c672507a91b9570484975812c8864455925b0ea7b1d0f6f82d442b1b901a19e76a5892ea6b489",
+          "sha256": "e802408a8b88efb169147abef8410abdb2273ce00a090225b85ab9fcfd57b715",
+          "sha1": "d08ef2c12f0408c063cbea66c6531c5d41dd4a6b",
+          "md5": "7bf548a6d30993ef176f0789a8c368ec"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.4.2.jar",
+          "url": "kodein-internal-gradle-versions-6.4.2.jar",
+          "size": 3155,
+          "sha512": "8b317583df7781745887065d6bef8a02796f0d48a38995af112c672507a91b9570484975812c8864455925b0ea7b1d0f6f82d442b1b901a19e76a5892ea6b489",
+          "sha256": "e802408a8b88efb169147abef8410abdb2273ce00a090225b85ab9fcfd57b715",
+          "sha1": "d08ef2c12f0408c063cbea66c6531c5d41dd4a6b",
+          "md5": "7bf548a6d30993ef176f0789a8c368ec"
+        }
+      ]
+    }
+  ]
+}
