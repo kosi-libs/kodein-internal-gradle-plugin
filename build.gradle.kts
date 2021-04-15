@@ -2,7 +2,7 @@ import okhttp3.*
 import org.kodein.internal.gradle.*
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.3.72"
     `kotlin-dsl`
     `maven-publish`
     id("org.ajoberstar.git-publish") version "3.0.0"
