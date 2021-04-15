@@ -30,17 +30,12 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 .takeIf { it.isFound } ?.value as String?
 
     private fun Settings.applyPlugin() {
-
-        // https://github.com/gradle/gradle/issues/11412
-        System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
-
         val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
 
         pluginManagement {
             repositories {
                 mavenLocal()
                 mavenCentral()
-                jcenter()
                 google()
                 maven(url = "https://plugins.gradle.org/m2/")
                 maven(url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo")

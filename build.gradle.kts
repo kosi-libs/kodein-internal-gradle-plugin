@@ -2,7 +2,7 @@ import okhttp3.*
 import org.kodein.internal.gradle.*
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.31"
     `kotlin-dsl`
     `maven-publish`
     id("org.ajoberstar.git-publish") version "3.0.0"
@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.4.2"
+    version = "6.5.0-kotlin-1.5-RC"
 }
 
 repositories {
@@ -129,11 +129,10 @@ tasks.create<Sync>("copyMavenLocalArtifacts") {
     into("$buildDir/mvn-repo/$groupDir/")
 }
 
-val gitPair: Pair<String?, String?> = (project.findProperty("com.github.http.auth") as? String)?.run {
+val (gitUser, gitPassword) = (project.findProperty("com.github.http.auth") as? String)?.run {
     val auth = split(":")
     auth[0] to auth[1]
-} ?: System.getenv("GIT_USER") to System.getenv("GIT_PASSWORD")
-val (gitUser, gitPassword) = gitPair
+} ?: System.getenv("GIT_USER") as String? to System.getenv("GIT_PASSWORD") as String?
 if(gitUser != null && gitPassword != null) {
     System.setProperty("org.ajoberstar.grgit.auth.username", gitUser)
     System.setProperty("org.ajoberstar.grgit.auth.password", gitPassword)

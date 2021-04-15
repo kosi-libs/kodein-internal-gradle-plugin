@@ -16,7 +16,6 @@ class KodeinRootPlugin : KtPlugin<Project> {
             repositories {
                 mavenLocal()
                 mavenCentral()
-                jcenter()
                 google()
                 maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
                 maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
