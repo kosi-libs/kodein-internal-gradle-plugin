@@ -224,9 +224,24 @@ class KodeinMppExtension(val project: Project) {
         val native = Native
 
         object JS {
-            private fun KodeinMppExtension.jsPreset(): String =
-                if (project.properties["org.kodein.js.useOnlyLegacyCompiler"] == "true") "js"
-                else "jsBoth"
+            private fun KodeinMppExtension.jsPreset(): String {
+                val jsCompiler = project.properties["org.kodein.js.useCompiler"] as? String?
+                if (jsCompiler != null) {
+                    when (jsCompiler) {
+                        "ir" -> return "jsIr"
+                        "legacy" -> return "js"
+                        "both" -> return "jsBoth"
+                        else -> error("The property org.kodein.js.useCompiler must be \"ir\", \"legacy\", or \"both\".")
+                    }
+                }
+                // TODO: remove when deprecated for enough time
+                val onlyLegacy = project.properties["org.kodein.js.useOnlyLegacyCompiler"] == "true"
+                if (onlyLegacy) {
+                    project.logger.warn("Please change the property \"org.kodein.js.useOnlyLegacyCompiler = true\" to \"org.kodein.js.useCompiler = legacy\"")
+                    return "js"
+                }
+                return "jsBoth"
+            }
 
             val js = KodeinJsTarget(
                     name = "js",
