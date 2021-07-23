@@ -2,6 +2,7 @@ package org.kodein.internal.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
@@ -27,7 +28,7 @@ class KodeinLibraryJvmPlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
-            val javaPlugin = project.convention.getPluginByName<org.gradle.api.plugins.JavaPluginConvention>("java")
+            val javaPlugin = project.extensions.getByName<JavaPluginExtension>("java")
             val sourceSets = javaPlugin.sourceSets
             sourcesJar.from(sourceSets["main"].allSource)
 

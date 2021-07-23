@@ -19,7 +19,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 kotlinOptions.allWarningsAsErrors = true
             }
 
-            withConvention(JavaPluginConvention::class) {
+            with(extensions.getByType<JavaPluginExtension>()) {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8
             }
