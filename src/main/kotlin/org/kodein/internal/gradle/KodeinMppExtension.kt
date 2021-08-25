@@ -227,10 +227,10 @@ class KodeinMppExtension(val project: Project) {
             private fun KodeinMppExtension.jsPreset(): String {
                 val jsCompiler = project.properties["org.kodein.js.useCompiler"] as? String?
                 if (jsCompiler != null) {
-                    when (jsCompiler) {
-                        "ir" -> return "jsIr"
-                        "legacy" -> return "js"
-                        "both" -> return "jsBoth"
+                    return when (jsCompiler) {
+                        "ir" -> "jsIr"
+                        "legacy" -> "js"
+                        "both" -> "jsBoth"
                         else -> error("The property org.kodein.js.useCompiler must be \"ir\", \"legacy\", or \"both\".")
                     }
                 }
