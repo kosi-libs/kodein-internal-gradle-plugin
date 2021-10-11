@@ -133,6 +133,12 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = arrayListOf(SourceSets.allIos)
             )
 
+            val iosSimulatorArm64 = KodeinNativeTarget(
+                    name = "iosSimulatorArm64",
+                    nativeBuildOn = { isMacOsX },
+                    dependencies = arrayListOf(SourceSets.allIos)
+            )
+
             val iosX64 = KodeinNativeTarget(
                     name = "iosX64",
                     nativeBuildOn = { isMacOsX },
@@ -141,6 +147,12 @@ class KodeinMppExtension(val project: Project) {
 
             val tvosArm64 = KodeinNativeTarget(
                     name = "tvosArm64",
+                    nativeBuildOn = { isMacOsX },
+                    dependencies = arrayListOf(SourceSets.allDarwin)
+            )
+
+            val tvosSimulatorArm64 = KodeinNativeTarget(
+                    name = "tvosSimulatorArm64",
                     nativeBuildOn = { isMacOsX },
                     dependencies = arrayListOf(SourceSets.allDarwin)
             )
@@ -159,6 +171,12 @@ class KodeinMppExtension(val project: Project) {
 
             val watchosArm64 = KodeinNativeTarget(
                     name = "watchosArm64",
+                    nativeBuildOn = { isMacOsX },
+                    dependencies = arrayListOf(SourceSets.allDarwin)
+            )
+
+            val watchosSimulatorArm64 = KodeinNativeTarget(
+                    name = "watchosSimulatorArm64",
                     nativeBuildOn = { isMacOsX },
                     dependencies = arrayListOf(SourceSets.allDarwin)
             )
@@ -193,6 +211,12 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = arrayListOf(SourceSets.allPosix)
             )
 
+            val macosArm64 = KodeinNativeTarget(
+                    name = "macosArm64",
+                    nativeBuildOn = { isMacOsX },
+                    dependencies = arrayListOf(SourceSets.allPosix)
+            )
+
             val mingwX64 = KodeinNativeTarget(
                     name = "mingwX64",
                     nativeBuildOn = { isWindows },
@@ -203,13 +227,14 @@ class KodeinMppExtension(val project: Project) {
             val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
             val allTvos = listOf(tvosArm64, tvosX64)
             val allDarwin = allIos + allWatchos + allTvos
+            val allSilicon = listOf(macosArm64, iosSimulatorArm64, watchosSimulatorArm64, tvosSimulatorArm64)
 
             val allDesktop = listOf(linuxX64, macosX64, mingwX64)
 
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin
+            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin + allSilicon
 
             val all = allPosix + mingwX64
 

@@ -4,8 +4,8 @@ import org.gradle.api.*
 
 object KodeinVersions {
 
-    const val kotlin = "1.5.30"
-    const val dokka = "1.5.0"
+    const val kotlin = "1.5.31"
+    const val dokka = "1.5.30"
     const val androidBuildTools = "4.1.3"
     const val androidNdk = "21.3.6528147"
 
