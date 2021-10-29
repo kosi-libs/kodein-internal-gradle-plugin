@@ -7,18 +7,19 @@ import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.kodein.internal.gradle.KodeinMppExtension.Targets.JS.jsPreset
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 
 @Suppress("UNUSED_TYPEALIAS_PARAMETER")
 typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
 typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsTarget>
+typealias KodeinJsIrTarget = KodeinMppExtension.KodeinTarget<KotlinJsIrTarget>
 typealias KodeinNativeTarget = KodeinMppExtension.KodeinTarget<KotlinNativeTarget>
 typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTarget>
 
@@ -249,23 +250,21 @@ class KodeinMppExtension(val project: Project) {
         val native = Native
 
         object JS {
+            private fun KodeinJsTarget.ir(conf: TargetBuilder<KotlinJsIrTarget>.() -> Unit): KodeinJsIrTarget =
+                KodeinJsIrTarget(
+                    name = name,
+                    preset = { "jsIr" },
+                    dependencies = dependencies,
+                    conf = conf
+                )
+
             private fun KodeinMppExtension.jsPreset(): String {
-                val jsCompiler = project.properties["org.kodein.js.useCompiler"] as? String?
-                if (jsCompiler != null) {
-                    return when (jsCompiler) {
-                        "ir" -> "jsIr"
-                        "legacy" -> "js"
-                        "both" -> "jsBoth"
-                        else -> error("The property org.kodein.js.useCompiler must be \"ir\", \"legacy\", or \"both\".")
-                    }
+                return when (project.properties["org.kodein.js.useCompiler"] as? String?) {
+                    "ir" -> error("To target JS IR only, use \"add(kodeinTargets.js.ir.*)\"")
+                    "legacy" -> "js"
+                    "both", null -> "jsBoth"
+                    else -> error("The property org.kodein.js.useCompiler must be \"ir\", \"legacy\", or \"both\".")
                 }
-                // TODO: remove when deprecated for enough time
-                val onlyLegacy = project.properties["org.kodein.js.useOnlyLegacyCompiler"] == "true"
-                if (onlyLegacy) {
-                    project.logger.warn("Please change the property \"org.kodein.js.useOnlyLegacyCompiler = true\" to \"org.kodein.js.useCompiler = legacy\"")
-                    return "js"
-                }
-                return "jsBoth"
             }
 
             val js = KodeinJsTarget(
@@ -289,7 +288,15 @@ class KodeinMppExtension(val project: Project) {
                     conf = { target.nodejs() }
             )
 
-            val all = listOf(js, nodejs, webjs)
+            object IR {
+                val js = JS.js.ir { target.browser(); target.nodejs() }
+                val webjs = JS.webjs.ir { target.browser() }
+                val nodejs = JS.webjs.ir { target.nodejs() }
+                val all = listOf(js, nodejs, webjs)
+            }
+
+            val ir = IR
+            val all = listOf(js, nodejs, webjs) + ir.all
         }
 
         val js = JS
