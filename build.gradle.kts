@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.11.0"
+    version = "6.12.0"
 }
 
 repositories {
@@ -36,6 +36,7 @@ repositories {
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${KodeinVersions.kotlin}")
 
     api(project(":kodein-internal-gradle-versions"))
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
