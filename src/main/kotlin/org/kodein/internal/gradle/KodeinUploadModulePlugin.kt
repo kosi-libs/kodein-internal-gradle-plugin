@@ -41,16 +41,17 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
         project.extensions.add("kodeinUpload", ext)
         evaluationDependsOn(rootProject.path)
 
+        tasks.withType<AbstractPublishToMaven>()
+            .configureEach {
+                onlyIf {
+                    if (publication in disabledPublications) {
+                        logger.warn("Publication ${publication.name} disabled")
+                        false
+                    } else true
+                }
+            }
+
         afterEvaluate {
-            tasks.withType<AbstractPublishToMaven>()
-                    .applyEach {
-                        onlyIf {
-                            if (publication in disabledPublications) {
-                                logger.warn("Publication ${publication.name} disabled")
-                                false
-                            } else true
-                        }
-                    }
 
             val root = rootProject.plugins.findPlugin(KodeinUploadRootPlugin::class)
                     ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
@@ -76,23 +77,24 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
 
                 afterEvaluate {
                     tasks.withType<PublishToMavenRepository>()
-                        .filter { it.repository.name == "ossrhStaging" }
-                        .applyEach {
-                            onlyIf {
-                                logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                                inputs.files.forEach {
-                                    logger.warn("    - " + it.name)
+                        .configureEach {
+                            if (repository.name == "ossrhStaging") {
+                                onlyIf {
+                                    logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                    inputs.files.forEach {
+                                        logger.warn("    - " + it.name)
+                                    }
+                                    !sonatypeConfig.dryRun
                                 }
-                                !sonatypeConfig.dryRun
-                            }
 
-                            doFirst {
-                                if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
-                                    error("Cannot publish to OSSRH with classpath fixes!")
-                                }
-                                val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-                                if (excludeTargets.isNotEmpty()) {
-                                    logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
+                                doFirst {
+                                    if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
+                                        error("Cannot publish to OSSRH with classpath fixes!")
+                                    }
+                                    val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                                    if (excludeTargets.isNotEmpty()) {
+                                        logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
+                                    }
                                 }
                             }
                         }
@@ -129,19 +131,19 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             val javadocJar = tasks.register<Jar>("javadocJar") {
-                dependsOn(deleteDokkaOutputDir, tasks.getByName<DokkaTask>("dokkaHtml"))
+                dependsOn(deleteDokkaOutputDir, "dokkaHtml")
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)
             }
 
-            tasks.getByName("dokkaGfm").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaGfmPartial").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaHtml").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaHtmlPartial").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaJavadoc").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaJavadocPartial").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaJekyll").dependsOn(tasks.getByName("build"))
-            tasks.getByName("dokkaJekyllPartial").dependsOn(tasks.getByName("build"))
+            tasks.named("dokkaGfm") { dependsOn("build") }
+            tasks.named("dokkaGfmPartial") { dependsOn("build") }
+            tasks.named("dokkaHtml") { dependsOn("build") }
+            tasks.named("dokkaHtmlPartial") { dependsOn("build") }
+            tasks.named("dokkaJavadoc") { dependsOn("build") }
+            tasks.named("dokkaJavadocPartial") { dependsOn("build") }
+            tasks.named("dokkaJekyll") { dependsOn("build") }
+            tasks.named("dokkaJekyllPartial") { dependsOn("build") }
 
             project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {

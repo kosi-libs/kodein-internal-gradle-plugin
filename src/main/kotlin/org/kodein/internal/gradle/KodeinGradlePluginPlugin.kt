@@ -4,7 +4,6 @@ import com.gradle.publish.PluginBundleExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.plugin
-import org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport
 
 class KodeinGradlePluginPlugin : KtPlugin<Project> {
 
