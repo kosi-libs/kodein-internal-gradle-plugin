@@ -36,7 +36,6 @@ include(
 
 * Allows modules segmentation (for target exclusion).
 * Adds all necessary repositories to project's gradle classpath.
-* Disables secure hashing for maven upload (due to a Bintray bug).
 * Synchronizes all versions of kodein plugins.
 * Synchronizes version of Kotlin & KotlinX Serialization plugins.
 
@@ -127,7 +126,7 @@ A Kodein local property `key` can be set:
 
 ## JVM module plugin
 
-* If the module is published, apply the `org.kodein.library.jvm`.
+* If the module is published, apply the `org.kodein.library.jvm` plugin.
 * If the module is internal to the project, apply the `org.kodein.jvm` plugin.
 
 ### Benefits
@@ -145,7 +144,7 @@ A Kodein local property `key` can be set:
 
 ## Android module plugin
 
-* If the module is published, apply the `org.kodein.library.android`.
+* If the module is published, apply the `org.kodein.library.android` plugin.
 * If the module is internal to the project, apply the `org.kodein.android` plugin.
 
 ### Benefits
@@ -283,3 +282,18 @@ They are configured in **kodein local properties**:
 ```properties
 classpathFixes = nativeHost
 ```
+
+
+## Gradle plugin module plugin
+
+Apply the `org.kodein.gradle-plugin` plugin.
+
+You also should apply the `kotlin-dsl` plugin as it does not come bundled.
+
+### Benefits
+
+* Applies all benefits provided by the "JVM module" plugin.
+* Library:
+  * Creates maven artifacts (with source jar).
+  * Adds `org.kodein.upload.module` plugin.
+  * Sets the explicit API Kotlin option
