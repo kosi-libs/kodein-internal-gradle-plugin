@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.13.1"
+    version = "6.14.0"
 }
 
 repositories {
