@@ -36,6 +36,17 @@ class KodeinMppPlugin : KtPlugin<Project> {
                     }
                 }
 
+                // https://youtrack.jetbrains.com/issue/KT-46257
+                targets["metadata"].compilations.filter {
+                    it.name in listOf("allDarwinMain", "allIosMain", "allNativeMain", "allPosixMain")
+                }.applyEach {
+                    compileKotlinTask.doFirst {
+                        compileDependencyFiles = files(
+                            compileDependencyFiles.filterNot { it.absolutePath.endsWith("klib/common/stdlib") }
+                        )
+                    }
+                }
+
                 sourceSets.all {
                     languageSettings.progressiveMode = true
                 }
