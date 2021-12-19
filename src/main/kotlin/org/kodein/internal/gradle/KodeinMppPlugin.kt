@@ -1,12 +1,14 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.*
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 class KodeinMppPlugin : KtPlugin<Project> {
+    private val os = OperatingSystem.current()
 
     @Suppress("UnstableApiUsage")
     override fun Project.applyPlugin() {
@@ -42,7 +44,11 @@ class KodeinMppPlugin : KtPlugin<Project> {
                 }.applyEach {
                     compileKotlinTask.doFirst {
                         compileDependencyFiles = files(
-                            compileDependencyFiles.filterNot { it.absolutePath.endsWith("klib/common/stdlib") }
+                            compileDependencyFiles.filterNot {
+                                it.absolutePath.endsWith(
+                                    if (os.isWindows) """klib\common\stdlib""" else """klib/common/stdlib"""
+                                )
+                            }
                         )
                     }
                 }
