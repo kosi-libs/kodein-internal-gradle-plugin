@@ -13,6 +13,7 @@ class KodeinGradlePluginPlugin : KtPlugin<Project> {
             plugin("java-gradle-plugin")
             plugin("maven-publish")
             plugin("com.gradle.plugin-publish")
+            plugin<KodeinUploadModulePlugin>()
         }
 
         System.getenv("GRADLE_PUBLISH_KEY")?.let { extra["gradle.publish.key"] = it }
