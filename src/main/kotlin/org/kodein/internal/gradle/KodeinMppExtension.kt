@@ -224,18 +224,17 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = arrayListOf(SourceSets.allNative)
             )
 
-            val allIos = listOf(iosArm32, iosArm64, iosX64)
-            val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86)
-            val allTvos = listOf(tvosArm64, tvosX64)
+            val allIos = listOf(iosArm32, iosArm64, iosX64, iosSimulatorArm64)
+            val allWatchos = listOf(watchosArm32, watchosArm64, watchosX86, watchosSimulatorArm64)
+            val allTvos = listOf(tvosArm64, tvosX64, tvosSimulatorArm64)
             val allDarwin = allIos + allWatchos + allTvos
-            val allSilicon = listOf(macosArm64, iosSimulatorArm64, watchosSimulatorArm64, tvosSimulatorArm64)
 
-            val allDesktop = listOf(linuxX64, macosX64, mingwX64)
+            val allDesktop = listOf(linuxX64, macosX64, macosArm64, mingwX64)
 
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin + allSilicon
+            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin
 
             val all = allPosix + mingwX64
 
