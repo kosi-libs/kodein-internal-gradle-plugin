@@ -234,7 +234,7 @@ class KodeinMppExtension(val project: Project) {
             val allEmbeddedLinux = listOf(linuxArm32Hfp, linuxArm64)
             val allLinux = allEmbeddedLinux + linuxX64
 
-            val allPosix = listOf(linuxX64, macosX64) + allEmbeddedLinux + allDarwin
+            val allPosix = listOf(linuxX64, macosX64, macosArm64) + allEmbeddedLinux + allDarwin
 
             val all = allPosix + mingwX64
 
