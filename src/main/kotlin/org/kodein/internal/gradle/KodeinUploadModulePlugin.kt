@@ -150,14 +150,16 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
 
             project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
-                val artifactJavadoc = tasks.register<Copy>("${artifactId}JavadocJar") {
-                    dependsOn(javadocJar)
-                    from(javadocJar)
-                    into("$buildDir/tmp/javadocJars/$artifactId")
-                }
-                artifact("$buildDir/tmp/javadocJars/$artifactId/${javadocJar.get().archiveFileName.get()}") {
-                    builtBy(artifactJavadoc)
-                    classifier = "javadoc"
+                if (!name.endsWith("PluginMarkerMaven")) {
+                    val artifactJavadoc = tasks.maybeCreate<Copy>("${artifactId}JavadocJar").apply {
+                        dependsOn(javadocJar)
+                        from(javadocJar)
+                        into("$buildDir/tmp/javadocJars/$artifactId")
+                    }
+                    artifact("$buildDir/tmp/javadocJars/$artifactId/${javadocJar.get().archiveFileName.get()}") {
+                        builtBy(artifactJavadoc)
+                        classifier = "javadoc"
+                    }
                 }
                 pom {
                     name.set(ext.name)

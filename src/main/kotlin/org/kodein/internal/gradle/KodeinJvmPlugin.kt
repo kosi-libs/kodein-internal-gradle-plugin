@@ -41,7 +41,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
         dependencies {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test")
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit")
-            "testImplementation"("junit:junit:4.12")
+            "testImplementation"("junit:junit:4.13.2")
         }
 
         afterEvaluate {
@@ -49,7 +49,7 @@ class KodeinJvmPlugin : KtPlugin<Project> {
                 languageSettings.progressiveMode = true
             }
 
-            configureJvmTarget(this)
+            configureJvmTarget(project)
         }
 
         configureTestLogsPrint()

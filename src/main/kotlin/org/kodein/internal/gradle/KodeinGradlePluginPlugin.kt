@@ -23,5 +23,7 @@ class KodeinGradlePluginPlugin : KtPlugin<Project> {
             website = "http://kodein.org"
             vcsUrl = "https://github.com/Kodein-Framework/${rootProject.name}.git"
         }
+
+        KodeinLibraryJvmPlugin.addJvmSourcesJar(project, "pluginMaven")
     }
 }

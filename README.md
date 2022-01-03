@@ -67,6 +67,7 @@ Each Kodein project must have a no-source root module with the `org.kodein.root`
 
 * Configures standard dependencies repositories (maven local, jCenter, Google, Kotlin EAP).
 * Applies the `org.kodein.upload.root` plugin.
+* Allows to generate a report of all dependencies for all modules (with `./gradlew allDependencies --scan`)
 
 
 ## MavenCentral (OSSRH):

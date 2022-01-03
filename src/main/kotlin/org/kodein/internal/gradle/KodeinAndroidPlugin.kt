@@ -35,7 +35,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
         dependencies {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test:${KodeinVersions.kotlin}")
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
-            "testImplementation"("junit:junit:4.12")
+            "testImplementation"("junit:junit:4.13.2")
 
             "androidTestImplementation"("androidx.test.ext:junit:1.1.1")
             "androidTestImplementation"("androidx.test.espresso:espresso-core:3.2.0")
@@ -47,7 +47,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             }
         }
 
-        KodeinJvmPlugin.configureJvmTarget(this)
+        KodeinJvmPlugin.configureJvmTarget(project)
 
         configureTestLogsPrint()
     }
