@@ -7,6 +7,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
@@ -81,8 +82,9 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                             if (repository.name == "ossrhStaging") {
                                 onlyIf {
                                     logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                    val maxSize = inputs.files.maxOf { it.name.length }
                                     inputs.files.forEach {
-                                        logger.warn("    - " + it.name)
+                                        logger.warn("    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${it.relativeTo(rootDir).path})")
                                     }
                                     !sonatypeConfig.dryRun
                                 }
@@ -129,9 +131,10 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
             val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
                 delete(dokkaOutputDir)
             }
+            tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
 
             val javadocJar = tasks.register<Jar>("javadocJar") {
-                dependsOn(deleteDokkaOutputDir, "dokkaHtml")
+                dependsOn("dokkaHtml")
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)
             }
@@ -147,7 +150,15 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
 
             project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
-                artifact(javadocJar)
+                val artifactJavadoc = tasks.register<Copy>("${artifactId}JavadocJar") {
+                    dependsOn(javadocJar)
+                    from(javadocJar)
+                    into("$buildDir/tmp/javadocJars/$artifactId")
+                }
+                artifact("$buildDir/tmp/javadocJars/$artifactId/${javadocJar.get().archiveFileName.get()}") {
+                    builtBy(artifactJavadoc)
+                    classifier = "javadoc"
+                }
                 pom {
                     name.set(ext.name)
                     description.set(ext.description)
