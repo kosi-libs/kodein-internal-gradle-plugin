@@ -125,8 +125,8 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             // https://github.com/Kotlin/dokka/issues/1455
-            tasks.withType<DokkaTask>().configureEach { dependsOn("assemble") }
-            tasks.withType<DokkaTaskPartial>().configureEach { dependsOn("assemble") }
+            // tasks.withType<DokkaTask>().configureEach { dependsOn("assemble") }
+            // tasks.withType<DokkaTaskPartial>().configureEach { dependsOn("assemble") }
 
             val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
                 delete(dokkaOutputDir)
@@ -134,19 +134,19 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
             tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
 
             val javadocJar = tasks.register<Jar>("javadocJar") {
-                dependsOn("dokkaHtml")
+                dependsOn("dokkaHtml") // TODO this breaks some builds (e.g. Windows...)
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)
             }
 
-            tasks.named("dokkaGfm") { dependsOn("build") }
-            tasks.named("dokkaGfmPartial") { dependsOn("build") }
-            tasks.named("dokkaHtml") { dependsOn("build") }
-            tasks.named("dokkaHtmlPartial") { dependsOn("build") }
-            tasks.named("dokkaJavadoc") { dependsOn("build") }
-            tasks.named("dokkaJavadocPartial") { dependsOn("build") }
-            tasks.named("dokkaJekyll") { dependsOn("build") }
-            tasks.named("dokkaJekyllPartial") { dependsOn("build") }
+            // tasks.named("dokkaGfm") { dependsOn("build") }
+            // tasks.named("dokkaGfmPartial") { dependsOn("build") }
+            // tasks.named("dokkaHtml") { dependsOn("build") }
+            // tasks.named("dokkaHtmlPartial") { dependsOn("build") }
+            // tasks.named("dokkaJavadoc") { dependsOn("build") }
+            // tasks.named("dokkaJavadocPartial") { dependsOn("build") }
+            // tasks.named("dokkaJekyll") { dependsOn("build") }
+            // tasks.named("dokkaJekyllPartial") { dependsOn("build") }
 
             project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
