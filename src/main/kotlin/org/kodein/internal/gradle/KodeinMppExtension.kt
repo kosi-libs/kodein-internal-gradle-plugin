@@ -97,8 +97,6 @@ class KodeinMppExtension(val project: Project) {
                     dependencies = arrayListOf(SourceSets.allJvm),
                     conf = {
                         target.compilations.all {
-                            compileKotlinTask.sourceCompatibility = "1.8"
-                            compileKotlinTask.targetCompatibility = "1.8"
                             kotlinOptions.jvmTarget = "1.8"
                         }
                     }

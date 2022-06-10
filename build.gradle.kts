@@ -5,8 +5,8 @@ plugins {
     kotlin("jvm") version "1.4.31"
     `kotlin-dsl`
     `maven-publish`
-    id("org.ajoberstar.git-publish") version "3.0.0"
-    id("org.ajoberstar.grgit") version "4.1.0"
+    id("org.ajoberstar.git-publish") version "4.1.0"
+    id("org.ajoberstar.grgit") version "5.0.0"
 }
 
 buildscript {
@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.17.1"
+    version = "6.18.0"
 }
 
 repositories {
@@ -28,8 +28,6 @@ repositories {
     mavenCentral()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
-    maven(url = "https://ajoberstar.github.io/bintray-backup/")
 }
 
 dependencies {
