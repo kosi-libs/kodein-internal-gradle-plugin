@@ -2,7 +2,7 @@ import okhttp3.*
 import org.kodein.internal.gradle.*
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.6.21"
     `kotlin-dsl`
     `maven-publish`
     id("org.ajoberstar.git-publish") version "4.1.0"
@@ -61,7 +61,6 @@ fun getPublishingVersion(): String {
 allprojects {
     afterEvaluate {
         val sourcesJar = task<Jar>("sourcesJar") {
-            @Suppress("UnstableApiUsage")
             archiveClassifier.set("sources")
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             from(sourceSets["main"].allSource)
