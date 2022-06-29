@@ -1,5 +1,6 @@
-import okhttp3.*
-import org.kodein.internal.gradle.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.kodein.internal.gradle.KodeinVersions
 
 plugins {
     kotlin("jvm") version "1.6.21"
@@ -20,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.18.0"
+    version = "6.18.1"
 }
 
 repositories {
@@ -78,14 +79,14 @@ allprojects {
                         url.set("https://opensource.org/licenses/MIT")
                     }
                 }
-                url.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin")
+                url.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin")
                 issueManagement {
                     name.set("Github")
-                    url.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin/issues")
+                    url.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin/issues")
                 }
                 scm {
-                    connection.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git")
-                    url.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin")
+                    connection.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin.git")
+                    url.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin")
                 }
             }
         }
@@ -101,8 +102,8 @@ task("validateVersionBeforeGitPublish") {
         if(!publishingVersion.matches("""^(\d*)\.(\d*)\.(\d*)$""".toRegex())) return@doLast
 
         // Verify that the SemVer version does not exist on the mvn-repo branch
-        //  https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/5.5.0/kodein-internal-gradle-plugin-5.5.0.pom
-        val url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin"
+        //  https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/5.5.0/kodein-internal-gradle-plugin-5.5.0.pom
+        val url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin"
         val request = Request.Builder()
             .url("$url/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/$publishingVersion/kodein-internal-gradle-plugin-$publishingVersion.pom")
             .get()
@@ -139,9 +140,11 @@ if(gitUser != null && gitPassword != null) {
 }
 
 gitPublish {
-    repoUri.set("https://github.com/Kodein-Framework/kodein-internal-gradle-plugin.git")
+    repoUri.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin.git")
     branch.set("mvn-repo")
-    contents.from("$buildDir/mvn-repo")
+    contents {
+        from("$buildDir/mvn-repo")
+    }
     preserve {
         include("**")
     }
@@ -151,8 +154,8 @@ gitPublish {
 
 tasks["gitPublishCopy"].dependsOn("copyMavenLocalArtifacts")
 
-tasks["gitPublishCommit"].doFirst {
-    if (!grgit.status().isClean) {
-        error("Refusing to commit new pages on a non-clean repo. Please commit first.\n${grgit.status()}")
-    }
-}
+//tasks["gitPublishCommit"].doFirst {
+//    if (!grgit.status().isClean) {
+//        error("Refusing to commit new pages on a non-clean repo. Please commit first.\n${grgit.status()}")
+//    }
+//}

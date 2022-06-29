@@ -1,8 +1,8 @@
 # Internal Gradle Configuration Plugins
 
-This is a collection of gradle plugin that contain the common configuration for all Kodein Framework components.
+This is a collection of gradle plugin that contain the common configuration for all Kodein Open-Source Initiative components.
 
-This project is **NOT** by itself a Kodein Framework component, it is a build tool intended to be used **ONLY** by Kodein components.
+This project is **NOT** by itself a Kodein Open-Source Initiative component, it is a build tool intended to be used **ONLY** by Kodein components.
 
 
 ## Settings
@@ -15,7 +15,7 @@ Here's a standard `settings.gradle.kts`:
 buildscript {
     repositories {
         mavenLocal()
-        maven(url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo")
+        maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
     }
     dependencies {
         classpath("org.kodein.internal.gradle:kodein-internal-gradle-settings:VERSION")

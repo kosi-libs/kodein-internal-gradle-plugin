@@ -173,11 +173,11 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                     url.set("http://kodein.org")
                     issueManagement {
                         system.set("Github")
-                        url.set("https://github.com/Kodein-Framework/${root.publication.projectName}/issues")
+                        url.set("https://github.com/kosi-libs/${root.publication.projectName}/issues")
                     }
                     scm {
-                        connection.set("https://github.com/Kodein-Framework/${root.publication.projectName}.git")
-                        url.set("https://github.com/Kodein-Framework/${root.publication.projectName}")
+                        connection.set("https://github.com/kosi-libs/${root.publication.projectName}.git")
+                        url.set("https://github.com/kosi-libs/${root.publication.projectName}")
                     }
                     developers {
                         developer {

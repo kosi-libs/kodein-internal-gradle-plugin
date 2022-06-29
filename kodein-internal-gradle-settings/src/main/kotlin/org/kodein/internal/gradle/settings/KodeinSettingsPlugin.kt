@@ -37,8 +37,9 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 mavenLocal()
                 mavenCentral()
                 google()
+                gradlePluginPortal()
                 maven(url = "https://plugins.gradle.org/m2/")
-                maven(url = "https://raw.githubusercontent.com/Kodein-Framework/kodein-internal-gradle-plugin/mvn-repo")
+                maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
             }

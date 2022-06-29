@@ -21,7 +21,7 @@ class KodeinGradlePluginPlugin : KtPlugin<Project> {
 
         extensions.configure<PluginBundleExtension>("pluginBundle") {
             website = "http://kodein.org"
-            vcsUrl = "https://github.com/Kodein-Framework/${rootProject.name}.git"
+            vcsUrl = "https://github.com/kosi-libs/${rootProject.name}.git"
         }
 
         KodeinLibraryJvmPlugin.addJvmSourcesJar(project, "pluginMaven")
