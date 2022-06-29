@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.18.1"
+    version = "6.18.2"
 }
 
 repositories {
@@ -37,7 +37,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${KodeinVersions.kotlin}")
 
     api(project(":kodein-internal-gradle-versions"))
-    api("org.jetbrains.kotlin:kotlin-gradle-plugin:${KodeinVersions.kotlin}")
+    api(kotlin("gradle-plugin", version = KodeinVersions.kotlin))
+    api(kotlin("serialization", version = KodeinVersions.kotlin))
     api("com.android.tools.build:gradle:${KodeinVersions.androidBuildTools}")
     api("org.jetbrains.dokka:dokka-gradle-plugin:${KodeinVersions.dokka}")
     api("org.jetbrains.dokka:dokka-core:${KodeinVersions.dokka}")
