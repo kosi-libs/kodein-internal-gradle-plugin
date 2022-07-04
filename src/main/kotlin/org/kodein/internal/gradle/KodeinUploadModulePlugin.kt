@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle
 
+import com.android.tools.r8.internal.it
 import org.gradle.api.Project
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
@@ -124,17 +125,13 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            // https://github.com/Kotlin/dokka/issues/1455
-            // tasks.withType<DokkaTask>().configureEach { dependsOn("assemble") }
-            // tasks.withType<DokkaTaskPartial>().configureEach { dependsOn("assemble") }
-
             val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
                 delete(dokkaOutputDir)
             }
             tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
 
             val javadocJar = tasks.register<Jar>("javadocJar") {
-                dependsOn("dokkaHtml") // TODO this breaks some builds (e.g. Windows...)
+                dependsOn("dokkaHtml")
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)
             }
