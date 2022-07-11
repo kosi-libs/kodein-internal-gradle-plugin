@@ -81,10 +81,10 @@
           "name": "kodein-internal-gradle-plugin-6.18.3-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.18.3-SNAPSHOT.jar",
           "size": 278414,
-          "sha512": "4d8269c37cc00aa7da460b06bcd7d871e381ef70c344a8d42cd2cd3d6ce097e78e068ecfdbe5158e3d3a6c3f2b93c48ac2cbe3f07621e6e211f6c5069dfb70f3",
-          "sha256": "6a349f0c28841ad874fa3da4026cf030b073d870ef70961dbc749cc276e3e6bb",
-          "sha1": "0615a171985e05ae93d9604828a40f1565a3e332",
-          "md5": "71049b2712437f55e24d5ebbe93d1aff"
+          "sha512": "a892037b25e820ee6ea90ba907dad0a3b9b054b6f75d0647d8801c1033547547302ee9706a353180d5236ce8edb86f6dcae5b1700c844cd156679027cdafdf6e",
+          "sha256": "09060cd8d6434473b3a0119847d62d7af3012d2ea8d10f98e0401426feedf32b",
+          "sha1": "576c7975abefb9659fa6784d8697e9e60a900804",
+          "md5": "2fb9f3c9e2aca133064528d4422fd6c0"
         }
       ]
     },
@@ -162,10 +162,10 @@
           "name": "kodein-internal-gradle-plugin-6.18.3-SNAPSHOT.jar",
           "url": "kodein-internal-gradle-plugin-6.18.3-SNAPSHOT.jar",
           "size": 278414,
-          "sha512": "4d8269c37cc00aa7da460b06bcd7d871e381ef70c344a8d42cd2cd3d6ce097e78e068ecfdbe5158e3d3a6c3f2b93c48ac2cbe3f07621e6e211f6c5069dfb70f3",
-          "sha256": "6a349f0c28841ad874fa3da4026cf030b073d870ef70961dbc749cc276e3e6bb",
-          "sha1": "0615a171985e05ae93d9604828a40f1565a3e332",
-          "md5": "71049b2712437f55e24d5ebbe93d1aff"
+          "sha512": "a892037b25e820ee6ea90ba907dad0a3b9b054b6f75d0647d8801c1033547547302ee9706a353180d5236ce8edb86f6dcae5b1700c844cd156679027cdafdf6e",
+          "sha256": "09060cd8d6434473b3a0119847d62d7af3012d2ea8d10f98e0401426feedf32b",
+          "sha1": "576c7975abefb9659fa6784d8697e9e60a900804",
+          "md5": "2fb9f3c9e2aca133064528d4422fd6c0"
         }
       ]
     }
