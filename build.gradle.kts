@@ -6,8 +6,8 @@ plugins {
     kotlin("jvm") version "1.6.21"
     `kotlin-dsl`
     `maven-publish`
-    id("org.ajoberstar.git-publish") version "4.1.0"
-    id("org.ajoberstar.grgit") version "5.0.0"
+    id("org.ajoberstar.git-publish") version "3.0.0"
+    id("org.ajoberstar.grgit") version "4.1.0"
 }
 
 buildscript {
@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.18.3"
+    version = "6.18.3-SNAPSHOT"
 }
 
 repositories {
@@ -29,6 +29,8 @@ repositories {
     mavenCentral()
     google()
     maven(url = "https://plugins.gradle.org/m2/")
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
+    maven(url = "https://ajoberstar.github.io/bintray-backup/")
 }
 
 dependencies {
@@ -155,8 +157,8 @@ gitPublish {
 
 tasks["gitPublishCopy"].dependsOn("copyMavenLocalArtifacts")
 
-//tasks["gitPublishCommit"].doFirst {
-//    if (!grgit.status().isClean) {
-//        error("Refusing to commit new pages on a non-clean repo. Please commit first.\n${grgit.status()}")
-//    }
-//}
+tasks["gitPublishCommit"].doFirst {
+    if (!grgit.status().isClean) {
+        error("Refusing to commit new pages on a non-clean repo. Please commit first.\n${grgit.status()}")
+    }
+}
