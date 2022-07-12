@@ -1,0 +1,64 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-versions",
+    "version": "6.18.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.18.3.jar",
+          "url": "kodein-internal-gradle-versions-6.18.3.jar",
+          "size": 3149,
+          "sha512": "c295b6743d6c610b48cbb133d949fd7c0dacc62079495d33ff1b19eef70a37881fd99ce5aef0d076e4c3773e9914e3b783569f90b629ebe667afdbad2623acce",
+          "sha256": "dabcd207643796f1e60b4e68dc60c8754e073f14d7df9f1ca920c30202acfab1",
+          "sha1": "08fe50dfee97284b47f415343434b715d2dc66a3",
+          "md5": "d577f783cb615a0043a27044537e38cc"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.18.3.jar",
+          "url": "kodein-internal-gradle-versions-6.18.3.jar",
+          "size": 3149,
+          "sha512": "c295b6743d6c610b48cbb133d949fd7c0dacc62079495d33ff1b19eef70a37881fd99ce5aef0d076e4c3773e9914e3b783569f90b629ebe667afdbad2623acce",
+          "sha256": "dabcd207643796f1e60b4e68dc60c8754e073f14d7df9f1ca920c30202acfab1",
+          "sha1": "08fe50dfee97284b47f415343434b715d2dc66a3",
+          "md5": "d577f783cb615a0043a27044537e38cc"
+        }
+      ]
+    }
+  ]
+}
