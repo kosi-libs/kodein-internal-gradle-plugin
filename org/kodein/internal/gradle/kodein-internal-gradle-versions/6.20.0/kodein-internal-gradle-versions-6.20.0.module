@@ -1,0 +1,64 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-versions",
+    "version": "6.20.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.20.0.jar",
+          "url": "kodein-internal-gradle-versions-6.20.0.jar",
+          "size": 3152,
+          "sha512": "a6ca6113486b1a46837b2e1ab9ed65d96002f819b914899cf29df09f915895149774b1406aad131a86f1f7b92f2a752a03209d364f9f951b3b70fa78e9097212",
+          "sha256": "fc9702ea9a8f9387b64fb6e21a1a75d35865a31ded9a1f93e3c24ffdf5eed4db",
+          "sha1": "0f17294dadc2c6d7c7554e1c3153ce38d4fa89f8",
+          "md5": "861384af093d5fd65f3252d9723ef78f"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-versions-6.20.0.jar",
+          "url": "kodein-internal-gradle-versions-6.20.0.jar",
+          "size": 3152,
+          "sha512": "a6ca6113486b1a46837b2e1ab9ed65d96002f819b914899cf29df09f915895149774b1406aad131a86f1f7b92f2a752a03209d364f9f951b3b70fa78e9097212",
+          "sha256": "fc9702ea9a8f9387b64fb6e21a1a75d35865a31ded9a1f93e3c24ffdf5eed4db",
+          "sha1": "0f17294dadc2c6d7c7554e1c3153ce38d4fa89f8",
+          "md5": "861384af093d5fd65f3252d9723ef78f"
+        }
+      ]
+    }
+  ]
+}
