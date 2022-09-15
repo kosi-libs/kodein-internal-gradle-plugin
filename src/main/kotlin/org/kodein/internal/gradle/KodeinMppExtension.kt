@@ -16,7 +16,6 @@ import org.kodein.internal.gradle.KodeinMppExtension.Targets.JS.jsPreset
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 
-@Suppress("UNUSED_TYPEALIAS_PARAMETER")
 typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
 typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsTarget>
 typealias KodeinJsIrTarget = KodeinMppExtension.KodeinTarget<KotlinJsIrTarget>
@@ -25,14 +24,14 @@ typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTar
 
 private val os = OperatingSystem.current()
 
-@Suppress("MemberVisibilityCanBePrivate", "unused", "UnstableApiUsage")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class KodeinMppExtension(val project: Project) {
 
     data class KodeinSourceSet internal constructor(
-            val name: String,
-            val dependencies: List<KodeinSourceSet> = emptyList(),
-            val mainConf: SourceSetConf = {},
-            val testConf: SourceSetConf = {}
+        val name: String,
+        val dependencies: List<KodeinSourceSet> = emptyList(),
+        val mainConf: SourceSetConf = {},
+        val testConf: SourceSetConf = {}
     )
 
     object SourceSets {
@@ -40,30 +39,42 @@ class KodeinMppExtension(val project: Project) {
                 KodeinSourceSet(name, dependencies, mainConf, testConf)
 
         val allJvm = KodeinSourceSet(
-                name = "allJvm"
+            name = "allJvm",
+            testConf = {
+                dependencies {
+                    if (project.properties["org.kodein.no-default-junit"] != "true") {
+                        api("org.jetbrains.kotlin:kotlin-test-junit")
+                    }
+                }
+            }
         )
 
         val allJs = KodeinSourceSet(
-                name = "allJs"
+            name = "allJs",
+            testConf = {
+                dependencies {
+                    api("org.jetbrains.kotlin:kotlin-test-js")
+                }
+            }
         )
 
         val allNative = KodeinSourceSet(
-                name = "allNative"
+            name = "allNative"
         )
 
         val allPosix = KodeinSourceSet(
-                name = "allPosix",
-                dependencies = listOf(allNative)
+            name = "allPosix",
+            dependencies = listOf(allNative)
         )
 
         val allDarwin = KodeinSourceSet(
-                name = "allDarwin",
-                dependencies = listOf(allPosix)
+            name = "allDarwin",
+            dependencies = listOf(allPosix)
         )
 
         val allIos = KodeinSourceSet(
-                name = "allIos",
-                dependencies = listOf(allDarwin)
+            name = "allIos",
+            dependencies = listOf(allDarwin)
         )
     }
 
@@ -83,25 +94,25 @@ class KodeinMppExtension(val project: Project) {
 
         object JVM {
             val jvm = KodeinJvmTarget(
-                    name = "jvm",
-                    dependencies = arrayListOf(SourceSets.allJvm),
-                    conf = {
-                        target.compilations.all {
-                            kotlinOptions.jvmTarget = "1.8"
-                        }
+                name = "jvm",
+                dependencies = arrayListOf(SourceSets.allJvm),
+                conf = {
+                    target.compilations.all {
+                        kotlinOptions.jvmTarget = "1.8"
                     }
+                }
             )
 
             val android = KodeinAndroidTarget(
-                    name = "android",
-                    dependencies = arrayListOf(SourceSets.allJvm),
-                    conf = {
-                        target.publishLibraryVariants("debug", "release")
-                        test.dependencies {
-                            implementation("androidx.test.ext:junit:1.1.1")
-                            implementation("androidx.test.espresso:espresso-core:3.2.0")
-                        }
+                name = "android",
+                dependencies = arrayListOf(SourceSets.allJvm),
+                conf = {
+                    target.publishLibraryVariants("debug", "release")
+                    test.dependencies {
+                        implementation("androidx.test.ext:junit:1.1.1")
+                        implementation("androidx.test.espresso:espresso-core:3.2.0")
                     }
+                }
             )
 
             val all = listOf(jvm, android)
@@ -111,105 +122,105 @@ class KodeinMppExtension(val project: Project) {
 
         object Native {
             val iosArm32 = KodeinNativeTarget(
-                    name = "iosArm32",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allIos)
+                name = "iosArm32",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allIos)
             )
 
             val iosArm64 = KodeinNativeTarget(
-                    name = "iosArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allIos)
+                name = "iosArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allIos)
             )
 
             val iosSimulatorArm64 = KodeinNativeTarget(
-                    name = "iosSimulatorArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allIos)
+                name = "iosSimulatorArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allIos)
             )
 
             val iosX64 = KodeinNativeTarget(
-                    name = "iosX64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allIos)
+                name = "iosX64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allIos)
             )
 
             val tvosArm64 = KodeinNativeTarget(
-                    name = "tvosArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "tvosArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val tvosSimulatorArm64 = KodeinNativeTarget(
-                    name = "tvosSimulatorArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "tvosSimulatorArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val tvosX64 = KodeinNativeTarget(
-                    name = "tvosX64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "tvosX64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val watchosArm32 = KodeinNativeTarget(
-                    name = "watchosArm32",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "watchosArm32",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val watchosArm64 = KodeinNativeTarget(
-                    name = "watchosArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "watchosArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val watchosSimulatorArm64 = KodeinNativeTarget(
-                    name = "watchosSimulatorArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "watchosSimulatorArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val watchosX86 = KodeinNativeTarget(
-                    name = "watchosX86",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allDarwin)
+                name = "watchosX86",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allDarwin)
             )
 
             val linuxArm32Hfp = KodeinNativeTarget(
-                    name = "linuxArm32Hfp",
-                    nativeBuildOn = { isLinux },
-                    dependencies = arrayListOf(SourceSets.allPosix)
+                name = "linuxArm32Hfp",
+                nativeBuildOn = { isLinux },
+                dependencies = arrayListOf(SourceSets.allPosix)
             )
 
             val linuxArm64 = KodeinNativeTarget(
-                    name = "linuxArm64",
-                    nativeBuildOn = { isLinux },
-                    dependencies = arrayListOf(SourceSets.allPosix)
+                name = "linuxArm64",
+                nativeBuildOn = { isLinux },
+                dependencies = arrayListOf(SourceSets.allPosix)
             )
 
             val linuxX64 = KodeinNativeTarget(
-                    name = "linuxX64",
-                    nativeBuildOn = { isLinux },
-                    dependencies = arrayListOf(SourceSets.allPosix)
+                name = "linuxX64",
+                nativeBuildOn = { isLinux },
+                dependencies = arrayListOf(SourceSets.allPosix)
             )
 
             val macosX64 = KodeinNativeTarget(
-                    name = "macosX64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allPosix)
+                name = "macosX64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allPosix)
             )
 
             val macosArm64 = KodeinNativeTarget(
-                    name = "macosArm64",
-                    nativeBuildOn = { isMacOsX },
-                    dependencies = arrayListOf(SourceSets.allPosix)
+                name = "macosArm64",
+                nativeBuildOn = { isMacOsX },
+                dependencies = arrayListOf(SourceSets.allPosix)
             )
 
             val mingwX64 = KodeinNativeTarget(
-                    name = "mingwX64",
-                    nativeBuildOn = { isWindows },
-                    dependencies = arrayListOf(SourceSets.allNative)
+                name = "mingwX64",
+                nativeBuildOn = { isWindows },
+                dependencies = arrayListOf(SourceSets.allNative)
             )
 
             val allIos = listOf(iosArm32, iosArm64, iosX64, iosSimulatorArm64)
@@ -255,24 +266,24 @@ class KodeinMppExtension(val project: Project) {
             }
 
             val js = KodeinJsTarget(
-                    name = "js",
-                    preset = { jsPreset() },
-                    dependencies = arrayListOf(SourceSets.allJs),
-                    conf = { target.browser() ; target.nodejs() }
+                name = "js",
+                preset = { jsPreset() },
+                dependencies = arrayListOf(SourceSets.allJs),
+                conf = { target.browser() ; target.nodejs() }
             )
 
             val webjs = KodeinJsTarget(
-                    name = "webjs",
-                    preset = { jsPreset() },
-                    dependencies = arrayListOf(SourceSets.allJs),
-                    conf = { target.browser() }
+                name = "webjs",
+                preset = { jsPreset() },
+                dependencies = arrayListOf(SourceSets.allJs),
+                conf = { target.browser() }
             )
 
             val nodejs = KodeinJsTarget(
-                    name = "nodejs",
-                    preset = { jsPreset() },
-                    dependencies = arrayListOf(SourceSets.allJs),
-                    conf = { target.nodejs() }
+                name = "nodejs",
+                preset = { jsPreset() },
+                dependencies = arrayListOf(SourceSets.allJs),
+                conf = { target.nodejs() }
             )
 
             object IR {
@@ -296,40 +307,40 @@ class KodeinMppExtension(val project: Project) {
 
 
     data class CPFix(
-            val name: String,
-            val mainTarget: KodeinTarget<*>,
-            val excludedTargets: List<KodeinTarget<*>>,
-            val excludedSourceSets: List<KodeinSourceSet> = emptyList()
+        val name: String,
+        val mainTarget: KodeinTarget<*>,
+        val excludedTargets: List<KodeinTarget<*>>,
+        val excludedSourceSets: List<KodeinSourceSet> = emptyList()
     )
 
     fun KodeinSourceSet.recursiveDependencies(): List<KodeinSourceSet> = dependencies.flatMap { it.recursiveDependencies() } + this
     fun CPFix.intermediateSourceSets(): List<KodeinSourceSet> = mainTarget.dependencies.flatMap { it.recursiveDependencies() }
 
     private val availableCpFixes = listOf(
-            CPFix(
-                    name = "jvm",
-                    mainTarget = Targets.jvm.jvm,
-                    excludedTargets = listOf(Targets.jvm.android)
-            ),
-            CPFix(
-                    name = "nativeHost",
-                    mainTarget = Targets.Native.host,
-                    excludedTargets = Targets.Native.all - Targets.Native.host,
-                    excludedSourceSets = listOf(SourceSets.allIos)
-            ),
-            CPFix(
-                    name = "ios",
-                    mainTarget = Targets.Native.iosX64,
-                    excludedTargets = Targets.Native.all - Targets.Native.iosX64
-            )
+        CPFix(
+            name = "jvm",
+            mainTarget = Targets.jvm.jvm,
+            excludedTargets = listOf(Targets.jvm.android)
+        ),
+        CPFix(
+            name = "nativeHost",
+            mainTarget = Targets.Native.host,
+            excludedTargets = Targets.Native.all - Targets.Native.host,
+            excludedSourceSets = listOf(SourceSets.allIos)
+        ),
+        CPFix(
+            name = "ios",
+            mainTarget = Targets.Native.iosX64,
+            excludedTargets = Targets.Native.all - Targets.Native.iosX64
+        )
     )
 
     val appliedCpFixes = KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes")
-            .also { if ("host" in it && "ios" in it) error("You cannot apply both host and ios classpath fixes at the same time") }
+        .also { if ("host" in it && "ios" in it) error("You cannot apply both host and ios classpath fixes at the same time") }
 
     val cpFixes = appliedCpFixes
-            .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
-            .toMutableList()
+        .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
+        .toMutableList()
 
     fun MutableList<CPFix>.update(name: String, update: (CPFix) -> CPFix) {
         val fix = find { it.name == name } ?: return
@@ -338,17 +349,17 @@ class KodeinMppExtension(val project: Project) {
     }
 
     val excludedTargets = (
-            KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-                    .flatMap {
-                        when (it) {
-                            "all-native" -> Targets.Native.all
-                            "all-jvm" -> Targets.JVM.all
-                            "all-js" -> Targets.JS.all
-                            "nativeNonHost" -> Targets.Native.all - Targets.Native.host
-                            else -> listOf(Targets[it])
-                        }
-                    }
-            ).plus(cpFixes.flatMap { it.excludedTargets })
+        KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+            .flatMap {
+                when (it) {
+                    "all-native" -> Targets.Native.all
+                    "all-jvm" -> Targets.JVM.all
+                    "all-js" -> Targets.JS.all
+                    "nativeNonHost" -> Targets.Native.all - Targets.Native.host
+                    else -> listOf(Targets[it])
+                }
+            }
+        ).plus(cpFixes.flatMap { it.excludedTargets })
 
     internal var crossTargets = ArrayList<String>()
     internal var hostTargets = ArrayList<String>()
@@ -439,14 +450,14 @@ class KodeinMppExtension(val project: Project) {
             val ktTarget = ktPreset.createTarget(target.name).also { targets.add(it) }
 
             cpFixes.filter { it.mainTarget == target }
-                    .forEach { fix ->
-                        fix.intermediateSourceSets().forEach { iss ->
-                            sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${iss.name}Main/kotlin")
-                            sourceSets.getByName(target.name + "Test").kotlin.srcDir("src/${iss.name}Test/kotlin")
-                            iss.mainConf(sourceSets.getByName(target.name + "Main"), sourceSets)
-                            iss.testConf(sourceSets.getByName(target.name + "Test"), sourceSets)
-                        }
+                .forEach { fix ->
+                    fix.intermediateSourceSets().forEach { iss ->
+                        sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${iss.name}Main/kotlin")
+                        sourceSets.getByName(target.name + "Test").kotlin.srcDir("src/${iss.name}Test/kotlin")
+                        iss.mainConf(sourceSets.getByName(target.name + "Main"), sourceSets)
+                        iss.testConf(sourceSets.getByName(target.name + "Test"), sourceSets)
                     }
+                }
 
             target.dependencies.forEach {
                 val depName = sourceSets.add(it)
