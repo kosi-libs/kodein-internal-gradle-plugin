@@ -1,0 +1,73 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "6.20.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-6.20.2.jar",
+          "url": "kodein-internal-gradle-settings-6.20.2.jar",
+          "size": 16196,
+          "sha512": "1ab608a7548b5969b8607e30da9644b650308f3243b9672ae8e177a767fba101bbe9223992760684294f3bec884bf90b0c895f41ab6ade07024a112157df1c5e",
+          "sha256": "6411f5ed9d2577de5fefd8fefc647606bf9c6d9ab92df5decbbdf8038d69e4c8",
+          "sha1": "f8cd73f041563401593380edc767d1a4ff4318ad",
+          "md5": "9dbeee377c7621d6f842db2fedb8f3b3"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.20.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-6.20.2.jar",
+          "url": "kodein-internal-gradle-settings-6.20.2.jar",
+          "size": 16196,
+          "sha512": "1ab608a7548b5969b8607e30da9644b650308f3243b9672ae8e177a767fba101bbe9223992760684294f3bec884bf90b0c895f41ab6ade07024a112157df1c5e",
+          "sha256": "6411f5ed9d2577de5fefd8fefc647606bf9c6d9ab92df5decbbdf8038d69e4c8",
+          "sha1": "f8cd73f041563401593380edc767d1a4ff4318ad",
+          "md5": "9dbeee377c7621d6f842db2fedb8f3b3"
+        }
+      ]
+    }
+  ]
+}
