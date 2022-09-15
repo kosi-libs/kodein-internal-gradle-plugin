@@ -40,21 +40,11 @@ class KodeinMppExtension(val project: Project) {
                 KodeinSourceSet(name, dependencies, mainConf, testConf)
 
         val allJvm = KodeinSourceSet(
-                name = "allJvm",
-                testConf = {
-                    dependencies {
-                        api("org.jetbrains.kotlin:kotlin-test-junit")
-                    }
-                }
+                name = "allJvm"
         )
 
         val allJs = KodeinSourceSet(
-                name = "allJs",
-                testConf = {
-                    dependencies {
-                        api("org.jetbrains.kotlin:kotlin-test-js")
-                    }
-                }
+                name = "allJs"
         )
 
         val allNative = KodeinSourceSet(
