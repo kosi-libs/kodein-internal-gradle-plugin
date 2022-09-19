@@ -1,0 +1,73 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "6.20.2-kotlin-1.7.20-RC",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-6.20.2-kotlin-1.7.20-RC.jar",
+          "url": "kodein-internal-gradle-settings-6.20.2-kotlin-1.7.20-RC.jar",
+          "size": 16199,
+          "sha512": "0f6b957291667a37251dc541a37dcd063f59861a25703e743a145113e29bcc7b80e40ed689a93872879a9705136f908b148bc4133cfdc3e4255a2b446ba83a89",
+          "sha256": "33be867f3409833f7cbfc7609891637ff804901d48aabb28068634dc24f330d1",
+          "sha1": "7d52ea47851ca4b3d61b60e2209d34843b5dd236",
+          "md5": "fd1e82b8b03a4902d58b53d726e49fb7"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.kodein.internal.gradle",
+          "module": "kodein-internal-gradle-versions",
+          "version": {
+            "requires": "6.20.2-kotlin-1.7.20-RC"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-6.20.2-kotlin-1.7.20-RC.jar",
+          "url": "kodein-internal-gradle-settings-6.20.2-kotlin-1.7.20-RC.jar",
+          "size": 16199,
+          "sha512": "0f6b957291667a37251dc541a37dcd063f59861a25703e743a145113e29bcc7b80e40ed689a93872879a9705136f908b148bc4133cfdc3e4255a2b446ba83a89",
+          "sha256": "33be867f3409833f7cbfc7609891637ff804901d48aabb28068634dc24f330d1",
+          "sha1": "7d52ea47851ca4b3d61b60e2209d34843b5dd236",
+          "md5": "fd1e82b8b03a4902d58b53d726e49fb7"
+        }
+      ]
+    }
+  ]
+}
