@@ -10,7 +10,7 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
 
     companion object {
         internal fun configureAndroid(android: LibraryExtension) = with(android) {
-            compileSdk = 31
+            compileSdk = 32
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 minSdk = 21
@@ -37,8 +37,8 @@ class KodeinAndroidPlugin : KtPlugin<Project> {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
             "testImplementation"("junit:junit:4.13.2")
 
-            "androidTestImplementation"("androidx.test.ext:junit:1.1.1")
-            "androidTestImplementation"("androidx.test.espresso:espresso-core:3.2.0")
+            "androidTestImplementation"("androidx.test.ext:junit:1.1.4")
+            "androidTestImplementation"("androidx.test.espresso:espresso-core:3.5.0")
         }
 
         afterEvaluate {
