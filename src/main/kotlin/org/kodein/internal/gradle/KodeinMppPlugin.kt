@@ -51,7 +51,9 @@ class KodeinMppPlugin : KtPlugin<Project> {
                             .mapNotNull { targets.findByName(it) }
                             .applyEach {
                                 compilations.applyEach {
-                                    compileKotlinTask.enabled = false
+                                    compileTaskProvider.configure {
+                                        enabled = false
+                                    }
                                 }
 
                                 mavenPublication {

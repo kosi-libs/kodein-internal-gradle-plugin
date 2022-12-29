@@ -1,6 +1,5 @@
 package org.kodein.internal.gradle
 
-import com.android.tools.r8.internal.it
 import org.gradle.api.Project
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
@@ -15,7 +14,6 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 
 @Suppress("UnstableApiUsage")
