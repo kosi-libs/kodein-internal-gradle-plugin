@@ -12,17 +12,17 @@ class KodeinJvmPlugin : KtPlugin<Project> {
     companion object {
 
         internal fun configureJvmTarget(project: Project) = with(project) {
-            tasks.withType<KotlinCompile>().all {
-                kotlinOptions.jvmTarget = "1.8"
-                kotlinOptions.allWarningsAsErrors = true
+            tasks.withType<KotlinCompile>().configureEach {
+                compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+                compilerOptions.allWarningsAsErrors.set(true)
             }
 
-            with(extensions.getByType<JavaPluginExtension>()) {
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
+            extensions.getByType<JavaPluginExtension>().apply {
+                sourceCompatibility = JavaVersion.VERSION_11
+                targetCompatibility = JavaVersion.VERSION_11
             }
 
-            tasks.create("jvmTest") {
+            tasks.register("jvmTest") {
                 group = "verification"
                 dependsOn("test")
             }

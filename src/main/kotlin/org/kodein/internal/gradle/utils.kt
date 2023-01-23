@@ -12,14 +12,10 @@ internal interface KtPlugin<T : Project> : Plugin<T> {
 
 internal fun Project.configureTestLogsPrint() {
     afterEvaluate {
-        tasks.withType<AbstractTestTask>().forEach {
-            it.testLogging {
+        tasks.withType<AbstractTestTask>().configureEach {
+            testLogging {
                 events("passed", "skipped", "failed")
             }
         }
     }
-}
-
-fun <T> Iterable<T>.applyEach(action: T.() -> Unit): Unit {
-    forEach { it.apply(action) }
 }

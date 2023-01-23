@@ -1,6 +1,5 @@
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
 import org.kodein.internal.gradle.KodeinVersions
 
 plugins {
@@ -22,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "6.23.1"
+    version = "7.0.0"
 }
 
 repositories {

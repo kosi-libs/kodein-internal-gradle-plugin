@@ -4,21 +4,18 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.get
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.kodein.internal.gradle.KodeinMppExtension.Targets.JS.jsPreset
 
 typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 
 typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
 typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsTarget>
-typealias KodeinJsIrTarget = KodeinMppExtension.KodeinTarget<KotlinJsIrTarget>
 typealias KodeinNativeTarget = KodeinMppExtension.KodeinTarget<KotlinNativeTarget>
 typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTarget>
 
@@ -82,7 +79,7 @@ class KodeinMppExtension(val project: Project) {
 
     data class KodeinTarget<T : KotlinTarget> internal constructor(
         val name: String,
-        val preset: KodeinMppExtension.() -> String = { name },
+        val preset: String = name,
         val dependencies: MutableList<KodeinSourceSet> = ArrayList(),
         val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
         val conf: TargetBuilder<T>.() -> Unit = {}
@@ -98,7 +95,9 @@ class KodeinMppExtension(val project: Project) {
                 dependencies = arrayListOf(SourceSets.allJvm),
                 conf = {
                     target.compilations.all {
-                        kotlinOptions.jvmTarget = "1.8"
+                        compilerOptions.configure {
+                            jvmTarget.set(JvmTarget.JVM_11)
+                        }
                     }
                 }
             )
@@ -248,53 +247,28 @@ class KodeinMppExtension(val project: Project) {
         val native = Native
 
         object JS {
-            private fun KodeinJsTarget.ir(conf: TargetBuilder<KotlinJsIrTarget>.() -> Unit): KodeinJsIrTarget =
-                KodeinJsIrTarget(
-                    name = name,
-                    preset = { "jsIr" },
-                    dependencies = dependencies,
-                    conf = conf
-                )
-
-            private fun KodeinMppExtension.jsPreset(): String {
-                return when (project.properties["org.kodein.js.useCompiler"] as? String?) {
-                    "ir" -> error("To target JS IR only, use \"add(kodeinTargets.js.ir.*)\"")
-                    "legacy" -> "js"
-                    "both", null -> "jsBoth"
-                    else -> error("The property org.kodein.js.useCompiler must be \"ir\", \"legacy\", or \"both\".")
-                }
-            }
-
             val js = KodeinJsTarget(
                 name = "js",
-                preset = { jsPreset() },
+                preset = "jsIr",
                 dependencies = arrayListOf(SourceSets.allJs),
                 conf = { target.browser() ; target.nodejs() }
             )
 
             val webjs = KodeinJsTarget(
                 name = "webjs",
-                preset = { jsPreset() },
+                preset = "jsIr",
                 dependencies = arrayListOf(SourceSets.allJs),
                 conf = { target.browser() }
             )
 
             val nodejs = KodeinJsTarget(
                 name = "nodejs",
-                preset = { jsPreset() },
+                preset = "jsIr",
                 dependencies = arrayListOf(SourceSets.allJs),
                 conf = { target.nodejs() }
             )
 
-            object IR {
-                val js = JS.js.ir { target.browser(); target.nodejs() }
-                val webjs = JS.webjs.ir { target.browser() }
-                val nodejs = JS.webjs.ir { target.nodejs() }
-                val all = listOf(js, nodejs, webjs)
-            }
-
-            val ir = IR
-            val all = listOf(js, nodejs, webjs) + ir.all
+            val all = listOf(js, nodejs, webjs)
         }
 
         val js = JS
@@ -306,47 +280,7 @@ class KodeinMppExtension(val project: Project) {
     val kodeinTargets = Targets
 
 
-    data class CPFix(
-        val name: String,
-        val mainTarget: KodeinTarget<*>,
-        val excludedTargets: List<KodeinTarget<*>>,
-        val excludedSourceSets: List<KodeinSourceSet> = emptyList()
-    )
-
     fun KodeinSourceSet.recursiveDependencies(): List<KodeinSourceSet> = dependencies.flatMap { it.recursiveDependencies() } + this
-    fun CPFix.intermediateSourceSets(): List<KodeinSourceSet> = mainTarget.dependencies.flatMap { it.recursiveDependencies() }
-
-    private val availableCpFixes = listOf(
-        CPFix(
-            name = "jvm",
-            mainTarget = Targets.jvm.jvm,
-            excludedTargets = listOf(Targets.jvm.android)
-        ),
-        CPFix(
-            name = "nativeHost",
-            mainTarget = Targets.Native.host,
-            excludedTargets = Targets.Native.all - Targets.Native.host,
-            excludedSourceSets = listOf(SourceSets.allIos)
-        ),
-        CPFix(
-            name = "ios",
-            mainTarget = Targets.Native.iosX64,
-            excludedTargets = Targets.Native.all - Targets.Native.iosX64
-        )
-    )
-
-    val appliedCpFixes = KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes")
-        .also { if ("host" in it && "ios" in it) error("You cannot apply both host and ios classpath fixes at the same time") }
-
-    val cpFixes = appliedCpFixes
-        .map { name -> availableCpFixes.find { it.name == name } ?: error("Unknown classpath fix: $name") }
-        .toMutableList()
-
-    fun MutableList<CPFix>.update(name: String, update: (CPFix) -> CPFix) {
-        val fix = find { it.name == name } ?: return
-        remove(fix)
-        add(update(fix))
-    }
 
     val excludedTargets = (
         KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
@@ -359,21 +293,15 @@ class KodeinMppExtension(val project: Project) {
                     else -> listOf(Targets[it])
                 }
             }
-        ).plus(cpFixes.flatMap { it.excludedTargets })
+        )
 
     internal var crossTargets = ArrayList<String>()
     internal var hostTargets = ArrayList<String>()
     internal var universalTargets = ArrayList<String>()
 
-    fun NamedDomainObjectContainer<out KotlinSourceSet>.add(sourceSet: KodeinSourceSet): String? {
-        for (fix in cpFixes) {
-            if (sourceSet in fix.excludedSourceSets) return null
-        }
-
-        val name = cpFixes.find { sourceSet in it.intermediateSourceSets() } ?.mainTarget?.name ?: sourceSet.name
-
-        val main = maybeCreate(name + "Main")
-        val test = maybeCreate(name + "Test")
+    fun NamedDomainObjectContainer<out KotlinSourceSet>.add(sourceSet: KodeinSourceSet) {
+        val main = maybeCreate(sourceSet.name + "Main")
+        val test = maybeCreate(sourceSet.name + "Test")
 
         sourceSet.mainConf(main, this)
         sourceSet.testConf(test, this)
@@ -383,14 +311,12 @@ class KodeinMppExtension(val project: Project) {
             test.dependsOn(getByName("commonTest"))
         } else {
             sourceSet.dependencies.forEach { dep ->
-                add(dep)?.takeIf { it != name } ?.let {
-                    main.dependsOn(getByName(it + "Main"))
-                    test.dependsOn(getByName(it + "Test"))
-                }
+                add(dep)
+                main.dependsOn(getByName(dep.name + "Main"))
+                test.dependsOn(getByName(dep.name + "Test"))
+
             }
         }
-
-        return name
     }
 
 
@@ -402,15 +328,13 @@ class KodeinMppExtension(val project: Project) {
         fun dependsOn(sourceSet: KodeinSourceSet)
     }
 
-    private inner class SourceSetBuilderImpl(val sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, val name: String) : SourceSetBuilder {
+    private inner class SourceSetBuilderImpl(val sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, name: String) : SourceSetBuilder {
         override val main: KotlinSourceSet = sourceSets.maybeCreate(name + "Main")
         override val test: KotlinSourceSet = sourceSets.maybeCreate(name + "Test")
         override fun dependsOn(sourceSet: KodeinSourceSet) {
-            val dependency = sourceSets.add(sourceSet)
-            if (dependency != name) {
-                main.dependsOn(sourceSets[dependency + "Main"])
-                test.dependsOn(sourceSets[dependency + "Test"])
-            }
+            sourceSets.add(sourceSet)
+            main.dependsOn(sourceSets[sourceSet.name + "Main"])
+            test.dependsOn(sourceSets[sourceSet.name + "Test"])
         }
     }
 
@@ -444,27 +368,14 @@ class KodeinMppExtension(val project: Project) {
         }
 
         val ktTarget = targets.findByName(target.name) ?: run {
-            val preset = target.preset(this@KodeinMppExtension)
             @Suppress("UNCHECKED_CAST")
-            val ktPreset = (presets.findByName(preset) ?: throw IllegalArgumentException("Unknown preset $preset")) as KotlinTargetPreset<T>
+            val ktPreset = (presets.findByName(target.preset) ?: throw IllegalArgumentException("Unknown preset ${target.preset}")) as KotlinTargetPreset<T>
             val ktTarget = ktPreset.createTarget(target.name).also { targets.add(it) }
 
-            cpFixes.filter { it.mainTarget == target }
-                .forEach { fix ->
-                    fix.intermediateSourceSets().forEach { iss ->
-                        sourceSets.getByName(target.name + "Main").kotlin.srcDir("src/${iss.name}Main/kotlin")
-                        sourceSets.getByName(target.name + "Test").kotlin.srcDir("src/${iss.name}Test/kotlin")
-                        iss.mainConf(sourceSets.getByName(target.name + "Main"), sourceSets)
-                        iss.testConf(sourceSets.getByName(target.name + "Test"), sourceSets)
-                    }
-                }
-
             target.dependencies.forEach {
-                val depName = sourceSets.add(it)
-                if (depName != null && depName != target.name) {
-                    sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.getByName(depName + "Main"))
-                    sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(depName + "Test"))
-                }
+                sourceSets.add(it)
+                sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.getByName(it.name + "Main"))
+                sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(it.name + "Test"))
             }
 
             when (target.nativeBuildOn(OperatingSystem.current())) {
@@ -488,17 +399,8 @@ class KodeinMppExtension(val project: Project) {
     }
 
     fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
-        for (fix in cpFixes) {
-            if (sourceSet in fix.excludedSourceSets) return
-            if (sourceSet in fix.intermediateSourceSets()) {
-                add(fix.mainTarget, conf)
-                return
-            }
-        }
-
-        val name = sourceSets.add(sourceSet)
-        if (name != null)
-            SourceSetBuilderImpl(sourceSets, name).conf()
+        sourceSets.add(sourceSet)
+        SourceSetBuilderImpl(sourceSets, sourceSet.name).conf()
     }
 
     fun KotlinMultiplatformExtension.sourceSet(name: String, conf: SourceSetBuilder.() -> Unit) {

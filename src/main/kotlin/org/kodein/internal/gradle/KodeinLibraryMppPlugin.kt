@@ -18,8 +18,8 @@ class KodeinLibraryMppPlugin : KtPlugin<Project> {
 
         extensions.getByName<KotlinMultiplatformExtension>("kotlin").explicitApi()
 
-        afterEvaluate {
-            tasks["publishToMavenLocal"].doFirst {
+        tasks.named("publishToMavenLocal").configure {
+            doFirst {
                 val k = project.extensions["kodein"] as KodeinMppExtension
                 if (k.excludedTargets.isNotEmpty()) {
                     logger.warn("Publishing to maven local with excluded targets: ${k.excludedTargets.joinToString { it.name }}!")

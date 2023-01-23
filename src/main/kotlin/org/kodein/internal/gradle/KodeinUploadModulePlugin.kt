@@ -41,15 +41,14 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
         project.extensions.add("kodeinUpload", ext)
         evaluationDependsOn(rootProject.path)
 
-        tasks.withType<AbstractPublishToMaven>()
-            .configureEach {
-                onlyIf {
-                    if (publication in disabledPublications) {
-                        logger.warn("Publication ${publication.name} disabled")
-                        false
-                    } else true
-                }
+        tasks.withType<AbstractPublishToMaven>().configureEach {
+            onlyIf {
+                if (publication in disabledPublications) {
+                    logger.warn("Publication ${publication.name} disabled")
+                    false
+                } else true
             }
+        }
 
         afterEvaluate {
 
@@ -76,29 +75,28 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
 
                 afterEvaluate {
-                    tasks.withType<PublishToMavenRepository>()
-                        .configureEach {
-                            if (repository.name == "ossrhStaging") {
-                                onlyIf {
-                                    logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                                    val maxSize = inputs.files.maxOf { it.name.length }
-                                    inputs.files.forEach {
-                                        logger.warn("    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${it.relativeTo(rootDir).path})")
-                                    }
-                                    !sonatypeConfig.dryRun
+                    tasks.withType<PublishToMavenRepository>().configureEach {
+                        if (repository.name == "ossrhStaging") {
+                            onlyIf {
+                                logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                val maxSize = inputs.files.maxOf { it.name.length }
+                                inputs.files.forEach {
+                                    logger.warn("    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${it.relativeTo(rootDir).path})")
                                 }
+                                !sonatypeConfig.dryRun
+                            }
 
-                                doFirst {
-                                    if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
-                                        error("Cannot publish to OSSRH with classpath fixes!")
-                                    }
-                                    val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-                                    if (excludeTargets.isNotEmpty()) {
-                                        logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
-                                    }
+                            doFirst {
+                                if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
+                                    error("Cannot publish to OSSRH with classpath fixes!")
+                                }
+                                val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                                if (excludeTargets.isNotEmpty()) {
+                                    logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
                                 }
                             }
                         }
+                    }
                 }
             }
 
@@ -112,6 +110,7 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                             Platform.js -> "js"
                             Platform.native -> "native"
                             Platform.common -> "common"
+                            null -> error("Null Kotlin platform")
                         }
                         displayName.set(platformName)
 
@@ -190,12 +189,13 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             tasks.create("hostOnlyPublish") {
+                val hostOnlyPublish = this
                 group = "publishing"
-                tasks.withType<PublishToMavenRepository>()
-                        .filter { it.publication in hostOnlyPublications }
-                        .forEach {
-                            dependsOn(it)
-                        }
+                tasks.withType<PublishToMavenRepository>().configureEach {
+                    if (this.publication in hostOnlyPublications) {
+                        hostOnlyPublish.dependsOn(this)
+                    }
+                }
             }
 
             val signingConfig = root.signingConfig

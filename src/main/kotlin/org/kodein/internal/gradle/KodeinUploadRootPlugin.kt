@@ -12,12 +12,10 @@ class KodeinUploadRootPlugin : Plugin<Project> {
         private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
         internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
 
-        val repositoryUrl: String by lazy {
-            when {
-                snapshot -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                repositoryId != null -> "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
-                else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
-            }
+        val repositoryUrl: String = when {
+            snapshot -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            repositoryId != null -> "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
+            else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
         }
 
         val version = run {

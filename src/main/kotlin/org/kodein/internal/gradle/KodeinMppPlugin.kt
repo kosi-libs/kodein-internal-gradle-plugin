@@ -1,15 +1,12 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.*
-import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 class KodeinMppPlugin : KtPlugin<Project> {
-    private val os = OperatingSystem.current()
-
     @Suppress("UnstableApiUsage")
     override fun Project.applyPlugin() {
         apply {
@@ -33,8 +30,10 @@ class KodeinMppPlugin : KtPlugin<Project> {
             afterEvaluate {
                 targets.all {
                     compilations.all {
-                        (kotlinOptions as? KotlinJvmOptions)?.jvmTarget = "1.8"
-                        kotlinOptions.allWarningsAsErrors = true
+                        compilerOptions.configure {
+                            allWarningsAsErrors.set(true)
+                            (this as? KotlinJvmCompilerOptions)?.jvmTarget?.set(JvmTarget.JVM_11)
+                        }
                     }
                 }
 
@@ -49,25 +48,25 @@ class KodeinMppPlugin : KtPlugin<Project> {
                 if (!enableCrossCompilation) {
                     ext.crossTargets
                             .mapNotNull { targets.findByName(it) }
-                            .applyEach {
-                                compilations.applyEach {
+                            .forEach { target ->
+                                target.compilations.configureEach {
                                     compileTaskProvider.configure {
                                         enabled = false
                                     }
                                 }
 
-                                mavenPublication {
+                                target.mavenPublication {
                                     upload?.disabledPublications?.add(this)
                                 }
 
                                 if (this is KotlinNativeTarget) {
-                                    compilations.applyEach {
-                                        cinterops.applyEach {
+                                    compilations.configureEach {
+                                        cinterops.configureEach {
                                             tasks[interopProcessingTaskName].enabled = false
                                         }
                                         tasks[this.processResourcesTaskName].enabled = false
                                     }
-                                    binaries.applyEach {
+                                    binaries.configureEach {
                                         linkTask.enabled = false
                                     }
                                 }
@@ -77,20 +76,21 @@ class KodeinMppPlugin : KtPlugin<Project> {
                 if (upload != null) {
                     ext.hostTargets
                             .mapNotNull { targets.findByName(it) }
-                            .applyEach {
-                                mavenPublication {
+                            .forEach { target ->
+                                target.mavenPublication {
                                     upload.hostOnlyPublications.add(this)
                                 }
                             }
                 }
 
                 tasks.create("hostOnlyTest") {
+                    val hostOnlyTest = this
                     group = "verification"
-                    tasks.withType<KotlinTest>()
-                            .filter { it.targetName in ext.hostTargets }
-                            .forEach {
-                                dependsOn(it)
-                            }
+                    tasks.withType<KotlinTest>().configureEach {
+                        if (this.targetName in ext.hostTargets) {
+                            hostOnlyTest.dependsOn(this)
+                        }
+                    }
                 }
 
             }
