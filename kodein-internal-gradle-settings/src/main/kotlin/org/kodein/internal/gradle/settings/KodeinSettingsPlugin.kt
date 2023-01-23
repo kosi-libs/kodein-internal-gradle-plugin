@@ -3,6 +3,7 @@ package org.kodein.internal.gradle.settings
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import java.io.File
 import java.util.*
@@ -30,13 +31,17 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
     private fun Settings.applyPlugin() {
         dependencyResolutionManagement {
             repositories {
-                repositories {
-                    mavenLocal()
-                    mavenCentral()
-                    google()
-                    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
-                    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
-                    maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
+                mavenLocal()
+                mavenCentral()
+                google()
+                maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
+                maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
+                maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
+                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin") {
+                    credentials {
+                        username = extra["github.username"]?.toString() ?: error("Please set github.username in ~/.gradle/gradle.properties")
+                        password = extra["github.personalAccessToken"]?.toString() ?: error("Please set github.personalAccessToken in ~/.gradle/gradle.properties")
+                    }
                 }
             }
 
@@ -51,11 +56,15 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
         pluginManagement {
             repositories {
                 mavenLocal()
+                gradlePluginPortal()
                 mavenCentral()
                 google()
-                gradlePluginPortal()
-                maven(url = "https://plugins.gradle.org/m2/")
-                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin")
+                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin") {
+                    credentials {
+                        username = extra["github.username"]?.toString() ?: error("Please set github.username in ~/.gradle/gradle.properties")
+                        password = extra["github.personalAccessToken"]?.toString() ?: error("Please set github.personalAccessToken in ~/.gradle/gradle.properties")
+                    }
+                }
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
             }
