@@ -13,6 +13,7 @@ public class KodeinLocalPropertiesPlugin : KtPlugin<Project> {
                     ?: (project.properties["org.kodein.local.$key"] as? String)
 
         public fun isTrue(key: String): Boolean = get(key) == "true"
+        public fun isNotTrue(key: String): Boolean = !isTrue(key)
 
         public fun getAsList(key: String): List<String> = get(key)?.split(",")?.map { it.trim() } ?: emptyList()
     }

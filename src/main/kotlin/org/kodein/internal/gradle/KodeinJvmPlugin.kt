@@ -14,7 +14,9 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
         fun configureJvmTarget(project: Project) = with(project) {
             tasks.withType<KotlinCompile>().configureEach {
                 compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
-                compilerOptions.allWarningsAsErrors.set(true)
+                if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
+                    compilerOptions.allWarningsAsErrors.set(true)
+                }
             }
 
             extensions.getByType<JavaPluginExtension>().apply {
