@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 public typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
 
 public typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
-public typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsTarget>
+public typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsIrTarget>
 public typealias KodeinNativeTarget = KodeinMppExtension.KodeinTarget<KotlinNativeTarget>
 public typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTarget>
 

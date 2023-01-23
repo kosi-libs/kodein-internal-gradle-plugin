@@ -11,7 +11,6 @@ public class KodeinMppPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("org.jetbrains.kotlin.multiplatform")
-            plugin<KodeinVersionsPlugin>()
         }
 
         val ext = KodeinMppExtension(this)

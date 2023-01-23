@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
     id("org.gradle.kotlin.kotlin-dsl")
     `maven-publish`
-    id("com.github.gmazzo.buildconfig")
+    id("com.github.gmazzo.buildconfig") version "3.1.0"
 }
 
 repositories {
@@ -26,6 +26,6 @@ buildConfig {
     useKotlinOutput {
         internalVisibility = true
     }
-    buildConfigField("String", "kotlinVersion", libs.versions.kotlin.map { "\"$it\"" })
+    buildConfigField("String", "kotlinVersion", kodeinGlobals.versions.kotlin.map { "\"$it\"" })
     buildConfigField("String", "thisVersion", "\"$version\"")
 }

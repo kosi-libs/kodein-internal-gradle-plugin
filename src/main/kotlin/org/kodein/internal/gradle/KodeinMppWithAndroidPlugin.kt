@@ -15,7 +15,7 @@ public class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
                 android.apply {
                     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
                 }
-                KodeinAndroidPlugin.configureAndroid(android)
+                KodeinAndroidPlugin.configureAndroid(project, android)
                 project.extensions.add("kodeinAndroid", KodeinMppAndroidExtension(android))
             } else {
                 project.extensions.add("kodeinAndroid", KodeinMppAndroidExtension(null))

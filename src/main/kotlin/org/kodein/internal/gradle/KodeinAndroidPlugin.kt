@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.gradle.dsl.*
 public class KodeinAndroidPlugin : KtPlugin<Project> {
 
     internal companion object {
-        fun configureAndroid(android: LibraryExtension) = with(android) {
+        fun configureAndroid(project: Project, android: LibraryExtension) = with(android) {
             compileSdk = 32
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 minSdk = 21
-                ndkVersion = KodeinVersions.androidNdk
+                ndkVersion = project.kodeinGlobalVersion("androidNdk")
             }
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_11
@@ -27,14 +27,14 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
         apply {
             plugin("com.android.library")
             plugin("kotlin-platform-android")
-            plugin<KodeinVersionsPlugin>()
         }
 
-        configureAndroid(extensions["android"] as LibraryExtension)
+        configureAndroid(project, extensions["android"] as LibraryExtension)
 
+        val kotlinVersion = kodeinGlobalVersion("kotlin")
         dependencies {
-            "testImplementation"("org.jetbrains.kotlin:kotlin-test:${KodeinVersions.kotlin}")
-            "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:${KodeinVersions.kotlin}")
+            "testImplementation"("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+            "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
             "testImplementation"("junit:junit:4.13.2")
 
             "androidTestImplementation"("androidx.test.ext:junit:1.1.4")

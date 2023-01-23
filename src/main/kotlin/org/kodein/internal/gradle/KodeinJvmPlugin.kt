@@ -35,7 +35,6 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("kotlin-platform-jvm")
-            plugin<KodeinVersionsPlugin>()
         }
 
         dependencies {

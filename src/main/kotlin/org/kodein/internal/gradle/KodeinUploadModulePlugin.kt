@@ -127,7 +127,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
             tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
 
-            val javadocJar = tasks.register<Jar>("javadocJar") {
+            val javadocJar = tasks.maybeRegister<Jar>("javadocJar") {
                 dependsOn("dokkaHtml")
                 archiveClassifier.set("javadoc")
                 from(dokkaOutputDir)

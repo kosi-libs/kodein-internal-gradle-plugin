@@ -28,6 +28,26 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 .takeIf { it.isFound } ?.value as String?
 
     private fun Settings.applyPlugin() {
+        dependencyResolutionManagement {
+            repositories {
+                repositories {
+                    mavenLocal()
+                    mavenCentral()
+                    google()
+                    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
+                    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
+                    maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
+                }
+            }
+
+            @Suppress("UnstableApiUsage")
+            versionCatalogs {
+                create("kodeinGlobals") {
+                    from("org.kodein.internal.gradle:kodein-internal-gradle-version-catalog:${BuildConfig.thisVersion}")
+                }
+            }
+        }
+
         pluginManagement {
             repositories {
                 mavenLocal()
@@ -35,7 +55,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 google()
                 gradlePluginPortal()
                 maven(url = "https://plugins.gradle.org/m2/")
-                maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
+                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
             }
@@ -50,6 +70,8 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 }
             }
         }
+
+        enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
     }
 
     override fun apply(settings: Settings) {

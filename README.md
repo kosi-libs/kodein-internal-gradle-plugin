@@ -15,7 +15,7 @@ Here's a standard `settings.gradle.kts`:
 buildscript {
     repositories {
         mavenLocal()
-        maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
+        maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin")
     }
     dependencies {
         classpath("org.kodein.internal.gradle:kodein-internal-gradle-settings:VERSION")
@@ -114,6 +114,7 @@ kodeinUpload {
 }
 ```
 
+
 ## Kodein local properties
 
 Kodein local properties are personal properties that may change your local project configuration.
@@ -141,7 +142,7 @@ A Kodein local property `key` can be set:
   * Creates maven artifacts (with source jar).
   * Adds `org.kodein.upload.module` plugin.
   * Sets the explicit API Kotlin option
-  
+
 
 ## Android module plugin
 
@@ -178,8 +179,6 @@ A Kodein local property `key` can be set:
   * Configures test tasks to display in console.
   * Adds default test dependencies.
   * Excludes targets based on local properties (for example if you don't want to compile Android).
-  * Adds "classpath fixes" that allows, via local properties, to change source sets from common to targets
-    (needed because `enableDependencyPropagation=false` has problems, especially regarding cinterops).
   * Disables native cross compilation (by default).
   * Enables both js compiler by default (legacy and IR).
   * Adds the `hostOnlyTest` gradle task that starts only host native tests.
@@ -266,22 +265,6 @@ You can enable it in **`gradle.properties`**:
 
 ```properties
 org.kodein.native.enableCrossCompilation = true
-```
-
-### Classpath fixes
-
-Classpath fixes are a mechanism that help you develop when `enableDependencyPropagation=false` is not enough.
-
-Considering a group of targets containing a main target and one or more secondary targets, as well as one or more source sets common to all targets in the group:
-
-* Disables all secondary targets.
-* Sets all sourcesets common to these target as specific to the main target (so that intelliJ resolves dependencies for that target only).
-
-Available classpath fixes are `jvm`, `nativeHost` and `ios`.
-They are configured in **kodein local properties**:
-
-```properties
-classpathFixes = nativeHost
 ```
 
 

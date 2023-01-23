@@ -22,12 +22,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: build locally
-        run: ./gradlew publishToMavenLocal
-      - name: Copy local build
-        run: ./gradlew gitPublishCopy
-      - name: Publish to mvn-repo
+      - name: build
+        run: ./gradlew build
+      - name: build & publish
         env:
-          GIT_USER: ${{ secrets.GIT_USER }}
-          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
-        run: ./gradlew gitPublishPush
+          GITHUB_USER: ${{ secrets.GIT_USER }}
+          GITHUB_TOKEN: ${{ secrets.GIT_PASSWORD }}
+        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository
