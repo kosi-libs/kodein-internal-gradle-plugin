@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 @Suppress("UnstableApiUsage")
-class KodeinLibraryMppPlugin : KtPlugin<Project> {
+public class KodeinLibraryMppPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {

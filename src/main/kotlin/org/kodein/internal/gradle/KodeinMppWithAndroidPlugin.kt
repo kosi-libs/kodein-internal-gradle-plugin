@@ -5,10 +5,10 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.plugin
 
-class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
+public class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
 
-    companion object {
-        internal fun configureMPPAndroid(project: Project, excludeAndroid: Boolean) {
+    internal companion object {
+        fun configureMPPAndroid(project: Project, excludeAndroid: Boolean) {
             if (!excludeAndroid) {
                 project.apply { plugin("com.android.library") }
                 val android = project.extensions["android"] as LibraryExtension

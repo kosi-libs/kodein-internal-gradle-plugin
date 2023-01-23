@@ -7,11 +7,11 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("UnstableApiUsage")
-class KodeinJvmPlugin : KtPlugin<Project> {
+public class KodeinJvmPlugin : KtPlugin<Project> {
 
-    companion object {
+    internal companion object {
 
-        internal fun configureJvmTarget(project: Project) = with(project) {
+        fun configureJvmTarget(project: Project) = with(project) {
             tasks.withType<KotlinCompile>().configureEach {
                 compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
                 compilerOptions.allWarningsAsErrors.set(true)

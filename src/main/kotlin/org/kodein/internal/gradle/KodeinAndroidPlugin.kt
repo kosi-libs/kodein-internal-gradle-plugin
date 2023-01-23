@@ -6,10 +6,10 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.*
 
 @Suppress("UnstableApiUsage")
-class KodeinAndroidPlugin : KtPlugin<Project> {
+public class KodeinAndroidPlugin : KtPlugin<Project> {
 
-    companion object {
-        internal fun configureAndroid(android: LibraryExtension) = with(android) {
+    internal companion object {
+        fun configureAndroid(android: LibraryExtension) = with(android) {
             compileSdk = 32
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -4,36 +4,36 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.provideDelegate
 
-class KodeinUploadRootPlugin : Plugin<Project> {
+public class KodeinUploadRootPlugin : Plugin<Project> {
 
     private lateinit var project: Project
 
-    inner class PublicationConfig {
+    public inner class PublicationConfig {
         private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
         internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
 
-        val repositoryUrl: String = when {
+        public val repositoryUrl: String = when {
             snapshot -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             repositoryId != null -> "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
             else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
         }
 
-        val version = run {
+        public val version: String = run {
             val eapBranch = (project.properties["gitRef"] as? String)?.split("/")?.last() ?: "dev"
             if (snapshot) "${project.version}-$eapBranch-SNAPSHOT" else project.version.toString()
         }
 
-        val projectName = project.name.ifEmpty { "UNDEFINED" }
+        public val projectName: String = project.name.ifEmpty { "UNDEFINED" }
     }
 
-    val publication by lazy { PublicationConfig() }
+    public val publication: PublicationConfig by lazy { PublicationConfig() }
 
-    inner class SonatypeConfig(
-            val username: String,
-            val password: String,
-            val dryRun: Boolean
+    public inner class SonatypeConfig(
+            public val username: String,
+            public val password: String,
+            public val dryRun: Boolean
     )
-    val sonatypeConfig: SonatypeConfig? by lazy {
+    public val sonatypeConfig: SonatypeConfig? by lazy {
         val username: String? = (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
         val password: String? = (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
         val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as Boolean?) ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
@@ -53,8 +53,8 @@ class KodeinUploadRootPlugin : Plugin<Project> {
         }
     }
 
-    inner class SigningConfig(val signingKey: String, val signingPassword: String)
-    val signingConfig: SigningConfig? by lazy {
+    public inner class SigningConfig(public val signingKey: String, public val signingPassword: String)
+    public val signingConfig: SigningConfig? by lazy {
         val signingKey: String? = (project.properties["org.kodein.signing.key"] as String?) ?: System.getenv("GPG_PRIVATE_KEY")
         val signingPassword: String? = (project.properties["org.kodein.signing.password"] as String?) ?: System.getenv("GPG_PRIVATE_PASSWORD")
         val skipSigning: Boolean = (KodeinLocalPropertiesPlugin.on(project).isTrue("org.kodein.signing.skip"))

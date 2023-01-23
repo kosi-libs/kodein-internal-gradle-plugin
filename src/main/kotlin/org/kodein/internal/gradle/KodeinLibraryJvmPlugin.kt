@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-class KodeinLibraryJvmPlugin : KtPlugin<Project> {
+public class KodeinLibraryJvmPlugin : KtPlugin<Project> {
 
-    companion object {
+    internal companion object {
         const val defaultPublicationName = "libraryMaven"
 
-        internal fun addJvmSourcesJar(
+        fun addJvmSourcesJar(
             project: Project,
             publication: String = defaultPublicationName,
             sourceSet: Project.() -> Iterable<File> = {

@@ -17,7 +17,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 
 @Suppress("UnstableApiUsage")
-class KodeinUploadModulePlugin : KtPlugin<Project> {
+public class KodeinUploadModulePlugin : KtPlugin<Project> {
 
     private val Project.publishing get() = extensions.getByName<PublishingExtension>("publishing")
     private val Project.signing get() = extensions.getByName<SigningExtension>("signing")
@@ -25,9 +25,9 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
     internal val disabledPublications = ArrayList<Publication>()
     internal val hostOnlyPublications = ArrayList<Publication>()
 
-    class Extension {
-        var name: String = ""
-        var description: String = ""
+    public class Extension {
+        public var name: String = ""
+        public var description: String = ""
     }
 
     override fun Project.applyPlugin() {
@@ -105,12 +105,12 @@ class KodeinUploadModulePlugin : KtPlugin<Project> {
                 outputDirectory.set(file(dokkaOutputDir))
                 dokkaSourceSets {
                     configureEach {
+                        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
                         val platformName = when(platform.get()) {
                             Platform.jvm -> "jvm"
                             Platform.js -> "js"
                             Platform.native -> "native"
                             Platform.common -> "common"
-                            null -> error("Null Kotlin platform")
                         }
                         displayName.set(platformName)
 

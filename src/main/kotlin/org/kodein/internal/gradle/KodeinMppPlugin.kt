@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
-class KodeinMppPlugin : KtPlugin<Project> {
+public class KodeinMppPlugin : KtPlugin<Project> {
     @Suppress("UnstableApiUsage")
     override fun Project.applyPlugin() {
         apply {

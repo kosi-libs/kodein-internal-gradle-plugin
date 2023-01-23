@@ -2,20 +2,20 @@ package org.kodein.internal.gradle.settings
 
 import org.gradle.api.initialization.Settings
 
-class Framework(private val settings: Settings, framework: String) {
+public class Framework(private val settings: Settings, framework: String) {
 
-    val excludedTargets = KodeinSettingsPlugin.get(settings).findLocalProperty("excludeTargets")
+    public val excludedTargets: List<String> = KodeinSettingsPlugin.get(settings).findLocalProperty("excludeTargets")
             ?.split(",")
             ?.map { it.trim() }
             ?: emptyList()
 
-    val isExcluded =
+    public val isExcluded: Boolean =
             (framework in excludedTargets)
             || (System.getenv("EXCLUDE_${framework.toUpperCase()}") != null)
 
-    val isIncluded get() = !isExcluded
+    public val isIncluded: Boolean get() = !isExcluded
 
-    fun include(vararg projectPaths: String) {
+    public fun include(vararg projectPaths: String) {
         if (isIncluded) settings.include(*projectPaths)
     }
 }

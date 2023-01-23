@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.plugin
 
-class KodeinGradlePluginPlugin : KtPlugin<Project> {
+public class KodeinGradlePluginPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {

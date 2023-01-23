@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 @Suppress("UnstableApiUsage")
-class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
+public class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {

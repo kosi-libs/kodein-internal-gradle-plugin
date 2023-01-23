@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.plugin
 
 @Suppress("UnstableApiUsage")
-class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
+public class KodeinLibraryMppWithAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         val excludedTargets = KodeinLocalPropertiesPlugin.on(this).getAsList("excludeTargets")

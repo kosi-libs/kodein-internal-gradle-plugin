@@ -2,6 +2,6 @@ package org.kodein.internal.gradle.settings
 
 import org.gradle.api.initialization.Settings
 
-fun Settings.framework(name: String) = Framework(settings, name)
+public fun Settings.framework(name: String): Framework = Framework(settings, name)
 
-val Settings.android get() = framework("android")
+public val Settings.android: Framework get() = framework("android")

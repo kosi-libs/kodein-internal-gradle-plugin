@@ -3,14 +3,12 @@ package org.kodein.internal.gradle.settings
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
-import org.kodein.internal.gradle.KodeinVersions
 import java.io.File
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-class KodeinSettingsPlugin : Plugin<Settings> {
+public class KodeinSettingsPlugin : Plugin<Settings> {
 
     private lateinit var settings: Settings
 
@@ -23,15 +21,13 @@ class KodeinSettingsPlugin : Plugin<Settings> {
 
     }
 
-    fun findLocalProperty(key: String): String? =
+    public fun findLocalProperty(key: String): String? =
         System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
             ?: localProperties.getProperty(key)
             ?: DslObject(settings).asDynamicObject.tryGetProperty("org.kodein.local.$key")
                 .takeIf { it.isFound } ?.value as String?
 
     private fun Settings.applyPlugin() {
-        val version = buildscript.configurations["classpath"].dependencies.first { it.group == "org.kodein.internal.gradle" && it.name == "kodein-internal-gradle-settings" } .version
-
         pluginManagement {
             repositories {
                 mavenLocal()
@@ -48,8 +44,8 @@ class KodeinSettingsPlugin : Plugin<Settings> {
                 eachPlugin {
                     val id = requested.id.id
                     when {
-                        id.startsWith("org.kodein.") -> useModule("org.kodein.internal.gradle:kodein-internal-gradle-plugin:$version")
-                        id == "kotlinx-serialization" -> useModule("org.jetbrains.kotlin:kotlin-serialization:${KodeinVersions.kotlin}")
+                        id.startsWith("org.kodein.") -> useModule("org.kodein.internal.gradle:kodein-internal-gradle-plugin:${BuildConfig.thisVersion}")
+                        id == "kotlinx-serialization" -> useModule("org.jetbrains.kotlin:kotlin-serialization:${BuildConfig.kotlinVersion}")
                     }
                 }
             }
@@ -61,7 +57,7 @@ class KodeinSettingsPlugin : Plugin<Settings> {
         settings.applyPlugin()
     }
 
-    companion object {
+    internal companion object {
         fun get(settings: Settings): KodeinSettingsPlugin = settings.plugins.getPlugin(KodeinSettingsPlugin::class.java)
     }
 }

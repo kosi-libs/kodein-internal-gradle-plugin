@@ -4,24 +4,24 @@ import org.gradle.api.Project
 import java.io.File
 import java.util.*
 
-class KodeinLocalPropertiesPlugin : KtPlugin<Project> {
+public class KodeinLocalPropertiesPlugin : KtPlugin<Project> {
 
-    class KodeinLocalProperties(private val project: Project, internal val local: Properties) {
-        operator fun get(key: String): String? =
+    public class KodeinLocalProperties(private val project: Project, internal val local: Properties) {
+        public operator fun get(key: String): String? =
             System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
                     ?: local.getProperty(key)
                     ?: (project.properties["org.kodein.local.$key"] as? String)
 
-        fun isTrue(key: String): Boolean = get(key) == "true"
+        public fun isTrue(key: String): Boolean = get(key) == "true"
 
-        fun getAsList(key: String): List<String> = get(key)?.split(",")?.map { it.trim() } ?: emptyList()
+        public fun getAsList(key: String): List<String> = get(key)?.split(",")?.map { it.trim() } ?: emptyList()
     }
 
     override fun Project.applyPlugin() {
         Companion.applyPlugin(project)
     }
 
-    companion object {
+    internal companion object {
         private const val EXTENSION_KEY = "kodeinLocalProperties"
 
         private fun applyPlugin(project: Project): KodeinLocalProperties = with(project) {
