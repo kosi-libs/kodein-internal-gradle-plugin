@@ -24,8 +24,8 @@ public class KodeinGradlePluginPlugin : KtPlugin<Project> {
             vcsUrl = "https://github.com/kosi-libs/${rootProject.name}.git"
         }
 
-        afterEvaluate {
-            KodeinLibraryJvmPlugin.addJvmSourcesJar(project, "pluginMaven")
-        }
+//        afterEvaluate {
+//            KodeinLibraryJvmPlugin.addJvmSourcesJar(project, "pluginMaven")
+//        }
     }
 }

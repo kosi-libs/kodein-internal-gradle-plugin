@@ -1,0 +1,10 @@
+[versions]
+# https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+kotlin = "1.7.10"
+gradle-publishPlugin = "1.1.0"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+
+[libraries]
+gradle-publishPlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-publishPlugin" }

@@ -1,17 +1,7 @@
 plugins {
-    // https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-    kotlin("jvm") version "1.7.10"
+    alias(libs.plugins.kotlin.jvm)
     `kotlin-dsl`
     `maven-publish`
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.squareup.okhttp3:okhttp:4.9.0")
-    }
 }
 
 allprojects {
@@ -29,20 +19,16 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = kodeinGlobals.versions.kotlin.get()
-    val androidBuildToolsVersion = kodeinGlobals.versions.android.buildTools.get()
-    val dokkaVersion = kodeinGlobals.versions.dokka.get()
-
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(kodeinGlobals.kotlin.reflect)
 
-    api(kotlin("gradle-plugin", version = kotlinVersion))
-    api(kotlin("serialization", version = kotlinVersion))
-    api("com.android.tools.build:gradle:$androidBuildToolsVersion")
-    api("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
-    api("org.jetbrains.dokka:dokka-core:$dokkaVersion")
-    api("com.gradle.publish:plugin-publish-plugin:1.1.0")
+    api(kodeinGlobals.kotlin.gradlePlugin)
+    api(kodeinGlobals.kotlin.serializationPlugin)
+    api(kodeinGlobals.android.gradlePlugin)
+    api(kodeinGlobals.dokka.gradlePlugin)
+    api(kodeinGlobals.dokka.core)
+    api(libs.gradle.publishPlugin)
 }
 
 kotlin {

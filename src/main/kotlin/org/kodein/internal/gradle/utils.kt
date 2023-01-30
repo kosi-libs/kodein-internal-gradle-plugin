@@ -29,6 +29,3 @@ internal fun Project.configureTestLogsPrint() {
 internal fun Project.kodeinGlobalVersion(alias: String) =
     (extensions.getByName("VersionCatalogsExtension") as VersionCatalogsExtension).named("kodeinGlobals")
         .findVersion(alias).orElseThrow { NoSuchElementException(alias) } .requiredVersion
-
-internal inline fun <reified T : Task> TaskContainer.maybeRegister(name: String, noinline configuration: T.() -> Unit): TaskProvider<T> =
-    if (name in names) named<T>(name) else register(name, configuration)

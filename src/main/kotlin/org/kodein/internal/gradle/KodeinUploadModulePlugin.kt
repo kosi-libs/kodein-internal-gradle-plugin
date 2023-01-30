@@ -31,15 +31,22 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
     }
 
     override fun Project.applyPlugin() {
+        evaluationDependsOn(rootProject.path)
+
+        val root = rootProject.plugins.findPlugin(KodeinUploadRootPlugin::class)
+            ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
+        val signingConfig = root.signingConfig
+
         apply {
             plugin("org.jetbrains.dokka")
             plugin("org.gradle.maven-publish")
-            plugin("org.gradle.signing")
+            if (signingConfig != null) {
+                plugin("org.gradle.signing")
+            }
         }
 
         val ext = Extension()
         project.extensions.add("kodeinUpload", ext)
-        evaluationDependsOn(rootProject.path)
 
         tasks.withType<AbstractPublishToMaven>().configureEach {
             onlyIf {
@@ -51,10 +58,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
-
-            val root = rootProject.plugins.findPlugin(KodeinUploadRootPlugin::class)
-                    ?: throw IllegalStateException("Could not find root project's kodeinPublications, have you applied the plugin?")
-
             val sonatypeConfig = root.sonatypeConfig?.takeIf {
                 if (ext.name.isBlank() || ext.description.isBlank()) {
                     logger.warn("$project: Skipping sonatype configuration as kodeinUpload has not been configured (empty name and/or description).")
@@ -127,24 +130,14 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
             tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
 
-            val javadocJar = tasks.maybeRegister<Jar>("javadocJar") {
-                dependsOn("dokkaHtml")
-                archiveClassifier.set("javadoc")
-                from(dokkaOutputDir)
-            }
+            if ("javadocJar" !in project.tasks.names) {
+                val javadocJar = tasks.register<Jar>("javadocJar") {
+                    dependsOn("dokkaHtml")
+                    archiveClassifier.set("javadoc")
+                    from(dokkaOutputDir)
+                }
 
-            // tasks.named("dokkaGfm") { dependsOn("build") }
-            // tasks.named("dokkaGfmPartial") { dependsOn("build") }
-            // tasks.named("dokkaHtml") { dependsOn("build") }
-            // tasks.named("dokkaHtmlPartial") { dependsOn("build") }
-            // tasks.named("dokkaJavadoc") { dependsOn("build") }
-            // tasks.named("dokkaJavadocPartial") { dependsOn("build") }
-            // tasks.named("dokkaJekyll") { dependsOn("build") }
-            // tasks.named("dokkaJekyllPartial") { dependsOn("build") }
-
-            project.version = root.publication.version
-            publishing.publications.withType<MavenPublication>().configureEach {
-                if (!name.endsWith("PluginMarkerMaven")) {
+                publishing.publications.withType<MavenPublication>().configureEach {
                     val artifactJavadoc = tasks.maybeCreate<Copy>("${artifactId}JavadocJar").apply {
                         dependsOn(javadocJar)
                         from(javadocJar)
@@ -155,6 +148,10 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                         classifier = "javadoc"
                     }
                 }
+            }
+
+            project.version = root.publication.version
+            publishing.publications.withType<MavenPublication>().configureEach {
                 pom {
                     name.set(ext.name)
                     description.set(ext.description)
@@ -198,7 +195,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            val signingConfig = root.signingConfig
             if(signingConfig != null ) {
                 signing.apply {
                     useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword)
