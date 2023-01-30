@@ -13,15 +13,16 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
 
         fun configureJvmTarget(project: Project) = with(project) {
             tasks.withType<KotlinCompile>().configureEach {
-                compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+                compilerOptions.jvmTarget.set(jvmTarget(project))
                 if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
                     compilerOptions.allWarningsAsErrors.set(true)
                 }
             }
 
             extensions.getByType<JavaPluginExtension>().apply {
-                sourceCompatibility = JavaVersion.VERSION_11
-                targetCompatibility = JavaVersion.VERSION_11
+                val version = javaVersion(project)
+                sourceCompatibility = version
+                targetCompatibility = version
             }
 
             tasks.register("jvmTest") {
@@ -29,6 +30,22 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
                 dependsOn("test")
             }
         }
+
+        fun javaVersion(project: Project) =
+            when (val version = project.properties["org.kodein.jvm-version"] ?: "1.8") {
+                "1.8" -> JavaVersion.VERSION_1_8
+                "11" -> JavaVersion.VERSION_11
+                "17" -> JavaVersion.VERSION_17
+                else -> error("Unsupported JVM version $version")
+            }
+
+        fun jvmTarget(project: Project) =
+            when (val version = project.properties["org.kodein.jvm-version"] ?: "1.8") {
+                "1.8" -> JvmTarget.JVM_1_8
+                "11" -> JvmTarget.JVM_11
+                "17" -> JvmTarget.JVM_17
+                else -> error("Unsupported JVM version $version")
+            }
 
     }
 

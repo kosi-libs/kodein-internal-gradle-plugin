@@ -17,8 +17,9 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
                 ndkVersion = project.kodeinGlobalVersion("androidNdk")
             }
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_11
-                targetCompatibility = JavaVersion.VERSION_11
+                val version = KodeinJvmPlugin.javaVersion(project)
+                sourceCompatibility = version
+                targetCompatibility = version
             }
         }
     }

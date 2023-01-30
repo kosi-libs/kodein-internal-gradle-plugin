@@ -96,7 +96,7 @@ public class KodeinMppExtension(private val project: Project) {
                 conf = {
                     target.compilations.all {
                         compilerOptions.configure {
-                            jvmTarget.set(JvmTarget.JVM_11)
+                            jvmTarget.set(KodeinJvmPlugin.jvmTarget(project))
                         }
                     }
                 }

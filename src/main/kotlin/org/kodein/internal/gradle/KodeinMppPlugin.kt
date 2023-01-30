@@ -30,9 +30,8 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                 targets.all {
                     compilations.all {
                         compilerOptions.configure {
-                            allWarningsAsErrors.set(true)
                             if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
-                                (this as? KotlinJvmCompilerOptions)?.jvmTarget?.set(JvmTarget.JVM_11)
+                                allWarningsAsErrors.set(true)
                             }
                         }
                     }
