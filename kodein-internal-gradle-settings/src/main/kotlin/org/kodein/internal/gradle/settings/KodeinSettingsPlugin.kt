@@ -37,12 +37,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
                 maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
-                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin") {
-                    credentials {
-                        username = extra["github.username"]?.toString() ?: error("Please set github.username in ~/.gradle/gradle.properties")
-                        password = extra["github.personalAccessToken"]?.toString() ?: error("Please set github.personalAccessToken in ~/.gradle/gradle.properties")
-                    }
-                }
+                maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
             }
 
             @Suppress("UnstableApiUsage")
@@ -59,12 +54,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 gradlePluginPortal()
                 mavenCentral()
                 google()
-                maven(url = "https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin") {
-                    credentials {
-                        username = extra["github.username"]?.toString() ?: error("Please set github.username in ~/.gradle/gradle.properties")
-                        password = extra["github.personalAccessToken"]?.toString() ?: error("Please set github.personalAccessToken in ~/.gradle/gradle.properties")
-                    }
-                }
+                maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
             }

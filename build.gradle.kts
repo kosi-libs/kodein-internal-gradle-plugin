@@ -1,7 +1,21 @@
+import okhttp3.OkHttpClient
+import okhttp3.Request
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     `kotlin-dsl`
     `maven-publish`
+    id("org.ajoberstar.git-publish") version "4.1.1"
+    id("org.ajoberstar.grgit") version "5.0.0"
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.squareup.okhttp3:okhttp:4.9.0")
+    }
 }
 
 allprojects {
@@ -52,11 +66,9 @@ allprojects {
                 from(sourceSets["main"].allSource)
             }
 
-            publishing.publications {
-                withType<MavenPublication> {
-                    artifact(sourcesJar) {
-                        classifier = "sources"
-                    }
+            publishing.publications.withType<MavenPublication> {
+                artifact(sourcesJar) {
+                    classifier = "sources"
                 }
             }
         }
@@ -82,22 +94,74 @@ allprojects {
                 }
             }
         }
+    }
+}
 
-        publishing.repositories {
-            val ghUser = System.getenv("GITHUB_USER")
-            val ghToken = System.getenv("GITHUB_TOKEN")
-            if(ghUser != null && ghToken != null) {
-                maven {
-                    name = "GitHubPackages"
-                    url = uri("https://maven.pkg.github.com/kosi-libs/kodein-internal-gradle-plugin")
-                    credentials {
-                        username = ghUser
-                        password = ghToken
-                    }
-                }
-            } else {
-                logger.warn("Missing git credentials. We won't be able to publish any version.")
-            }
+tasks.register("validateVersion") {
+    group = "publishing"
+    doLast {
+        val publishingVersion = project.version.toString()
+
+        // Allow snapshots to be overridden
+        if(!publishingVersion.matches("""^(\d*)\.(\d*)\.(\d*)$""".toRegex())) return@doLast
+
+        // Verify that the SemVer version does not exist on the mvn-repo branch
+        val url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin"
+        val request = Request.Builder()
+            .url("$url/mvn-repo/org/kodein/internal/gradle/kodein-internal-gradle-plugin/$publishingVersion/kodein-internal-gradle-plugin-$publishingVersion.pom")
+            .get()
+            .build()
+        val res = OkHttpClient().newCall(request).execute()
+        if (res.code == 200) error("Version ($publishingVersion) already published on $url.")
+    }
+}
+
+tasks.register<Sync>("copyMavenLocalArtifacts") {
+    group = "publishing"
+    dependsOn("validateVersion")
+    val publishingVersion = project.version.toString()
+    val userHome = System.getProperty("user.home")
+    val groupDir = project.group.toString().replace('.', '/')
+    val localRepository = "$userHome/.m2/repository/$groupDir/"
+
+    from(localRepository) {
+        include("*/$publishingVersion/**")
+    }
+
+    into("$buildDir/mvn-repo/$groupDir/")
+}
+
+val (gitUser, gitPassword) = (project.findProperty("com.github.http.auth") as? String)?.run {
+    val auth = split(":")
+    auth[0] to auth[1]
+} ?: (System.getenv("GIT_USER") to System.getenv("GIT_PASSWORD")) as Pair<String?, String?>
+if(gitUser != null && gitPassword != null) {
+    System.setProperty("org.ajoberstar.grgit.auth.username", gitUser)
+    System.setProperty("org.ajoberstar.grgit.auth.password", gitPassword)
+    Unit
+} else {
+    logger.warn("Missing git credentials. We won't be able to publish any version.")
+}
+
+gitPublish {
+    repoUri.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin.git")
+    branch.set("mvn-repo")
+    contents {
+        from("$buildDir/mvn-repo")
+    }
+    preserve {
+        include("**")
+    }
+    val head = grgit.head()
+    commitMessage.set("${head.abbreviatedId}: ${project.version} : ${head.fullMessage}")
+}
+
+tasks.named("gitPublishCopy").configure { dependsOn("copyMavenLocalArtifacts") }
+
+tasks.named("gitPublishCommit").configure {
+    doFirst {
+        if (!grgit.status().isClean) {
+            error("Refusing to commit new pages on a non-clean repo. Please commit first.\n${grgit.status()}")
         }
     }
 }
