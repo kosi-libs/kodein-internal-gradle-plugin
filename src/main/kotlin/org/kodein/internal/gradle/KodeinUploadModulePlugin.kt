@@ -198,11 +198,14 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             if(signingConfig != null ) {
                 signing.apply {
                     useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword)
-                    sign(publishing.publications)
+                    publishing.publications.all {
+                        if ("sign${name.capitalize()}Publication" !in tasks.names) {
+                            sign(this)
+                        }
+                    }
                 }
             }
         }
-
     }
 
 }
