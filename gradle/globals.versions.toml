@@ -4,6 +4,14 @@ dokka = "1.7.20"
 android-buildTools = "7.4.0"
 android-ndk = "25.1.8937393"
 
+[plugins]
+android-library = { id = "com.android.library", version.ref = "android-buildTools" }
+android-application = { id = "com.android.application", version.ref = "android-buildTools" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
 [libraries]
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-buildTools" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
