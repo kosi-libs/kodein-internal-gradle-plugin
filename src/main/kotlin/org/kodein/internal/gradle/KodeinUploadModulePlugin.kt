@@ -8,7 +8,6 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
@@ -28,6 +27,8 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
     public class Extension {
         public var name: String = ""
         public var description: String = ""
+        internal var addJavadoc: Boolean = true
+        internal var signPublications: Boolean = true
     }
 
     override fun Project.applyPlugin() {
@@ -90,9 +91,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                             }
 
                             doFirst {
-                                if (KodeinLocalPropertiesPlugin.on(project).getAsList("classpathFixes").isNotEmpty()) {
-                                    error("Cannot publish to OSSRH with classpath fixes!")
-                                }
                                 val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
                                 if (excludeTargets.isNotEmpty()) {
                                     logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
@@ -125,12 +123,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
-                delete(dokkaOutputDir)
-            }
-            tasks.named("dokkaHtml").configure { dependsOn(deleteDokkaOutputDir) }
-
-            if ("javadocJar" !in project.tasks.names) {
+            if (ext.addJavadoc) {
                 val javadocJar = tasks.register<Jar>("javadocJar") {
                     dependsOn("dokkaHtml")
                     archiveClassifier.set("javadoc")
@@ -195,13 +188,11 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            if(signingConfig != null ) {
+            if(signingConfig != null) {
                 signing.apply {
                     useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword)
-                    publishing.publications.all {
-                        if ("sign${name.capitalize()}Publication" !in tasks.names) {
-                            sign(this)
-                        }
+                    if (ext.signPublications) {
+                        sign(publishing.publications)
                     }
                 }
             }

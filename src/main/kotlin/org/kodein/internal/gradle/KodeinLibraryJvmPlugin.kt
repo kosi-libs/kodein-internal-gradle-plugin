@@ -23,16 +23,14 @@ public class KodeinLibraryJvmPlugin : KtPlugin<Project> {
                 extensions.getByName<JavaPluginExtension>("java").sourceSets["main"].allSource
             }
         ) {
-            if ("sourcesJar" !in project.tasks.names) {
-                val sourcesJar = project.tasks.register<Jar>("sourcesJar") {
-                    archiveClassifier.set("sources")
-                    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-                    from(project.sourceSet())
-                }
-
-                project.extensions.getByName<PublishingExtension>("publishing")
-                    .publications.getByName<MavenPublication>(publication).artifact(sourcesJar)
+            val sourcesJar = project.tasks.register<Jar>("sourcesJar") {
+                archiveClassifier.set("sources")
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                from(project.sourceSet())
             }
+
+            project.extensions.getByName<PublishingExtension>("publishing")
+                .publications.getByName<MavenPublication>(publication).artifact(sourcesJar)
         }
     }
 
