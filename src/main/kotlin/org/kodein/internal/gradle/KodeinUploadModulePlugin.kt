@@ -59,6 +59,8 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
         }
 
         afterEvaluate {
+            project.version = root.publication.version
+
             val sonatypeConfig = root.sonatypeConfig?.takeIf {
                 if (ext.name.isBlank() || ext.description.isBlank()) {
                     logger.warn("$project: Skipping sonatype configuration as kodeinUpload has not been configured (empty name and/or description).")
@@ -143,7 +145,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            project.version = root.publication.version
             publishing.publications.withType<MavenPublication>().configureEach {
                 pom {
                     name.set(ext.name)
