@@ -7,6 +7,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -27,5 +28,5 @@ internal fun Project.configureTestLogsPrint() {
 }
 
 internal fun Project.kodeinGlobalVersion(alias: String) =
-    (extensions.getByName("VersionCatalogsExtension") as VersionCatalogsExtension).named("kodeinGlobals")
+    extensions.getByType<VersionCatalogsExtension>().named("kodeinGlobals")
         .findVersion(alias).orElseThrow { NoSuchElementException(alias) } .requiredVersion
