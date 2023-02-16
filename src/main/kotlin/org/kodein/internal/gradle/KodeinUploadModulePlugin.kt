@@ -63,7 +63,10 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
 
             val sonatypeConfig = root.sonatypeConfig?.takeIf {
                 if (ext.name.isBlank() || ext.description.isBlank()) {
-                    logger.warn("$project: Skipping sonatype configuration as kodeinUpload has not been configured (empty name and/or description).")
+                    logger.warn(
+                        "{}: Skipping sonatype configuration as kodeinUpload has not been configured (empty name and/or description).",
+                        project
+                    )
                     false
                 } else true
             }
@@ -95,7 +98,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                             doFirst {
                                 val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
                                 if (excludeTargets.isNotEmpty()) {
-                                    logger.warn("Uploading to OSSRH with excluded targets $excludeTargets")
+                                    logger.warn("Uploading to OSSRH with excluded targets {}", excludeTargets)
                                 }
                             }
                         }
@@ -179,10 +182,11 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            tasks.create("hostOnlyPublish") {
+            tasks.register("hostOnlyPublish") {
                 val hostOnlyPublish = this
                 group = "publishing"
-                tasks.withType<PublishToMavenRepository>().configureEach {
+                // Configuration must NOT be on-demand here.
+                tasks.withType<PublishToMavenRepository>().all {
                     if (this.publication in hostOnlyPublications) {
                         hostOnlyPublish.dependsOn(this)
                     }

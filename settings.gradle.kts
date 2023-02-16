@@ -5,8 +5,8 @@ include(
     "kodein-internal-gradle-version-catalog"
 )
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    @Suppress("UnstableApiUsage")
     versionCatalogs {
         create("kodeinGlobals") {
             from(files("gradle/globals.versions.toml"))

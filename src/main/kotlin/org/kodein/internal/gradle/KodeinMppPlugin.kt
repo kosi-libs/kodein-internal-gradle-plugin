@@ -83,10 +83,10 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                             }
                 }
 
-                tasks.create("hostOnlyTest") {
+                tasks.register("hostOnlyTest") {
                     val hostOnlyTest = this
                     group = "verification"
-                    tasks.withType<KotlinTest>().configureEach {
+                    tasks.withType<KotlinTest>().all {
                         if (this.targetName in ext.hostTargets) {
                             hostOnlyTest.dependsOn(this)
                         }
