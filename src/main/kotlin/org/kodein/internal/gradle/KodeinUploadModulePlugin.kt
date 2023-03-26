@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 
 @Suppress("UnstableApiUsage")
@@ -183,14 +184,9 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             tasks.register("hostOnlyPublish") {
-                val hostOnlyPublish = this
                 group = "publishing"
                 // Configuration must NOT be on-demand here.
-                tasks.withType<PublishToMavenRepository>().all {
-                    if (this.publication in hostOnlyPublications) {
-                        hostOnlyPublish.dependsOn(this)
-                    }
-                }
+                dependsOn(tasks.withType<PublishToMavenRepository>().filter { it.publication in hostOnlyPublications })
             }
 
             if(signingConfig != null) {
