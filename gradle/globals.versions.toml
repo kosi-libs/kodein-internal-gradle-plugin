@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.8.10"
 dokka = "1.7.20"
-android-buildTools = "7.4.0-beta02" #7.4.0 is not compatible with IDEA yet.
+android-buildTools = "7.4.0"
 android-ndk = "25.1.8937393"
 
 [plugins]
