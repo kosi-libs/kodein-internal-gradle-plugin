@@ -118,6 +118,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                             Platform.js -> "js"
                             Platform.native -> "native"
                             Platform.common -> "common"
+                            Platform.wasm -> "wasm"
                         }
                         displayName.set(platformName)
 
