@@ -1,6 +1,7 @@
 package org.kodein.internal.gradle.settings
 
 import org.gradle.api.initialization.Settings
+import java.util.*
 
 public class Framework(private val settings: Settings, framework: String) {
 
@@ -11,7 +12,7 @@ public class Framework(private val settings: Settings, framework: String) {
 
     public val isExcluded: Boolean =
             (framework in excludedTargets)
-            || (System.getenv("EXCLUDE_${framework.toUpperCase()}") != null)
+            || (System.getenv("EXCLUDE_${framework.uppercase(Locale.getDefault())}") != null)
 
     public val isIncluded: Boolean get() = !isExcluded
 

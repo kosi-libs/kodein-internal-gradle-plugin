@@ -23,7 +23,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
     }
 
     public fun findLocalProperty(key: String): String? =
-        System.getenv("KODEIN_LOCAL_${key.toUpperCase()}")
+        System.getenv("KODEIN_LOCAL_${key.uppercase(Locale.getDefault())}")
             ?: localProperties.getProperty(key)
             ?: DslObject(settings).asDynamicObject.tryGetProperty("org.kodein.local.$key")
                 .takeIf { it.isFound } ?.value as String?
@@ -37,10 +37,10 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
                 maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
+                maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
                 maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
             }
 
-            @Suppress("UnstableApiUsage")
             versionCatalogs {
                 create("kodeinGlobals") {
                     from("org.kodein.internal.gradle:kodein-internal-gradle-version-catalog:${BuildConfig.thisVersion}")
@@ -56,6 +56,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
                 google()
                 maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
                 maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
+                maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
                 maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
             }
 
@@ -71,6 +72,12 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
         }
 
         enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+        this.gradle.allprojects {
+            extra.set("kotlin.native.ignoreDisabledTargets", "true")
+            extra.set("kotlin.mpp.stability.nowarn", "true")
+            extra.set("kotlin.mpp.androidSourceSetLayoutVersion", "2")
+        }
     }
 
     override fun apply(settings: Settings) {

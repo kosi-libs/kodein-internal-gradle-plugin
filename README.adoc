@@ -1,17 +1,18 @@
-# Internal Gradle Configuration Plugins
+= Internal Gradle Configuration Plugins
 
 This is a collection of gradle plugin that contain the common configuration for all Kodein Open-Source Initiative components.
 
 This project is **NOT** by itself a Kodein Open-Source Initiative component, it is a build tool intended to be used **ONLY** by Kodein components.
 
 
-## Settings
+== Settings
 
 This plugins must be applied in `settings.gradle.kts`.
-You therefore need to add the repository.
-Here's a standard `settings.gradle.kts`:
+You therefore need to add both the repository and the plugin:
 
-```kotlin
+.settings.gradle.kts
+[source,kotlin]
+----
 buildscript {
     repositories {
         mavenLocal()
@@ -27,19 +28,20 @@ apply { plugin("org.kodein.settings") }
 rootProject.name = "PRJECT-NAME"
 
 include(
-    ":moduleA", 
+    ":moduleA",
     ":moduleB"
 )
-```
+----
 
-### Benefits
+=== Benefits
 
 * Allows modules segmentation (for target exclusion).
 * Adds all necessary repositories to project's gradle classpath.
+* Configures standard dependencies repositories (maven local, jCenter, Google, Kotlin EAP).
 * Synchronizes all versions of kodein plugins.
-* Synchronizes version of Kotlin & KotlinX Serialization plugins.
+* Imports the `kodeinGlobal` version catalog.
 
-### Target exclusion
+=== Target exclusion
 
 You can exclude modules from being configured / compiled.
 For example: you can exclude an Android modules if you don't have an Android SDK installation.
@@ -47,32 +49,43 @@ For example: you can exclude an Android modules if you don't have an Android SDK
 Excluded targets are configured via the `excludeTargets` **kodein local property**.
 You can exclude multiple targets with a coma separated list:
 
-```properties
+.kodein.local.properties
+[source,properties]
+----
 excludeTargets = android, ktor
-```
+----
 
 For a module to relate to a target, you need to include it in a special way in settings.gradle.kts:
 
-```kotlin
+.settings.gradle.kts
+[source,kotlin]
+----
 android.include(":framework:android")
 framework("ktor").include(":framework:ktor")
-```
+----
 
 
-## Root
+== Root
 
-Each Kodein project must have a no-source root module with the `org.kodein.root` plugin applied.
+Each Kodein project must have a no-source root module with the `kodein.root` plugin applied:
 
-### Benefits
+.build.gradle.kts
+[source,kotlin]
+----
+plugins {
+    kodein.root
+}
+----
 
-* Configures standard dependencies repositories (maven local, jCenter, Google, Kotlin EAP).
+=== Benefits
+
 * Applies the `org.kodein.upload.root` plugin.
 * Allows to generate a report of all dependencies for all modules (with `./gradlew allDependencies --scan`)
 
 
-## MavenCentral (OSSRH):
+== MavenCentral (OSSRH):
 
-### Benefits
+=== Benefits
 
 * Read Nexus Sonatype's configuration values once and cache them in root module.
 * Configures sonatype (releases or snapshots) with `maven-publish` plugin (recommended way with KMP).
@@ -81,41 +94,45 @@ Each Kodein project must have a no-source root module with the `org.kodein.root`
 * Disables publications on cross and excluded targets (see MP module plugin).
 * Creates the `hostOnlyPublish` task which publishes only locally built native targets.
 
-### Configuration
+=== Configuration
 
 MavenCentral publishing and configuration is automatically disabled if the configuration values are not set.
 
 You can set the bintray configuration values:
 
 * In your global **`~/.gradle/gradle.properties`**:
-  ```properties
-  org.kodein.sonatype.username = bintray-username
-  org.kodein.sonatype.password = bintray-api-key
-  ```
++
+[source,properties]
+----
+org.kodein.sonatype.username = bintray-username
+org.kodein.sonatype.password = bintray-api-key
+----
 * In environment variables `SONATYPE_USERNAME` and `SONATYPE_PASSWORD`.
 
 If the kodein local property `ossrh.dryRun` is `true`, the upload emulates the upload without actually uploading the items.
 (or even through the `org.kodein.sonatype.dryRun` gradle parameter).
 
-### Root module
+=== Root module
 
 Apply the `org.kodein.root` plugin (or the "bare" `org.kodein.upload.root` plugin).
 
-### Artifact module
+=== Artifact module
 
 Apply any `org.kodein.library.*` plugin (or the "bare" `org.kodein.upload.module` plugin).
 
 Configure the artifact upload:
 
-```kotlin
+.build.gradle.kts
+[source,kotlin]
+----
 kodeinUpload {
     name = "artifact-name"
     description = "Artifact description"
 }
-```
+----
 
 
-## Kodein local properties
+== Kodein local properties
 
 Kodein local properties are personal properties that may change your local project configuration.
 
@@ -126,12 +143,12 @@ A Kodein local property `key` can be set:
 * In the personal `~/.gradle/gradle.properties` file, with the key `org.kodein.local.${key}`.
 
 
-## JVM module plugin
+== JVM module plugin
 
 * If the module is published, apply the `org.kodein.library.jvm` plugin.
 * If the module is internal to the project, apply the `org.kodein.jvm` plugin.
 
-### Benefits
+=== Benefits
 
 * Global:
   * Configures JVM target to 1.8.
@@ -144,12 +161,12 @@ A Kodein local property `key` can be set:
   * Sets the explicit API Kotlin option
 
 
-## Android module plugin
+== Android module plugin
 
 * If the module is published, apply the `org.kodein.library.android` plugin.
 * If the module is internal to the project, apply the `org.kodein.android` plugin.
 
-### Benefits
+=== Benefits
 
 * Global:
   * Same benefits as the JVM plugin.
@@ -161,7 +178,7 @@ A Kodein local property `key` can be set:
   * Adds `org.kodein.upload.module` plugin and the `android-maven-publish` plugin.
 
 
-## MP module plugin
+== MP module plugin
 
 * If the module is published:
   * If the module targets Android, apply the `org.kodein.library.mpp-with-android` plugin.
@@ -170,7 +187,7 @@ A Kodein local property `key` can be set:
   * If the module targets Android, apply the `org.kodein.mpp-with-android` plugin.
   * If the module does not target Android, apply the `org.kodein.mpp` plugin.
 
-### Benefits
+=== Benefits
 
 * Global:
   * Adds multiple shortcut helpers to the Kotlin targets & source sets configuration DSL.
@@ -186,62 +203,46 @@ A Kodein local property `key` can be set:
   * Adds `org.kodein.upload.module` plugin.
   * Sets the explicit API Kotlin option.
 
-### MP Configuration
+=== MP Configuration
 
-```kotlin
-kodein {                            // Adds the kodein helpers
-    kotlin {
-        common {                    // Helper to access the common sourcesets
-            main.dependencies {}
-            test.dependencies {}
-        }
-        add(kodeinTargets.jvm.jvm)  // Adds the JVM Kodein target
-        add(
-            kodeinTargets.native.allDarwin +
-            kodeinTargets.native.allDesktop
-        ) {
-          mainCompilation           // Helper to access main (or test) compilation
-              .cinterops
-              .create("libleveldb") {}
-        }
-        sourceSet(kodeinSourceSets.allNative) {
-            main.dependencies {}
-            test.dependencies {}
-        }
+.build.gradle.kts
+[source,kotlin]
+----
+kotlin.kodein {
+    common {  // Helper to access the common sourcesets
+        mainDependencies {}
+        testDependencies {}
+    }
+    all()  // Adds all supported target
+    allNative {
+      compilation.main
+          .cinterops
+          .create("libleveldb") {}
+
+        sources.MainDependencies {}
+        sources.TestDependencies {}
     }
 }
-```
+----
 
-Note that you should only use `add(kodeinTargets.*)` to add a new target.
+Note that you should *NOT* use `kotlin.*` to add a new target.
 
-Available targets and sourcesets sourcesets can be found in the `KodeinMPPExtension.kt` source file.
+=== Android configuration
 
-### Android configuration
-
-```kotlin
-kodeinAndroid {                 // Adds the kodein helpers
-    android {
-        /* standard android configuration */
-    }
+[source,kotlin]
+----
+kodeinAndroid.android {
+    /* standard android configuration */
 }
 
 if (kodeinAndroid.isIncluded) {
     /* Whatever gradle conf only enabled if Android is enabled */
 }
-```
+----
 
 The `kodeinAndroid` helper is needed to disable Android configuration if Android is an excluded target.
 
-### JS compilers
-
-By default, both compiler (legacy & IR) are enabled.
-You can configure the toolchain to only use the legacy compiler in **`gradle.properties`**:
-
-```properties
-org.kodein.js.useOnlyLegacyCompiler = true
-```
-
-### Target exclusion
+=== Target exclusion
 
 You can exclude targets from being configured / compiled.
 For example: you can exclude the Android target if you don't have an Android SDK installation.
@@ -254,27 +255,31 @@ You can exclude:
 
 You can exclude multiple targets with a coma separated list:
 
-```properties
+.gradle.properties
+[source,properties]
+----
 excludeTargets = nativeNonHost, android
-```
+----
 
-### Native cross compilation
+=== Native cross compilation
 
 By default, native cross-compilation is disabled (each host only builds its own native libs).
 You can enable it in **`gradle.properties`**:
 
-```properties
+.gradle.properties
+[source,properties]
+----
 org.kodein.native.enableCrossCompilation = true
-```
+----
 
 
-## Gradle plugin module plugin
+== Gradle plugin module plugin
 
 Apply the `org.kodein.gradle-plugin` plugin.
 
 You also should apply the `kotlin-dsl` plugin as it does not come bundled.
 
-### Benefits
+=== Benefits
 
 * Applies all benefits provided by the "JVM module" plugin.
 * Library:

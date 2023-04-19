@@ -1,43 +1,61 @@
 package org.kodein.internal.gradle
 
-import org.gradle.api.*
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.findPlugin
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.konan.target.Family
 
 public class KodeinMppPlugin : KtPlugin<Project> {
-    @Suppress("UnstableApiUsage")
-    override fun Project.applyPlugin() {
-        apply {
-            plugin("org.jetbrains.kotlin.multiplatform")
-        }
 
-        val ext = KodeinMppExtension(this)
-        extensions.add("kodein", ext)
+    internal companion object {
+        fun Project.applyMppPlugin(createExt: (KotlinMultiplatformExtension) -> KodeinMppExtension) {
+            apply {
+                plugin("org.jetbrains.kotlin.multiplatform")
+            }
 
-        extensions.configure<KotlinMultiplatformExtension>("kotlin") {
-            sourceSets.apply {
-                getByName("commonTest") {
-                    dependencies {
-                        implementation("org.jetbrains.kotlin:kotlin-test-common")
-                        implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+            val kotlin = extensions.findByType<KotlinMultiplatformExtension>()!!
+
+            val ext = createExt(kotlin)
+            (kotlin as ExtensionAware).extensions.add("kodein", ext)
+
+            @OptIn(ExperimentalKotlinGradlePluginApi::class)
+            kotlin.targetHierarchy.default {
+                common {
+                    group("jvmBased") {
+                        withJvm()
+                        withAndroid()
+                    }
+                    group("jsBased") {
+                        withJs()
+                    }
+                    group("posix") {
+                        withCompilations { it.target.let { target -> target is KotlinNativeTarget && target.konanTarget.family != Family.MINGW } }
+                    }
+                }
+            }
+
+            kotlin.sourceSets.getByName("commonTest").dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test")
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+            }
+
+            kotlin.targets.configureEach {
+                compilations.configureEach {
+                    compilerOptions.configure {
+                        allWarningsAsErrors.set(provider { KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings") })
                     }
                 }
             }
 
             afterEvaluate {
-                targets.all {
-                    compilations.all {
-                        compilerOptions.configure {
-                            if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
-                                allWarningsAsErrors.set(true)
-                            }
-                        }
-                    }
-                }
 
-                sourceSets.all {
+                kotlin.sourceSets.all {
                     languageSettings.progressiveMode = true
                 }
 
@@ -47,40 +65,34 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                 // https://youtrack.jetbrains.com/issue/KT-30498
                 if (!enableCrossCompilation) {
                     ext.crossTargets
-                            .mapNotNull { targets.findByName(it) }
-                            .forEach { target ->
-                                target.compilations.configureEach {
-                                    compileTaskProvider.configure {
-                                        enabled = false
-                                    }
-                                }
-
-                                target.mavenPublication {
-                                    upload?.disabledPublications?.add(this)
-                                }
-
-                                if (this is KotlinNativeTarget) {
-                                    compilations.configureEach {
-                                        cinterops.configureEach {
-                                            tasks[interopProcessingTaskName].enabled = false
-                                        }
-                                        tasks[this.processResourcesTaskName].enabled = false
-                                    }
-                                    binaries.configureEach {
-                                        linkTask.enabled = false
-                                    }
-                                }
+                        .mapNotNull { kotlin.targets.findByName(it) }
+                        .forEach { target ->
+                            target.compilations.configureEach {
+                                compileTaskProvider.configure { enabled = false }
                             }
+
+                            target.mavenPublication { upload?.disabledPublications?.add(this) }
+
+                            if (this is KotlinNativeTarget) {
+                                compilations.configureEach {
+                                    cinterops.configureEach {
+                                        tasks.named(interopProcessingTaskName).configure { enabled = false }
+                                    }
+                                    tasks.named(processResourcesTaskName).configure { enabled = false }
+                                }
+                                binaries.configureEach { linkTask.enabled = false }
+                            }
+                        }
                 }
 
                 if (upload != null) {
                     ext.hostTargets
-                            .mapNotNull { targets.findByName(it) }
-                            .forEach { target ->
-                                target.mavenPublication {
-                                    upload.hostOnlyPublications.add(this)
-                                }
+                        .mapNotNull { kotlin.targets.findByName(it) }
+                        .forEach { target ->
+                            target.mavenPublication {
+                                upload.hostOnlyPublications.add(this)
                             }
+                        }
                 }
 
                 tasks.register("hostOnlyTest") {
@@ -90,9 +102,12 @@ public class KodeinMppPlugin : KtPlugin<Project> {
 
             }
 
+            configureTestLogsPrint()
         }
+    }
 
-        configureTestLogsPrint()
+    override fun Project.applyPlugin() {
+        applyMppPlugin(::KodeinMppExtension)
     }
 
 }

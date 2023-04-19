@@ -10,7 +10,6 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 public class KodeinLibraryJvmPlugin : KtPlugin<Project> {
 
     internal companion object {

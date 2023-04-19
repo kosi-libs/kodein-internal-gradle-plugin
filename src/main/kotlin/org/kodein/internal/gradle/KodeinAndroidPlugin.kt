@@ -1,9 +1,12 @@
 package org.kodein.internal.gradle
 
-import com.android.build.gradle.*
-import org.gradle.api.*
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.*
+import com.android.build.gradle.LibraryExtension
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.plugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 @Suppress("UnstableApiUsage")
 public class KodeinAndroidPlugin : KtPlugin<Project> {
@@ -28,6 +31,7 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
         apply {
             plugin("com.android.library")
             plugin("kotlin-platform-android")
+            plugin<KodeinAndroidNdkPlugin>()
         }
 
         configureAndroid(project, extensions["android"] as LibraryExtension)

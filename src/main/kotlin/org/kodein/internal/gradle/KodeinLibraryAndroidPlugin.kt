@@ -4,10 +4,12 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.plugin
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-@Suppress("UnstableApiUsage")
 public class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {

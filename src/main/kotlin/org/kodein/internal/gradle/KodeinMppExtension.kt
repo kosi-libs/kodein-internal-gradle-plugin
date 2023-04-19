@@ -1,434 +1,304 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.internal.os.OperatingSystem
-import org.gradle.kotlin.dsl.get
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
+import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 
-public typealias SourceSetConf = KotlinSourceSet.(NamedDomainObjectContainer<out KotlinSourceSet>) -> Unit
+public typealias KodeinTarget = KodeinMppExtension.Target<out KotlinTarget, out KotlinCompilation<KotlinCommonOptions>, out KotlinCommonOptions, out KodeinMppExtension.Sources>
+public typealias KodeinTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinTarget, out KotlinCompilation<KotlinCommonOptions>, out KotlinCommonOptions, out KodeinMppExtension.Sources>
 
-public typealias KodeinJvmTarget = KodeinMppExtension.KodeinTarget<KotlinJvmTarget>
-public typealias KodeinJsTarget = KodeinMppExtension.KodeinTarget<KotlinJsIrTarget>
-public typealias KodeinNativeTarget = KodeinMppExtension.KodeinTarget<KotlinNativeTarget>
-public typealias KodeinAndroidTarget = KodeinMppExtension.KodeinTarget<KotlinAndroidTarget>
+public typealias KodeinJvmTarget = KodeinMppExtension.Target<KotlinJvmTarget, KotlinJvmCompilation, KotlinJvmOptions, KodeinMppExtension.Sources>
+public typealias KodeinJvmTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinJvmTarget, KotlinJvmCompilation, KotlinJvmOptions, KodeinMppExtension.Sources>
 
-private val os = OperatingSystem.current()
+public typealias KodeinJsTarget = KodeinMppExtension.Target<KotlinJsTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinJsTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinJsTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
-public class KodeinMppExtension(private val project: Project) {
+public typealias KodeinWasmTarget = KodeinMppExtension.Target<KotlinWasmTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinWasmTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinWasmTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 
-    public data class KodeinSourceSet internal constructor(
-        val name: String,
-        val dependencies: List<KodeinSourceSet> = emptyList(),
-        val mainConf: SourceSetConf = {},
-        val testConf: SourceSetConf = {}
-    )
+public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTarget, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
 
-    public object SourceSets {
-        public fun new(name: String, dependencies: List<KodeinSourceSet> = emptyList(), mainConf: SourceSetConf = {}, testConf: SourceSetConf = {}): KodeinSourceSet =
-                KodeinSourceSet(name, dependencies, mainConf, testConf)
+public typealias KodeinNativeTargetWithHostTests = KodeinMppExtension.Target<KotlinNativeTargetWithHostTests, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithHostTestsBuilder = KodeinMppExtension.TargetBuilder<KotlinNativeTargetWithHostTests, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
 
-        public val allJvm: KodeinSourceSet = KodeinSourceSet(
-            name = "allJvm",
-            testConf = {
-                dependencies {
-                    if (project.properties["org.kodein.no-default-junit"] != "true") {
-                        api("org.jetbrains.kotlin:kotlin-test-junit")
-                    }
-                }
-            }
-        )
+public typealias KodeinNativeTargetWithSimulatorTests = KodeinMppExtension.Target<KotlinNativeTargetWithSimulatorTests, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithSimulatorTestsBuilder = KodeinMppExtension.TargetBuilder<KotlinNativeTargetWithSimulatorTests, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
 
-        public val allJs: KodeinSourceSet = KodeinSourceSet(
-            name = "allJs",
-            testConf = {
-                dependencies {
-                    api("org.jetbrains.kotlin:kotlin-test-js")
-                }
-            }
-        )
+public typealias KodeinNativeTargetWithTests = KodeinMppExtension.Target<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
 
-        public val allNative: KodeinSourceSet = KodeinSourceSet(
-            name = "allNative"
-        )
+public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExtension) {
 
-        public val allPosix: KodeinSourceSet = KodeinSourceSet(
-            name = "allPosix",
-            dependencies = listOf(allNative)
-        )
+    @OptIn(ExternalVariantApi::class)
+    internal val project get() = kotlin.project
 
-        public val allDarwin: KodeinSourceSet = KodeinSourceSet(
-            name = "allDarwin",
-            dependencies = listOf(allPosix)
-        )
-
-        public val allIos: KodeinSourceSet = KodeinSourceSet(
-            name = "allIos",
-            dependencies = listOf(allDarwin)
-        )
+    public open inner class Sources(internal val name: String) {
+        public val main: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "Main")
+        public open val test: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "Test")
+        public fun main(configure: KotlinSourceSet.() -> Unit) { main.configure(configure) }
+        public fun mainDependencies(configure: KotlinDependencyHandler.() -> Unit) { main.configure { dependencies(configure) } }
+        public fun test(configure: KotlinSourceSet.() -> Unit) { test.configure(configure) }
+        public fun testDependencies(configure: KotlinDependencyHandler.() -> Unit) { test.configure { dependencies(configure) } }
     }
 
-    public val kodeinSourceSets: SourceSets = SourceSets
+    public val common: Sources get() = Sources("common")
+    public fun common(configure: Sources.() -> Unit) { common.apply(configure) }
 
-    public data class KodeinTarget<T : KotlinTarget> internal constructor(
-        val name: String,
-        val preset: String = name,
-        val dependencies: MutableList<KodeinSourceSet> = ArrayList(),
-        val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
-        val conf: TargetBuilder<T>.() -> Unit = {}
+    public inner class TargetBuilder<T : KotlinTarget, C : KotlinCompilation<O>, O : KotlinCommonOptions, S : Sources> internal constructor(
+            public val target: T,
+            public val sources: S
     ) {
-        public operator fun invoke(name: String): KodeinTarget<T> = copy(name = name)
-    }
-
-    public object Targets {
-
-        public object JVM {
-            public val jvm: KodeinJvmTarget = KodeinJvmTarget(
-                name = "jvm",
-                dependencies = arrayListOf(SourceSets.allJvm),
-                conf = {
-                    target.compilations.all {
-                        compilerOptions.configure {
-                            jvmTarget.set(KodeinJvmPlugin.jvmTarget(project))
-                        }
-                    }
-                }
-            )
-
-            public val android: KodeinAndroidTarget = KodeinAndroidTarget(
-                name = "android",
-                dependencies = arrayListOf(SourceSets.allJvm),
-                conf = {
-                    target.publishLibraryVariants("debug", "release")
-                    test.dependencies {
-                        implementation("androidx.test.ext:junit:1.1.1")
-                        implementation("androidx.test.espresso:espresso-core:3.2.0")
-                    }
-                }
-            )
-
-            public val all: List<KodeinTarget<out KotlinTarget>> = listOf(jvm, android)
-        }
-
-        public val jvm: JVM = JVM
-
-        public object Native {
-            public val iosArm32: KodeinNativeTarget = KodeinNativeTarget(
-                name = "iosArm32",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allIos)
-            )
-
-            public val iosArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "iosArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allIos)
-            )
-
-            public val iosSimulatorArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "iosSimulatorArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allIos)
-            )
-
-            public val iosX64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "iosX64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allIos)
-            )
-
-            public val tvosArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "tvosArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val tvosSimulatorArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "tvosSimulatorArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val tvosX64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "tvosX64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val watchosArm32: KodeinNativeTarget = KodeinNativeTarget(
-                name = "watchosArm32",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val watchosArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "watchosArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val watchosSimulatorArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "watchosSimulatorArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val watchosX86: KodeinNativeTarget = KodeinNativeTarget(
-                name = "watchosX86",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allDarwin)
-            )
-
-            public val linuxArm32Hfp: KodeinNativeTarget = KodeinNativeTarget(
-                name = "linuxArm32Hfp",
-                nativeBuildOn = { isLinux },
-                dependencies = arrayListOf(SourceSets.allPosix)
-            )
-
-            public val linuxArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "linuxArm64",
-                nativeBuildOn = { isLinux },
-                dependencies = arrayListOf(SourceSets.allPosix)
-            )
-
-            public val linuxX64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "linuxX64",
-                nativeBuildOn = { isLinux },
-                dependencies = arrayListOf(SourceSets.allPosix)
-            )
-
-            public val macosX64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "macosX64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allPosix)
-            )
-
-            public val macosArm64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "macosArm64",
-                nativeBuildOn = { isMacOsX },
-                dependencies = arrayListOf(SourceSets.allPosix)
-            )
-
-            public val mingwX64: KodeinNativeTarget = KodeinNativeTarget(
-                name = "mingwX64",
-                nativeBuildOn = { isWindows },
-                dependencies = arrayListOf(SourceSets.allNative)
-            )
-
-            public val allIos: List<KodeinNativeTarget> = listOf(iosArm32, iosArm64, iosX64, iosSimulatorArm64)
-            public val allWatchos: List<KodeinNativeTarget> = listOf(watchosArm32, watchosArm64, watchosX86, watchosSimulatorArm64)
-            public val allTvos: List<KodeinNativeTarget> = listOf(tvosArm64, tvosX64, tvosSimulatorArm64)
-            public val allDarwin: List<KodeinNativeTarget> = allIos + allWatchos + allTvos
-
-            public val allDesktop: List<KodeinNativeTarget> = listOf(linuxX64, macosX64, macosArm64, mingwX64)
-
-            public val allEmbeddedLinux: List<KodeinNativeTarget> = listOf(linuxArm32Hfp, linuxArm64)
-            public val allLinux: List<KodeinNativeTarget> = allEmbeddedLinux + linuxX64
-
-            public val allPosix: List<KodeinNativeTarget> = listOf(linuxX64, macosX64, macosArm64) + allEmbeddedLinux + allDarwin
-
-            public val all: List<KodeinNativeTarget> = allPosix + mingwX64
-
-            public val host: KodeinNativeTarget = when {
-                os.isLinux -> linuxX64
-                os.isMacOsX -> macosX64
-                os.isWindows -> mingwX64
-                else -> throw IllegalStateException("Unsupported OS host $os")
-            }
-        }
-
-        public val native: Native = Native
-
-        public object JS {
-            public val js: KodeinJsTarget = KodeinJsTarget(
-                name = "js",
-                preset = "jsIr",
-                dependencies = arrayListOf(SourceSets.allJs),
-                conf = { target.browser() ; target.nodejs() }
-            )
-
-            public val webjs: KodeinJsTarget = KodeinJsTarget(
-                name = "webjs",
-                preset = "jsIr",
-                dependencies = arrayListOf(SourceSets.allJs),
-                conf = { target.browser() }
-            )
-
-            public val nodejs: KodeinJsTarget = KodeinJsTarget(
-                name = "nodejs",
-                preset = "jsIr",
-                dependencies = arrayListOf(SourceSets.allJs),
-                conf = { target.nodejs() }
-            )
-
-            public val all: List<KodeinJsTarget> = listOf(js, nodejs, webjs)
-        }
-
-        public val js: JS = JS
-
-        public val all: List<KodeinTarget<out KotlinTarget>> = JVM.all + Native.all + JS.all
-        public operator fun get(name: String): KodeinTarget<out KotlinTarget> = all.firstOrNull { it.name == name } ?: error("No Kodein target named $name\n Known targets are: ${all.map { it.name }.joinToString()}.")
-    }
-
-    public val kodeinTargets: Targets = Targets
-
-
-    public fun KodeinSourceSet.recursiveDependencies(): List<KodeinSourceSet> = dependencies.flatMap { it.recursiveDependencies() } + this
-
-    internal val excludedTargets = (
-        KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-            .flatMap {
-                when (it) {
-                    "all-native" -> Targets.Native.all
-                    "all-jvm" -> Targets.JVM.all
-                    "all-js" -> Targets.JS.all
-                    "nativeNonHost" -> Targets.Native.all - Targets.Native.host
-                    else -> listOf(Targets[it])
-                }
-            }
-        )
-
-    internal var crossTargets = ArrayList<String>()
-    internal var hostTargets = ArrayList<String>()
-    internal var universalTargets = ArrayList<String>()
-
-    public fun NamedDomainObjectContainer<out KotlinSourceSet>.add(sourceSet: KodeinSourceSet) {
-        val main = maybeCreate(sourceSet.name + "Main")
-        val test = maybeCreate(sourceSet.name + "Test")
-
-        sourceSet.mainConf(main, this)
-        sourceSet.testConf(test, this)
-
-        if (sourceSet.dependencies.isEmpty()) {
-            main.dependsOn(getByName("commonMain"))
-            test.dependsOn(getByName("commonTest"))
-        } else {
-            sourceSet.dependencies.forEach { dep ->
-                add(dep)
-                main.dependsOn(getByName(dep.name + "Main"))
-                test.dependsOn(getByName(dep.name + "Test"))
-
-            }
-        }
-    }
-
-
-    public interface SourceSetBuilder {
-        public val main: KotlinSourceSet
-        public val test: KotlinSourceSet
-        public fun main(block: KotlinSourceSet.() -> Unit) { main.apply(block) }
-        public fun test(block: KotlinSourceSet.() -> Unit) { test.apply(block) }
-        public fun dependsOn(sourceSet: KodeinSourceSet)
-    }
-
-    private inner class SourceSetBuilderImpl(val sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, name: String) : SourceSetBuilder {
-        override val main: KotlinSourceSet = sourceSets.maybeCreate(name + "Main")
-        override val test: KotlinSourceSet = sourceSets.maybeCreate(name + "Test")
-        override fun dependsOn(sourceSet: KodeinSourceSet) {
-            sourceSets.add(sourceSet)
-            main.dependsOn(sourceSets[sourceSet.name + "Main"])
-            test.dependsOn(sourceSets[sourceSet.name + "Test"])
-        }
-    }
-
-    public interface TargetConfigurator<T : KotlinTarget> {
-        public val mainCommonCompilation: KotlinCompilation<KotlinCommonOptions>
-        public val testCommonCompilation: KotlinCompilation<KotlinCommonOptions>
-        public val target: T
         public fun target(block: T.() -> Unit) { target.block() }
+
+        public inner class Compilations(container: NamedDomainObjectContainer<C>) : NamedDomainObjectContainer<C> by container {
+            public val main: NamedDomainObjectProvider<C> get() = named("main")
+            public val test: NamedDomainObjectProvider<C> get() = named("test")
+            public fun main(configure: C.() -> Unit) { main.configure(configure) }
+            public fun test(configure: C.() -> Unit) { test.configure(configure) }
+        }
+        @Suppress("UNCHECKED_CAST")
+        public val compilations: Compilations get() = Compilations(target.compilations as NamedDomainObjectContainer<C>)
+
+        public fun KotlinJvmTarget.setCompileClasspath() {
+            val targetName = name
+            project.configurations.create("compileClasspath") {
+                extendsFrom(project.configurations.getByName(targetName + "CompileClasspath"))
+            }
+        }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    public val <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> TargetConfigurator<T>.mainCompilation: C
-        get() = mainCommonCompilation as C
-    @Suppress("UNCHECKED_CAST")
-    public val <C : KotlinCompilation<*>, T : KotlinOnlyTarget<C>> TargetConfigurator<T>.testCompilation: C
-        get() = testCommonCompilation as C
-
-    private class TargetConfiguratorImpl<T : KotlinTarget>(override val target: T) : TargetConfigurator<T> {
-        override val mainCommonCompilation get() = target.compilations["main"]!!
-        override val testCommonCompilation get() = target.compilations["test"]!!
+    public class Target<T : KotlinTarget, C : KotlinCompilation<O>, O : KotlinCommonOptions, S : Sources>(
+            internal val name: String,
+            internal val kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
+            internal val sourceBuilder: (String) -> S,
+            internal val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
+            internal val defaultConfig: TargetBuilder<T, C, O, S>.() -> Unit = {}
+    ) {
+        internal fun access(kotlin: KotlinMultiplatformExtension) = kotlinAccess(kotlin, name)
     }
 
-    public interface TargetBuilder<T : KotlinTarget> : SourceSetBuilder, TargetConfigurator<T>
+    internal open inner class Targets {
+        fun <T : KotlinTarget, C : KotlinCompilation<O>, O : KotlinCommonOptions> Target(
+                name: String,
+                kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
+                nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
+                defaultConfig: TargetBuilder<T, C, O, Sources>.() -> Unit = {}
+        ): Target<T, C, O, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
 
-    private inner class TargetBuilderImpl<T : KotlinTarget> private constructor(val ssb: SourceSetBuilder, val tc: TargetConfigurator<T>) : TargetBuilder<T>, SourceSetBuilder by ssb, TargetConfigurator<T> by tc {
-        constructor(sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>, target: T, sourceSetName: String = target.name) : this(SourceSetBuilderImpl(sourceSets, sourceSetName), TargetConfiguratorImpl(target))
+        fun <C : KotlinCompilation<O>, O : KotlinCommonOptions> TargetBuilder<*, C, O, out Sources>.commonJvmConfig(
+            compilerOptions: C.() -> HasCompilerOptions<KotlinJvmCompilerOptions>
+        ) {
+            compilations.configureEach {
+                compilerOptions(this).configure {
+                    jvmTarget.set(KodeinJvmPlugin.jvmTarget(project))
+                }
+            }
+            if (target.project.properties["org.kodein.no-default-junit"] != "true") {
+                sources.testDependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-junit")
+                }
+            }
+        }
+
+        val jvm: KodeinJvmTarget = Target("jvm", KotlinMultiplatformExtension::jvm) { commonJvmConfig(KotlinJvmCompilation::compilerOptions) }
+
+        var jsEnvBrowser = true
+        var jsEnvNodejs = true
+        var jsEnvD8 = true
+        var jsConfigured = false
+        val js: KodeinJsTarget = Target("js", { js(it, IR) }) {
+            jsConfigured = true
+            if (jsEnvBrowser) target.browser()
+            if (jsEnvNodejs) target.nodejs()
+        }
+        @OptIn(ExperimentalWasmDsl::class)
+        val wasm: KodeinWasmTarget = Target("wasm", { wasm(it) as KotlinWasmTargetDsl }) {
+            jsConfigured = true
+            if (jsEnvBrowser) target.browser {
+                // TODO: Remove with Kotlin 1.9.0
+                // https://youtrack.jetbrains.com/issue/KT-56159/Running-karma-tests-doesnt-work-in-a-project-generated-by-wizard-Browser-Application-for-Kotlin-Wasm
+                testTask {
+                    useKarma {
+                        webpackConfig.experiments.add("topLevelAwait")
+                        useChromeHeadless()
+                    }
+                }
+
+            }
+            // TODO: Try again with Kotlin 1.9.0
+            // This is failing in Kosi-Kaverit (test fail only in Node)
+            // if (jsEnvNodejs) target.nodejs()
+            if (jsEnvD8) target.d8()
+        }
+
+        val linuxX64: KodeinNativeTargetWithHostTests = Target("linuxX64", KotlinMultiplatformExtension::linuxX64, nativeBuildOn = { isLinux })
+        val linuxArm64: KodeinNativeTarget = Target("linuxArm64", KotlinMultiplatformExtension::linuxArm64, nativeBuildOn = { isLinux })
+        val allLinux = listOf(linuxX64, linuxArm64)
+
+        val mingwX64: KodeinNativeTargetWithHostTests = Target("mingwX64", KotlinMultiplatformExtension::mingwX64, nativeBuildOn = { isWindows })
+
+        val macosX64: KodeinNativeTargetWithHostTests = Target("macosX64", KotlinMultiplatformExtension::macosX64, nativeBuildOn = { isMacOsX })
+        val macosArm64: KodeinNativeTargetWithHostTests = Target("macosArm64", KotlinMultiplatformExtension::macosArm64, nativeBuildOn = { isMacOsX })
+        val allMacos = listOf(macosX64, macosArm64)
+
+        val allDesktop = allMacos + listOf(linuxX64, mingwX64)
+
+        val androidNativeX64: KodeinNativeTarget = Target("androidNativeX64", KotlinMultiplatformExtension::androidNativeX64, nativeBuildOn = { isLinux })
+        val androidNativeX86: KodeinNativeTarget = Target("androidNativeX86", KotlinMultiplatformExtension::androidNativeX86, nativeBuildOn = { isLinux })
+        val androidNativeArm64: KodeinNativeTarget = Target("androidNativeArm64", KotlinMultiplatformExtension::androidNativeArm64, nativeBuildOn = { isLinux })
+        val androidNativeArm32: KodeinNativeTarget = Target("androidNativeArm32", KotlinMultiplatformExtension::androidNativeArm32, nativeBuildOn = { isLinux })
+        val allAndroidNative = listOf(androidNativeX64, androidNativeX86, androidNativeArm64, androidNativeArm32)
+
+        val iosX64: KodeinNativeTargetWithSimulatorTests = Target("iosX64", KotlinMultiplatformExtension::iosX64, nativeBuildOn = { isMacOsX })
+        val iosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("iosSimulatorArm64", KotlinMultiplatformExtension::iosSimulatorArm64, nativeBuildOn = { isMacOsX })
+        val iosArm64: KodeinNativeTarget = Target("iosArm64", KotlinMultiplatformExtension::iosArm64, nativeBuildOn = { isMacOsX })
+        val allIos = listOf(iosX64, iosSimulatorArm64, iosArm64)
+
+        val tvosX64: KodeinNativeTargetWithSimulatorTests = Target("tvosX64", KotlinMultiplatformExtension::tvosX64, nativeBuildOn = { isMacOsX })
+        val tvosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("tvosSimulatorArm64", KotlinMultiplatformExtension::tvosSimulatorArm64, nativeBuildOn = { isMacOsX })
+        val tvosArm64: KodeinNativeTarget = Target("tvosArm64", KotlinMultiplatformExtension::tvosArm64, nativeBuildOn = { isMacOsX })
+        val allTvos = listOf(tvosX64, tvosSimulatorArm64, tvosArm64)
+
+        val watchosX64: KodeinNativeTargetWithSimulatorTests = Target("watchosX64", KotlinMultiplatformExtension::watchosX64, nativeBuildOn = { isMacOsX })
+        val watchosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("watchosSimulatorArm64", KotlinMultiplatformExtension::watchosSimulatorArm64, nativeBuildOn = { isMacOsX })
+        val watchosArm64: KodeinNativeTarget = Target("watchosArm64", KotlinMultiplatformExtension::watchosArm64, nativeBuildOn = { isMacOsX })
+        val watchosArm32: KodeinNativeTarget = Target("watchosArm32", KotlinMultiplatformExtension::watchosArm32, nativeBuildOn = { isMacOsX })
+        val watchosDeviceArm64: KodeinNativeTarget = Target("watchosDeviceArm64", KotlinMultiplatformExtension::watchosDeviceArm64, nativeBuildOn = { isMacOsX })
+        val allWatchos = listOf(watchosX64, watchosSimulatorArm64, watchosArm64, watchosArm32, watchosDeviceArm64)
+
+        val allAppleMobile = allIos + allTvos + allWatchos
+        val allApple = allMacos + allAppleMobile
+
+        val allEmbedded = allAndroidNative + linuxArm64
+
+        val allNative = allMacos + allLinux + mingwX64 + allAndroidNative + allAppleMobile
+
+        val allPosix = allNative - mingwX64
+
+        val allNativeTier1 = listOf(linuxX64, macosX64, macosArm64, iosSimulatorArm64, iosX64)
+        val allNativeTier1And2 = allNativeTier1 + listOf(linuxArm64, watchosSimulatorArm64, watchosX64, watchosArm32, watchosArm64, tvosSimulatorArm64, tvosX64, tvosArm64, iosArm64)
+
+        open val all: List<KodeinTarget> = allNative + jvm + js + wasm
     }
 
-    public fun <T : KotlinTarget> KotlinMultiplatformExtension.add(target: KodeinTarget<T>, conf: TargetBuilder<T>.() -> Unit = {}) {
-        if (excludedTargets.any { it.name == target.name }) {
+    internal open val targets = Targets()
+
+    private val currentOS = OperatingSystem.current()
+
+    internal val excludedTargets: List<String> = (
+            KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                .flatMap { targetName ->
+                    when (targetName) {
+                        "all-native" -> targets.allNative.map { it.name }
+                        "all-jvm" -> listOf("jvm", "android")
+                        "all-js" -> listOf("js", "wasm")
+                        "nativeNonHost" -> targets.allNative.map { it.name } - when {
+                            currentOS.isLinux -> "linuxX64"
+                            currentOS.isMacOsX -> "macosX64"
+                            currentOS.isWindows -> "mingwX64"
+                            else -> throw IllegalStateException("Unsupported OS host $currentOS")
+                        }
+                        else -> listOf(targetName)
+                    }
+                }
+            )
+
+    internal var hostTargets = HashSet<String>()
+    internal var crossTargets = HashSet<String>()
+
+    private val created = HashSet<String>()
+
+    public fun <T : KotlinTarget, C : KotlinCompilation<O>, O : KotlinCommonOptions, S : Sources> add(target: Target<T, C, O, S>, configure: TargetBuilder<T, C, O, S>.() -> Unit) {
+        if (target.name in excludedTargets) {
             project.logger.warn("Target ${target.name} excluded.")
             return
         }
 
-        val ktTarget = targets.findByName(target.name) ?: run {
-            @Suppress("UNCHECKED_CAST")
-            val ktPreset = (presets.findByName(target.preset) ?: throw IllegalArgumentException("Unknown preset ${target.preset}")) as KotlinTargetPreset<T>
-            val ktTarget = ktPreset.createTarget(target.name).also { targets.add(it) }
+        val targetBuilder = TargetBuilder<T, C, O, S>(target.access(kotlin), target.sourceBuilder(target.name))
 
-            target.dependencies.forEach {
-                sourceSets.add(it)
-                sourceSets.getByName(target.name + "Main").dependsOn(sourceSets.getByName(it.name + "Main"))
-                sourceSets.getByName(target.name + "Test").dependsOn(sourceSets.getByName(it.name + "Test"))
-            }
+        if (target.name !in created) {
+            created += target.name
+            target.defaultConfig(targetBuilder)
 
-            when (target.nativeBuildOn(OperatingSystem.current())) {
+            when (target.nativeBuildOn(currentOS)) {
                 true -> hostTargets.add(target.name)
                 false -> crossTargets.add(target.name)
-                null -> universalTargets.add(target.name)
+                null -> {}
             }
-
-            ktTarget
         }
-        @Suppress("UNCHECKED_CAST")
-        TargetBuilderImpl(sourceSets, ktTarget as T).apply(target.conf).apply(conf)
+
+        targetBuilder.apply(configure)
     }
 
-    public fun <T : KotlinTarget> KotlinMultiplatformExtension.add(targets: Iterable<KodeinTarget<T>>, conf: TargetBuilder<T>.() -> Unit = {}) {
-        targets.forEach { add(it, conf) }
-    }
+    public fun jvm(configure: KodeinJvmTargetBuilder.() -> Unit = {}): Unit = add(targets.jvm, configure)
 
-    public fun KotlinMultiplatformExtension.sourceSet(target: KodeinTarget<*>, conf: SourceSetBuilder.() -> Unit) {
-        if (excludedTargets.any { it.name == target.name }) return //TODO: remove this once IDEA correctly handles intermediate source sets.
-        SourceSetBuilderImpl(sourceSets, target.name).apply(conf)
+    public fun jsEnv(browser: Boolean = targets.jsEnvBrowser, nodejs: Boolean = targets.jsEnvNodejs, d8: Boolean = targets.jsEnvD8) {
+        check(!targets.jsConfigured) { "Please call jsEnv *before* creating JS or WASM targets" }
+        targets.jsEnvBrowser = browser
+        targets.jsEnvNodejs = nodejs
+        targets.jsEnvD8 = d8
     }
+    public fun jsEnvBrowserOnly(): Unit = jsEnv(browser = true, nodejs = false, d8 = false)
+    public fun js(configure: KodeinJsTargetBuilder.() -> Unit = {}): Unit = add(targets.js, configure)
+    public fun wasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasm, configure)
 
-    public fun KotlinMultiplatformExtension.sourceSet(sourceSet: KodeinSourceSet, conf: SourceSetBuilder.() -> Unit) {
-        sourceSets.add(sourceSet)
-        SourceSetBuilderImpl(sourceSets, sourceSet.name).conf()
-    }
+    public fun linuxX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.linuxX64, configure)
+    public fun linuxArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.linuxArm64, configure)
+    public fun allLinux(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allLinux.forEach { add(it, configure) }
 
-    public fun KotlinMultiplatformExtension.sourceSet(name: String, conf: SourceSetBuilder.() -> Unit) {
-        SourceSetBuilderImpl(sourceSets, name).conf()
-    }
+    public fun mingwX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.mingwX64, configure)
 
-    public fun KotlinMultiplatformExtension.common(conf: TargetBuilder<KotlinOnlyTarget<KotlinCommonCompilation>>.() -> Unit) {
-        @Suppress("UNCHECKED_CAST")
-        TargetBuilderImpl(sourceSets, targets["metadata"] as KotlinOnlyTarget<KotlinCommonCompilation>, "common").apply(conf)
-    }
+    public fun macosX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.macosX64, configure)
+    public fun macosArm64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.macosArm64, configure)
+    public fun allMacos(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = targets.allMacos.forEach { add(it, configure) }
 
-    public val KotlinMultiplatformExtension.common: SourceSetBuilder
-        get() = SourceSetBuilderImpl(sourceSets, "common")
+    public fun allDesktop(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = targets.allDesktop.forEach { add(it, configure) }
 
-    public fun KotlinTarget.setCompileClasspath() {
-        val targetName = name
-        project.configurations.create("compileClasspath") {
-            extendsFrom(project.configurations.getByName(targetName + "CompileClasspath"))
-        }
-    }
+    public fun androidNativeX64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.androidNativeX64, configure)
+    public fun androidNativeX86(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.androidNativeX86, configure)
+    public fun androidNativeArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.androidNativeArm64, configure)
+    public fun androidNativeArm32(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.androidNativeArm32, configure)
+    public fun allAndroidNative(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allAndroidNative.forEach { add(it, configure) }
 
-    public fun KotlinMultiplatformExtension.allTargets(conf: TargetConfigurator<out KotlinTarget>.() -> Unit) {
-        targets.forEach {
-            if (it !is KotlinOnlyTarget<*>) return@forEach
-            TargetConfiguratorImpl(it).conf()
-        }
-    }
+    public fun iosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.iosX64, configure)
+    public fun iosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.iosSimulatorArm64, configure)
+    public fun iosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.iosArm64, configure)
+    public fun allIos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allIos.forEach { add(it, configure) }
+
+    public fun tvosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.tvosX64, configure)
+    public fun tvosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.tvosSimulatorArm64, configure)
+    public fun tvosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.tvosArm64, configure)
+    public fun allTvos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allTvos.forEach { add(it, configure) }
+
+    public fun watchosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.watchosX64, configure)
+    public fun watchosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.watchosSimulatorArm64, configure)
+    public fun watchosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.watchosArm64, configure)
+    public fun watchosArm32(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.watchosArm32, configure)
+    public fun watchosDeviceArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.watchosDeviceArm64, configure)
+    public fun allWatchos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allWatchos.forEach { add(it, configure) }
+
+    public fun allAppleMobile(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allAppleMobile.forEach { add(it, configure) }
+    public fun allApple(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allApple.forEach { add(it, configure) }
+
+    public fun allEmbedded(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allEmbedded.forEach { add(it, configure) }
+
+    public fun allNative(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allNative.forEach { add(it, configure) }
+
+    public fun allPosix(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allPosix.forEach { add(it, configure) }
+
+    public fun allNativeTier1(configure: KodeinNativeTargetWithTestsBuilder.() -> Unit = {}): Unit = targets.allNativeTier1.forEach { add(it, configure) }
+    public fun allNativeTierTo2(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = targets.allNativeTier1And2.forEach { add(it, configure) }
+
+    public fun all(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = targets.all.forEach { add(it, configure) }
 }
