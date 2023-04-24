@@ -17,8 +17,8 @@ public class KodeinMppWithAndroidExtension(kotlin: KotlinMultiplatformExtension)
         public val instrumentedTest: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "InstrumentedTest")
     }
 
-    internal inner class Targets : KodeinMppExtension.Targets() {
-        val android: KodeinAndroidTarget = Target("android", KotlinMultiplatformExtension::android, ::AndroidSources) {
+    public inner class Targets : KodeinMppExtension.Targets() {
+        public val android: KodeinAndroidTarget = Target("android", KotlinMultiplatformExtension::android, ::AndroidSources) {
             commonJvmConfig(KotlinJvmAndroidCompilation::compilerOptions)
             target.publishLibraryVariants("debug", "release")
             sources.testDependencies {
@@ -27,7 +27,8 @@ public class KodeinMppWithAndroidExtension(kotlin: KotlinMultiplatformExtension)
             }
         }
 
-        override val all: List<KodeinTarget> = super.all + android
+        override val all: List<KodeinTarget> get() = super.all + android
+        override val allComposeStable: List<KodeinTarget> get() = super.allComposeStable + android
     }
 
     override val targets: Targets = Targets()
