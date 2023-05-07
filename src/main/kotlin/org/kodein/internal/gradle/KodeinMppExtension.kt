@@ -193,7 +193,9 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         public open val all: List<KodeinTarget> get() = allNative + jvm + js + wasm
 
         public open val allComposeStable: List<KodeinTarget> get() = allDesktop + allIos + allTvos + allWatchosNoDevice + jvm + js
-        public open val allComposeExperimental: List<KodeinTarget> get() = allComposeStable + wasm
+        public val allComposeExperimental: List<KodeinTarget> get() = allComposeStable + wasm
+
+        public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosX64 + tvosSimulatorArm64 + watchosX64 + watchosSimulatorArm64 + jvm + js
     }
 
     public open val targets: Targets = Targets()
@@ -312,4 +314,6 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
 
     public fun allComposeExperimental(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeExperimental) { configure() }
     public fun allComposeStable(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeStable) { configure() }
+
+    public fun allTestable(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allTestable) { configure() }
 }

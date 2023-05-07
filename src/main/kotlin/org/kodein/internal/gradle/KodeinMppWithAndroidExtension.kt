@@ -29,6 +29,7 @@ public class KodeinMppWithAndroidExtension(kotlin: KotlinMultiplatformExtension)
 
         override val all: List<KodeinTarget> get() = super.all + android
         override val allComposeStable: List<KodeinTarget> get() = super.allComposeStable + android
+        override val allTestable: List<KodeinTarget> get() = super.allTestable + android
     }
 
     override val targets: Targets = Targets()
