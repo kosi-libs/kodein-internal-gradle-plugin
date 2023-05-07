@@ -1,9 +1,9 @@
 package org.kodein.internal.gradle
 
-import com.gradle.publish.PluginBundleExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.plugin
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 
 public class KodeinGradlePluginPlugin : KtPlugin<Project> {
 
@@ -19,9 +19,10 @@ public class KodeinGradlePluginPlugin : KtPlugin<Project> {
         System.getenv("GRADLE_PUBLISH_KEY")?.let { extra["gradle.publish.key"] = it }
         System.getenv("GRADLE_PUBLISH_SECRET")?.let { extra["gradle.publish.secret"] = it }
 
-        extensions.configure<PluginBundleExtension>("pluginBundle") {
-            website = "http://kodein.org"
-            vcsUrl = "https://github.com/kosi-libs/${rootProject.name}.git"
+        @Suppress("UnstableApiUsage")
+        extensions.configure<GradlePluginDevelopmentExtension>("gradlePlugin") {
+            website.set("http://kodein.org")
+            vcsUrl.set("https://github.com/kosi-libs/${rootProject.name}.git")
         }
 
         extensions.configure<KodeinUploadModulePlugin.Extension>("kodeinUpload") {
