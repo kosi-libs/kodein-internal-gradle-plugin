@@ -125,18 +125,8 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         @OptIn(ExperimentalWasmDsl::class)
         public val wasm: KodeinWasmTarget = Target("wasm", { wasm(it) as KotlinWasmTargetDsl }) {
             jsConfigured = true
-            if (jsEnvBrowser) target.browser {
-                // TODO: Remove with Kotlin 1.9.0
-                // https://youtrack.jetbrains.com/issue/KT-56159/Running-karma-tests-doesnt-work-in-a-project-generated-by-wizard-Browser-Application-for-Kotlin-Wasm
-                testTask {
-                    useKarma {
-                        webpackConfig.experiments.add("topLevelAwait")
-                        useChromeHeadless()
-                    }
-                }
-
-            }
-            // TODO: Try again with Kotlin 1.9.0
+            if (jsEnvBrowser) target.browser()
+            // TODO: Try again with Kotlin 1.9.20
             // This is failing in Kosi-Kaverit (test fail only in Node)
             // if (jsEnvNodejs) target.nodejs()
             if (jsEnvD8) target.d8()

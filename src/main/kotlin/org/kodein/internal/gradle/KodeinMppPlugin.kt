@@ -29,10 +29,11 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                 common {
                     group("jvmBased") {
                         withJvm()
-                        withAndroid()
+                        withAndroidTarget()
                     }
                     group("jsBased") {
                         withJs()
+                        withWasm()
                     }
                     group("posix") {
                         withCompilations { it.target.let { target -> target is KotlinNativeTarget && target.konanTarget.family != Family.MINGW } }
