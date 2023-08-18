@@ -17,7 +17,7 @@ dependencies {
 kotlin {
     explicitApi()
     target.compilations.all {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 }
 

@@ -7,16 +7,17 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.findPlugin
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.maybeCreate
+import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 
-@Suppress("UnstableApiUsage")
 public class KodeinUploadModulePlugin : KtPlugin<Project> {
 
     private val Project.publishing get() = extensions.getByName<PublishingExtension>("publishing")
@@ -131,22 +132,17 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             if (ext.addJavadoc) {
-                val javadocJar = tasks.register<Jar>("javadocJar") {
-                    dependsOn("dokkaHtml")
-                    archiveClassifier.set("javadoc")
-                    from(dokkaOutputDir)
-                }
-
+                // Workaround from https://youtrack.jetbrains.com/issue/KT-46466 & https://github.com/gradle/gradle/issues/26091
                 publishing.publications.withType<MavenPublication>().configureEach {
-                    val artifactJavadoc = tasks.maybeCreate<Copy>("${artifactId}JavadocJar").apply {
-                        dependsOn(javadocJar)
-                        from(javadocJar)
-                        into("$buildDir/tmp/javadocJars/$artifactId")
+                    val publication = this
+                    val javadocJar = tasks.maybeCreate<Jar>("${publication.name}JavadocJar").apply {
+                        dependsOn("dokkaHtml")
+                        archiveClassifier.set("javadoc")
+                        from(dokkaOutputDir)
+                        // Each archive name should be distinct. Mirror the format for the sources Jar tasks.
+                        archiveBaseName.set("${archiveBaseName.get()}-${publication.name}")
                     }
-                    artifact("$buildDir/tmp/javadocJars/$artifactId/${javadocJar.get().archiveFileName.get()}") {
-                        builtBy(artifactJavadoc)
-                        classifier = "javadoc"
-                    }
+                    artifact(javadocJar)
                 }
             }
 
@@ -190,15 +186,11 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 dependsOn(tasks.withType<PublishToMavenRepository>().filter { it.publication in hostOnlyPublications })
             }
 
-            if(signingConfig != null) {
-                signing.apply {
-                    useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword)
-                    if (ext.signPublications) {
-                        sign(publishing.publications)
-                    }
-                }
+            if (signingConfig != null && ext.signPublications) {
+                signing.apply { useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword) }
+                // Workaround from https://youtrack.jetbrains.com/issue/KT-46466 & https://github.com/gradle/gradle/issues/26091
+                publishing.publications.configureEach { signing.sign(this) }
             }
         }
     }
-
 }

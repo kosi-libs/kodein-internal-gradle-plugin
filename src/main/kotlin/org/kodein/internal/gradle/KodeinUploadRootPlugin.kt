@@ -38,7 +38,7 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
     public val sonatypeConfig: SonatypeConfig? by lazy {
         val username: String? = (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
         val password: String? = (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
-        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as Boolean?) ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
+        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as String?)?.toBooleanStrict() ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
 
         when {
             username == null || password == null -> {

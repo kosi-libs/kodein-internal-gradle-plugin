@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.2.1"
+    version = "8.2.2"
 }
 
 repositories {
@@ -50,7 +50,7 @@ kotlin {
     explicitApi()
 
     target.compilations.all {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 
     sourceSets.all {
