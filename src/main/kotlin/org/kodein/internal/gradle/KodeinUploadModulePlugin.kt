@@ -108,7 +108,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            val dokkaOutputDir = buildDir.resolve("dokka")
+            val dokkaOutputDir = layout.buildDirectory.dir("dokka")
             tasks.withType<DokkaTask>().configureEach {
                 outputDirectory.set(file(dokkaOutputDir))
                 dokkaSourceSets {
