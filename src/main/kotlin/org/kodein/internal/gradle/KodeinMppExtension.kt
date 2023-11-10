@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 
@@ -23,7 +25,7 @@ public typealias KodeinJvmTargetBuilder = KodeinMppExtension.TargetBuilder<out K
 public typealias KodeinJsTarget = KodeinMppExtension.Target<KotlinJsTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 public typealias KodeinJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJsTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
 
-public typealias KodeinWasmTarget = KodeinMppExtension.Target<KotlinWasmTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinWasmTarget<T> = KodeinMppExtension.Target<T, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 public typealias KodeinWasmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
 
 public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
@@ -122,15 +124,28 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
             if (jsEnvBrowser) target.browser()
             if (jsEnvNodejs) target.nodejs()
         }
+        // TODO Review with Salomon
         @OptIn(ExperimentalWasmDsl::class)
-        public val wasm: KodeinWasmTarget = Target("wasm", { wasm(it) as KotlinWasmTargetDsl }) {
+        public val wasmJs: KodeinWasmTarget<KotlinWasmJsTargetDsl> = Target("wasmJs", { wasmJs(it) }) {
             jsConfigured = true
-            if (jsEnvBrowser) target.browser()
-            // TODO: Try again with Kotlin 1.9.20
-            // This is failing in Kosi-Kaverit (test fail only in Node)
-            // if (jsEnvNodejs) target.nodejs()
             if (jsEnvD8) target.d8()
+             if (jsEnvBrowser) target.browser {
+                 // Because Chrome 11* on CI is not compatible
+                 // https://youtrack.jetbrains.com/issue/KT-63014
+                 testTask { enabled = false }
+             }
+            // TODO: Try again with Kotlin 2.0.0
+            // This is failing in Kosi-Kaverit (test fail in Node)
+            // if (jsEnvNodejs) target.nodejs()
         }
+        @OptIn(ExperimentalWasmDsl::class)
+        public val wasmWasi: KodeinWasmTarget<KotlinWasmWasiTargetDsl> = Target("wasmWasi", { wasmWasi(it) }) {
+                jsConfigured = true
+                // TODO: Try again with Kotlin 2.0.0
+                // This is failing in Kosi-Kaverit (test fail in Node)
+                // if (jsEnvNodejs) target.nodejs()
+        }
+        public val allWasm: List<KodeinWasmTarget<out KotlinWasmTargetDsl>> get() = listOf(wasmJs, wasmWasi)
 
         public val linuxX64: KodeinNativeTargetWithHostTests = Target("linuxX64", KotlinMultiplatformExtension::linuxX64, nativeBuildOn = { isLinux })
         public val linuxArm64: KodeinNativeTarget = Target("linuxArm64", KotlinMultiplatformExtension::linuxArm64, nativeBuildOn = { isLinux })
@@ -180,10 +195,10 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         public val allNativeTier1: List<KodeinNativeTargetWithTests> get() = listOf(linuxX64, macosX64, macosArm64, iosSimulatorArm64, iosX64)
         public val allNativeTier1And2: List<KodeinNativeTarget> get() = allNativeTier1 + listOf(linuxArm64, watchosSimulatorArm64, watchosX64, watchosArm32, watchosArm64, tvosSimulatorArm64, tvosX64, tvosArm64, iosArm64)
 
-        public open val all: List<KodeinTarget> get() = allNative + jvm + js + wasm
+        public open val all: List<KodeinTarget> get() = allNative + jvm + js + allWasm
 
         public open val allComposeStable: List<KodeinTarget> get() = allDesktop + allIos + allTvos + allWatchosNoDevice + jvm + js
-        public val allComposeExperimental: List<KodeinTarget> get() = allComposeStable + wasm
+        public val allComposeExperimental: List<KodeinTarget> get() = allComposeStable + wasmJs
 
         public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosX64 + tvosSimulatorArm64 + watchosX64 + watchosSimulatorArm64 + jvm + js
     }
@@ -251,7 +266,11 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
     }
     public fun jsEnvBrowserOnly(): Unit = jsEnv(browser = true, nodejs = false, d8 = false)
     public fun js(configure: KodeinJsTargetBuilder.() -> Unit = {}): Unit = add(targets.js) { configure() }
-    public fun wasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasm) { configure() }
+    @Deprecated("Use wasmJs instead", ReplaceWith("wasmJs(configure)"))
+    public fun wasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
+    public fun wasmJs(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
+    public fun wasmWasi(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmWasi) { configure() }
+    public fun allWasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allWasm) { configure() }
 
     public fun linuxX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.linuxX64) { configure() }
     public fun linuxArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.linuxArm64) { configure() }

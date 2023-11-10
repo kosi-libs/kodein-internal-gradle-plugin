@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.2.2"
+    version = "8.3.0-SNAPSHOT"
 }
 
 repositories {
@@ -117,6 +117,7 @@ tasks.register("validateVersion") {
     }
 }
 
+val buildDir by layout.buildDirectory
 tasks.register<Sync>("copyMavenLocalArtifacts") {
     group = "publishing"
     dependsOn("validateVersion")
@@ -129,7 +130,7 @@ tasks.register<Sync>("copyMavenLocalArtifacts") {
         include("*/$publishingVersion/**")
     }
 
-    into("$buildDir/mvn-repo/$groupDir/")
+    into("${buildDir}/mvn-repo/$groupDir/")
 }
 
 val (gitUser, gitPassword) = (project.findProperty("com.github.http.auth") as? String)?.run {
@@ -148,7 +149,7 @@ gitPublish {
     repoUri.set("https://github.com/kosi-libs/kodein-internal-gradle-plugin.git")
     branch.set("mvn-repo")
     contents {
-        from("$buildDir/mvn-repo")
+        from("${buildDir}/mvn-repo")
     }
     preserve {
         include("**")

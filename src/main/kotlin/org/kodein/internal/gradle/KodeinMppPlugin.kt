@@ -25,7 +25,7 @@ public class KodeinMppPlugin : KtPlugin<Project> {
             (kotlin as ExtensionAware).extensions.add("kodein", ext)
 
             @OptIn(ExperimentalKotlinGradlePluginApi::class)
-            kotlin.targetHierarchy.default {
+            kotlin.applyDefaultHierarchyTemplate {
                 common {
                     group("jvmBased") {
                         withJvm()
@@ -36,7 +36,9 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                         withWasm()
                     }
                     group("posix") {
-                        withCompilations { it.target.let { target -> target is KotlinNativeTarget && target.konanTarget.family != Family.MINGW } }
+                        withCompilations { it.target.let { target ->
+                            target is KotlinNativeTarget && target.konanTarget.family != Family.MINGW }
+                        }
                     }
                 }
             }
