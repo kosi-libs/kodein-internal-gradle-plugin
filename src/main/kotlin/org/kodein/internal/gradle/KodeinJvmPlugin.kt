@@ -55,7 +55,7 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
 
     override fun Project.applyPlugin() {
         apply {
-            plugin("kotlin-platform-jvm")
+            plugin("org.jetbrains.kotlin.jvm")
         }
 
         dependencies {

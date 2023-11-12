@@ -30,7 +30,7 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
-            plugin("kotlin-platform-android")
+            plugin("kotlin-android")
             plugin<KodeinAndroidNdkPlugin>()
         }
 
