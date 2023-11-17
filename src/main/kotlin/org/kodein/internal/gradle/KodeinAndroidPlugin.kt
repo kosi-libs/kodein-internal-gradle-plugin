@@ -13,7 +13,7 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
 
     internal companion object {
         fun configureAndroid(project: Project, android: LibraryExtension) = with(android) {
-            compileSdk = 32
+            compileSdk = 34
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 minSdk = 21
