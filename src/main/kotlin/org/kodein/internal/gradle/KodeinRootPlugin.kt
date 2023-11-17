@@ -43,17 +43,12 @@ public class KodeinRootPlugin : KtPlugin<Project> {
 
         allprojects {
             tasks.register<DependencyReportTask>("allDependencies")
-            // TODO Review with Salomon
-            repositories {
-                mavenLocal()
-                mavenCentral()
-                google()
-                maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
-                maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
-                maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
-                maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
-                maven(url = "https://raw.githubusercontent.com/kosi-libs/kodein-internal-gradle-plugin/mvn-repo")
-            }
+        }
+
+        // https://youtrack.jetbrains.com/issue/KT-48410
+        // Kaverit: Could not find org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable:1.9.20
+        repositories {
+            mavenCentral()
         }
 
         extensions.add("kodein", Extension(this))
