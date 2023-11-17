@@ -26,9 +26,6 @@ public class KodeinLibraryAndroidPlugin : KtPlugin<Project> {
                 .publications.register<MavenPublication>(KodeinLibraryJvmPlugin.defaultPublicationName) {
                     from(components["release"])
                 }
-            KodeinLibraryJvmPlugin.addJvmSourcesJar(project) {
-                extensions.getByName<LibraryExtension>("android").sourceSets["main"].java.srcDirs
-            }
         }
     }
 

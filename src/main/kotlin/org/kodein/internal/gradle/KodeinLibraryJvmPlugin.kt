@@ -5,6 +5,8 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -15,14 +17,14 @@ public class KodeinLibraryJvmPlugin : KtPlugin<Project> {
     internal companion object {
         const val defaultPublicationName = "libraryMaven"
 
-        fun addJvmSourcesJar(
+        private fun addJvmSourcesJar(
             project: Project,
             publication: String = defaultPublicationName,
             sourceSet: Project.() -> Iterable<File> = {
                 extensions.getByName<JavaPluginExtension>("java").sourceSets["main"].allSource
             }
         ) {
-            val sourcesJar = project.tasks.register<Jar>("sourcesJar") {
+            val sourcesJar = project.tasks.maybeCreate<Jar>("sourcesJar").apply {
                 archiveClassifier.set("sources")
                 duplicatesStrategy = DuplicatesStrategy.EXCLUDE
                 from(project.sourceSet())

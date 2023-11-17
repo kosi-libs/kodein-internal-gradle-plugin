@@ -25,8 +25,14 @@ public typealias KodeinJvmTargetBuilder = KodeinMppExtension.TargetBuilder<out K
 public typealias KodeinJsTarget = KodeinMppExtension.Target<KotlinJsTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 public typealias KodeinJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJsTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
 
-public typealias KodeinWasmTarget<T> = KodeinMppExtension.Target<T, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinWasmTarget = KodeinMppExtension.Target<out KotlinWasmTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
 public typealias KodeinWasmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
+
+public typealias KodeinWasmJsTarget = KodeinMppExtension.Target<KotlinWasmJsTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinWasmJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmJsTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
+
+public typealias KodeinWasmWasiTarget = KodeinMppExtension.Target<KotlinWasmWasiTargetDsl, KotlinJsCompilation, KotlinJsOptions, KodeinMppExtension.Sources>
+public typealias KodeinWasmWasiTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmWasiTargetDsl, out KotlinJsCompilation, out KotlinJsOptions, out KodeinMppExtension.Sources>
 
 public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinNativeCompilation, KotlinCommonOptions, KodeinMppExtension.Sources>
 public typealias KodeinNativeTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTarget, out KotlinNativeCompilation, out KotlinCommonOptions, out KodeinMppExtension.Sources>
@@ -124,9 +130,9 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
             if (jsEnvBrowser) target.browser()
             if (jsEnvNodejs) target.nodejs()
         }
-        // TODO Review with Salomon
+
         @OptIn(ExperimentalWasmDsl::class)
-        public val wasmJs: KodeinWasmTarget<KotlinWasmJsTargetDsl> = Target("wasmJs", { wasmJs(it) }) {
+        public val wasmJs: KodeinWasmJsTarget = Target("wasmJs", { wasmJs(it) }) {
             jsConfigured = true
             if (jsEnvD8) target.d8()
              if (jsEnvBrowser) target.browser {
@@ -139,13 +145,13 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
             // if (jsEnvNodejs) target.nodejs()
         }
         @OptIn(ExperimentalWasmDsl::class)
-        public val wasmWasi: KodeinWasmTarget<KotlinWasmWasiTargetDsl> = Target("wasmWasi", { wasmWasi(it) }) {
+        public val wasmWasi: KodeinWasmWasiTarget = Target("wasmWasi", { wasmWasi(it) }) {
                 jsConfigured = true
                 // TODO: Try again with Kotlin 2.0.0
                 // This is failing in Kosi-Kaverit (test fail in Node)
                 // if (jsEnvNodejs) target.nodejs()
         }
-        public val allWasm: List<KodeinWasmTarget<out KotlinWasmTargetDsl>> get() = listOf(wasmJs, wasmWasi)
+        public val allWasm: List<KodeinWasmTarget> get() = listOf(wasmJs, wasmWasi)
 
         public val linuxX64: KodeinNativeTargetWithHostTests = Target("linuxX64", KotlinMultiplatformExtension::linuxX64, nativeBuildOn = { isLinux })
         public val linuxArm64: KodeinNativeTarget = Target("linuxArm64", KotlinMultiplatformExtension::linuxArm64, nativeBuildOn = { isLinux })
@@ -266,10 +272,8 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
     }
     public fun jsEnvBrowserOnly(): Unit = jsEnv(browser = true, nodejs = false, d8 = false)
     public fun js(configure: KodeinJsTargetBuilder.() -> Unit = {}): Unit = add(targets.js) { configure() }
-    @Deprecated("Use wasmJs instead", ReplaceWith("wasmJs(configure)"))
-    public fun wasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
-    public fun wasmJs(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
-    public fun wasmWasi(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmWasi) { configure() }
+    public fun wasmJs(configure: KodeinWasmJsTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
+    public fun wasmWasi(configure: KodeinWasmWasiTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmWasi) { configure() }
     public fun allWasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allWasm) { configure() }
 
     public fun linuxX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.linuxX64) { configure() }
