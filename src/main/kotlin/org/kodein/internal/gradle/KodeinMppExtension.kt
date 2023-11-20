@@ -8,11 +8,7 @@ import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 
@@ -134,22 +130,24 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmJs: KodeinWasmJsTarget = Target("wasmJs", { wasmJs(it) }) {
             jsConfigured = true
+            if (jsEnvNodejs) target.nodejs()
             if (jsEnvD8) target.d8()
-             if (jsEnvBrowser) target.browser {
-                 // Because Chrome 11* on CI is not compatible
-                 // https://youtrack.jetbrains.com/issue/KT-63014
-                 testTask { enabled = false }
-             }
+            if (jsEnvBrowser) target.browser {
+                // Because Chrome 11* on CI is not compatible
+                // https://youtrack.jetbrains.com/issue/KT-63014
+                testTask { enabled = false }
+            }
             // TODO: Try again with Kotlin 2.0.0
             // This is failing in Kosi-Kaverit (test fail in Node)
             // if (jsEnvNodejs) target.nodejs()
         }
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmWasi: KodeinWasmWasiTarget = Target("wasmWasi", { wasmWasi(it) }) {
-                jsConfigured = true
-                // TODO: Try again with Kotlin 2.0.0
-                // This is failing in Kosi-Kaverit (test fail in Node)
-                // if (jsEnvNodejs) target.nodejs()
+            jsConfigured = true
+            target.nodejs()
+            // TODO: Try again with Kotlin 2.0.0
+            // This is failing in Kosi-Kaverit (test fail in Node)
+            // if (jsEnvNodejs) target.nodejs()
         }
         public val allWasm: List<KodeinWasmTarget> get() = listOf(wasmJs, wasmWasi)
 

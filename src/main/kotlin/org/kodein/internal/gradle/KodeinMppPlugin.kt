@@ -52,6 +52,7 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                 compilations.configureEach {
                     compilerOptions.configure {
                         allWarningsAsErrors.set(provider { KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings") })
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
                     }
                 }
             }
