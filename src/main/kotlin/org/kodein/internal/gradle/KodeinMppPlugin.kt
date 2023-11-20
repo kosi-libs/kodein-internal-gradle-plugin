@@ -35,6 +35,9 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                         withJs()
                         withWasm()
                     }
+                    group("wasm") {
+                        withWasm()
+                    }
                     group("posix") {
                         withCompilations { it.target.let { target ->
                             target is KotlinNativeTarget && target.konanTarget.family != Family.MINGW }
