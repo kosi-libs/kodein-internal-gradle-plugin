@@ -130,25 +130,26 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmJs: KodeinWasmJsTarget = Target("wasmJs", { wasmJs(it) }) {
             jsConfigured = true
-            if (jsEnvNodejs) target.nodejs()
-            if (jsEnvD8) target.d8()
-            if (jsEnvBrowser) target.browser {
+            if (jsEnvNodejs) target.nodejs {
+                // TODO: Try again with Kotlin 2.0.0
                 // Because Chrome 11* on CI is not compatible
                 // https://youtrack.jetbrains.com/issue/KT-63014
                 testTask { enabled = false }
             }
-            // TODO: Try again with Kotlin 2.0.0
-            // This is failing in Kosi-Kaverit (test fail in Node)
-            // if (jsEnvNodejs) target.nodejs()
+            if (jsEnvD8) target.d8()
+            if (jsEnvBrowser) target.browser()
         }
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmWasi: KodeinWasmWasiTarget = Target("wasmWasi", { wasmWasi(it) }) {
             jsConfigured = true
-            target.nodejs()
-            // TODO: Try again with Kotlin 2.0.0
-            // This is failing in Kosi-Kaverit (test fail in Node)
-            // if (jsEnvNodejs) target.nodejs()
+            target.nodejs {
+                // TODO: Try again with Kotlin 2.0.0
+                // Because Chrome 11* on CI is not compatible
+                // https://youtrack.jetbrains.com/issue/KT-63014
+                testTask { enabled = false }
+            }
         }
+
         public val allWasm: List<KodeinWasmTarget> get() = listOf(wasmJs, wasmWasi)
 
         public val linuxX64: KodeinNativeTargetWithHostTests = Target("linuxX64", KotlinMultiplatformExtension::linuxX64, nativeBuildOn = { isLinux })
