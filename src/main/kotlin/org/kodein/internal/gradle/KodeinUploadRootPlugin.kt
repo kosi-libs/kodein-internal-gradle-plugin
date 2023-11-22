@@ -57,9 +57,10 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
 
     public inner class SigningConfig(public val signingKey: String, public val signingPassword: String)
     public val signingConfig: SigningConfig? by lazy {
-        val signingKey: String? = (project.properties["org.kodein.signing.key"] as String?) ?: System.getenv("GPG_PRIVATE_KEY")
-        val signingPassword: String? = (project.properties["org.kodein.signing.password"] as String?) ?: System.getenv("GPG_PRIVATE_PASSWORD")
-        val skipSigning: Boolean = (KodeinLocalPropertiesPlugin.on(project).isTrue("org.kodein.signing.skip"))
+        val localProps = KodeinLocalPropertiesPlugin.on(project)
+        val signingKey: String? =  localProps.get("signing.key") ?: System.getenv("GPG_PRIVATE_KEY")
+        val signingPassword: String? = localProps.get("signing.password") ?: System.getenv("GPG_PRIVATE_PASSWORD")
+        val skipSigning: Boolean = localProps.isTrue("signing.skip")
 
         when {
             signingKey == null || signingPassword == null || skipSigning || publication.snapshot -> {

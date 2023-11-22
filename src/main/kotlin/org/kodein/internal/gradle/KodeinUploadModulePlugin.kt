@@ -186,10 +186,12 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 dependsOn(tasks.withType<PublishToMavenRepository>().filter { it.publication in hostOnlyPublications })
             }
 
-            if (signingConfig != null && ext.signPublications) {
+            if (signingConfig != null) {
                 signing.apply { useInMemoryPgpKeys(signingConfig.signingKey, signingConfig.signingPassword) }
-                // Workaround from https://youtrack.jetbrains.com/issue/KT-46466 & https://github.com/gradle/gradle/issues/26091
-                publishing.publications.configureEach { signing.sign(this) }
+                if (ext.signPublications) {
+                    // Workaround from https://youtrack.jetbrains.com/issue/KT-46466 & https://github.com/gradle/gradle/issues/26091
+                    publishing.publications.configureEach { signing.sign(this) }
+                }
             }
         }
     }
