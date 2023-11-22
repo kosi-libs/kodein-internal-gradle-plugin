@@ -1,3 +1,7 @@
+plugins {
+    id("com.gradle.enterprise") version "3.15.1"
+}
+
 rootProject.name = "kodein-internal-gradle-plugin"
 
 include(
@@ -5,7 +9,6 @@ include(
     "kodein-internal-gradle-version-catalog"
 )
 
-@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     versionCatalogs {
         create("kodeinGlobals") {
@@ -15,3 +18,13 @@ dependencyResolutionManagement {
 }
 
 System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
+
+gradleEnterprise {
+    if (System.getenv("CI") != null) {
+        buildScan {
+            publishAlways()
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
+        }
+    }
+}

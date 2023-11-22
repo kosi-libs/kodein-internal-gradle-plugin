@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle.settings
 
+import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.plugins.DslObject
@@ -77,6 +78,18 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
             extra.set("kotlin.native.ignoreDisabledTargets", "true")
             extra.set("kotlin.mpp.stability.nowarn", "true")
             extra.set("kotlin.mpp.androidSourceSetLayoutVersion", "2")
+        }
+
+        plugins.apply("com.gradle.enterprise")
+
+        extensions.configure<GradleEnterpriseExtension>(GradleEnterpriseExtension.NAME) {
+            if (System.getenv("CI") != null) {
+                buildScan {
+                    publishAlways()
+                    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+                    termsOfServiceAgree = "yes"
+                }
+            }
         }
     }
 

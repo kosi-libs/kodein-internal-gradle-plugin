@@ -7,11 +7,13 @@ plugins {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
+    api(libs.gradle.enterprisePlugin)
 }
 
 kotlin {
