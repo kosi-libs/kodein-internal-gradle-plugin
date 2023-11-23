@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "8.4.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.4.2.jar",
+          "url": "kodein-internal-gradle-settings-8.4.2.jar",
+          "size": 29894,
+          "sha512": "457a0f2ef8b040dc78bceb6ac11b24c85f71c04b0568987f0c6acce5ee7f886b8934580486dcf1fd1c7d43e17f7cd720ccc8e76681565455a09871d94661d363",
+          "sha256": "8281494d5f1e4c416b3434ab01e1748fc99195db7d9df20a83de7d3df0804dc6",
+          "sha1": "95d6d1db1b569f6bab1537cceb7f32ab636942bf",
+          "md5": "63cc9090d975174815c33c65d3c3d62f"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.4.2.jar",
+          "url": "kodein-internal-gradle-settings-8.4.2.jar",
+          "size": 29894,
+          "sha512": "457a0f2ef8b040dc78bceb6ac11b24c85f71c04b0568987f0c6acce5ee7f886b8934580486dcf1fd1c7d43e17f7cd720ccc8e76681565455a09871d94661d363",
+          "sha256": "8281494d5f1e4c416b3434ab01e1748fc99195db7d9df20a83de7d3df0804dc6",
+          "sha1": "95d6d1db1b569f6bab1537cceb7f32ab636942bf",
+          "md5": "63cc9090d975174815c33c65d3c3d62f"
+        }
+      ]
+    }
+  ]
+}
