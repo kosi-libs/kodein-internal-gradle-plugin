@@ -130,6 +130,12 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmJs: KodeinWasmJsTarget = Target("wasmJs", { wasmJs(it) }) {
             jsConfigured = true
+            if (jsEnvBrowser) target.browser {
+                // TODO: Try again with Kotlin 2.0.0
+                // Because Chrome 11* on CI is not compatible
+                // https://youtrack.jetbrains.com/issue/KT-63014
+                testTask { enabled = false }
+            }
             if (jsEnvNodejs) target.nodejs {
                 // TODO: Try again with Kotlin 2.0.0
                 // Because Chrome 11* on CI is not compatible
@@ -137,7 +143,6 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
                 testTask { enabled = false }
             }
             if (jsEnvD8) target.d8()
-            if (jsEnvBrowser) target.browser()
         }
         @OptIn(ExperimentalWasmDsl::class)
         public val wasmWasi: KodeinWasmWasiTarget = Target("wasmWasi", { wasmWasi(it) }) {

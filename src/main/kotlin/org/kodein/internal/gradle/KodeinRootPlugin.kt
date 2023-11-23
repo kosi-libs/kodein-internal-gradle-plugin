@@ -3,7 +3,6 @@ package org.kodein.internal.gradle
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.diagnostics.DependencyReportTask
-import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.plugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.repositories
