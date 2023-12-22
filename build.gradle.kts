@@ -21,16 +21,16 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.5.1"
+    version = "8.5.2"
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     google()
     gradlePluginPortal()
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     maven(url = "https://ajoberstar.github.io/bintray-backup/")
+    mavenLocal()
 }
 
 dependencies {
