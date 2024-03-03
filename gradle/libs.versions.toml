@@ -1,6 +1,6 @@
 [versions]
 # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-kotlin = "1.9.10"
+kotlin = "1.9.20"
 gradle-publishPlugin = "1.2.1"
 gradle-enterprisePlugin = "3.15.1"
 

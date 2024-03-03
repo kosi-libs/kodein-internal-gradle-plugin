@@ -54,6 +54,18 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         public fun mainDependencies(configure: KotlinDependencyHandler.() -> Unit) { main.configure { dependencies(configure) } }
         public fun test(configure: KotlinSourceSet.() -> Unit) { test.configure(configure) }
         public fun testDependencies(configure: KotlinDependencyHandler.() -> Unit) { test.configure { dependencies(configure) } }
+        public fun dependsOn(sources: Sources) {
+            main.configure { dependsOn(sources.main.get()) }
+            test.configure { dependsOn(sources.test.get()) }
+        }
+        public fun dependsOn(target: KodeinTarget) { dependsOn(target.sourceBuilder(target.name)) }
+        public fun dependsOn(targets: List<KodeinTarget>) { targets.forEach { dependsOn(it) } }
+        public fun feedsInto(sources: Sources) {
+            sources.main.configure { dependsOn(main.get()) }
+            sources.test.configure { dependsOn(test.get()) }
+        }
+        public fun feedsInto(target: KodeinTarget) { feedsInto(target.sourceBuilder(target.name)) }
+        public fun feedsInto(targets: List<KodeinTarget>) { targets.forEach { feedsInto(it) } }
     }
 
     public val common: Sources get() = Sources("common")
@@ -207,8 +219,8 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
 
         public open val all: List<KodeinTarget> get() = allNative + jvm + js + allWasm
 
-        public open val allComposeStable: List<KodeinTarget> get() = allDesktop + allIos + allTvos + allWatchosNoDevice + jvm + js
-        public val allComposeExperimental: List<KodeinTarget> get() = allComposeStable + wasmJs
+        public open val allComposeUi: List<KodeinTarget> get() = allIos + jvm + wasmJs
+        public open val allComposeRuntime: List<KodeinTarget> get() = allComposeUi + js + allDesktop + allTvos + allWatchosNoDevice
 
         public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosX64 + tvosSimulatorArm64 + watchosX64 + watchosSimulatorArm64 + jvm + js
     }
@@ -329,8 +341,14 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
 
     public fun all(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.all) { configure() }
 
-    public fun allComposeExperimental(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeExperimental) { configure() }
-    public fun allComposeStable(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeStable) { configure() }
+    public fun allComposeUi(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeUi) { configure() }
+    public fun allComposeRuntime(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allComposeRuntime) { configure() }
 
     public fun allTestable(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allTestable) { configure() }
+
+    public fun createSources(name: String, configure: Sources.() -> Unit = {}): Sources {
+        val main = kotlin.sourceSets.create(name + "Main")
+        kotlin.sourceSets.create(name + "Test") {  }
+        return Sources(name).apply(configure)
+    }
 }
