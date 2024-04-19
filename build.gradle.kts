@@ -1,5 +1,6 @@
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.target
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -21,7 +22,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.6.1"
+    version = "8.7.0"
 }
 
 repositories {
