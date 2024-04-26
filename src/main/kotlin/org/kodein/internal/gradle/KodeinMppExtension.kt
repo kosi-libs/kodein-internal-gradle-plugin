@@ -2,29 +2,17 @@ package org.kodein.internal.gradle
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.project
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -59,11 +47,10 @@ public typealias KodeinNativeTargetWithSimulatorTestsBuilder = KodeinMppExtensio
 public typealias KodeinNativeTargetWithTests = KodeinMppExtension.Target<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, KotlinCompilationTask<KotlinNativeCompilerOptions>, KotlinNativeCompilerOptions, KodeinMppExtension.Sources>
 public typealias KodeinNativeTargetWithTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, out KotlinCompilationTask<KotlinNativeCompilerOptions>, out KotlinNativeCompilerOptions, out KodeinMppExtension.Sources>
 
-public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExtension) {
-
-    @OptIn(ExternalKotlinTargetApi::class)
-    internal val project get() = kotlin.project
-
+public open class KodeinMppExtension(
+    internal val project: Project,
+    internal val kotlin: KotlinMultiplatformExtension
+) {
     public open inner class Sources(internal val name: String) {
         public val main: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "Main")
         public open val test: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "Test")
@@ -129,14 +116,9 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
                 defaultConfig: TargetBuilder<T, C, O, Sources>.() -> Unit = {}
         ): Target<T, C, O, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
 
-        public fun <C : KotlinCompilationTask<O>, O : KotlinJvmCompilerOptions> TargetBuilder<*, C, O, out Sources>.commonJvmConfig(
-            compilerOptions: C.() -> HasCompilerOptions<KotlinJvmCompilerOptions>
-        ) {
-            compilations.configureEach {
-                compilerOptions(this).configure {
-                    jvmTarget.set(KodeinJvmPlugin.jvmTarget(project))
-                }
-            }
+        public fun <C : KotlinCompilationTask<O>, O : KotlinJvmCompilerOptions> TargetBuilder<*, C, O, out Sources>.commonJvmConfig(kotlin: KotlinTopLevelExtension) {
+            kotlin.jvmToolchain(KodeinJvmPlugin.jvmTarget(project))
+
             if (target.project.properties["org.kodein.no-default-junit"] != "true") {
                 sources.testDependencies {
                     implementation("org.jetbrains.kotlin:kotlin-test-junit")
@@ -145,9 +127,7 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
         }
 
         public val jvm: KodeinJvmTarget = Target("jvm", KotlinMultiplatformExtension::jvm) {
-            commonJvmConfig {
-                TODO()
-            }
+            commonJvmConfig(kotlin)
         }
 
         internal var jsEnvBrowser = true
@@ -372,7 +352,7 @@ public open class KodeinMppExtension(internal val kotlin: KotlinMultiplatformExt
     public fun allTestable(configure: KodeinTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allTestable) { configure() }
 
     public fun createSources(name: String, configure: Sources.() -> Unit = {}): Sources {
-        val main = kotlin.sourceSets.create(name + "Main")
+        kotlin.sourceSets.create(name + "Main")
         kotlin.sourceSets.create(name + "Test") {  }
         return Sources(name).apply(configure)
     }

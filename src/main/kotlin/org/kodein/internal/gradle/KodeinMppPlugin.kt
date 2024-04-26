@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.konan.target.Family
 public class KodeinMppPlugin : KtPlugin<Project> {
 
     internal companion object {
-        fun Project.applyMppPlugin(createExt: (KotlinMultiplatformExtension) -> KodeinMppExtension) {
+        fun Project.applyMppPlugin(createExt: (Project, KotlinMultiplatformExtension) -> KodeinMppExtension) {
             apply {
                 plugin("org.jetbrains.kotlin.multiplatform")
             }
 
             val kotlin = extensions.findByType<KotlinMultiplatformExtension>()!!
 
-            val ext = createExt(kotlin)
+            val ext = createExt(this, kotlin)
             (kotlin as ExtensionAware).extensions.add("kodein", ext)
 
             @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -33,10 +33,12 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                     }
                     group("jsBased") {
                         withJs()
-                        withWasm()
+                        withWasmJs()
+                        withWasmWasi()
                     }
                     group("wasm") {
-                        withWasm()
+                        withWasmJs()
+                        withWasmWasi()
                     }
                     group("posix") {
                         withCompilations { it.target.let { target ->
@@ -53,9 +55,11 @@ public class KodeinMppPlugin : KtPlugin<Project> {
 
             kotlin.targets.configureEach {
                 compilations.configureEach {
-                    compilerOptions.configure {
-                        allWarningsAsErrors.set(provider { KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings") })
-                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                    compileTaskProvider.configure {
+                        compilerOptions {
+                            allWarningsAsErrors.set(provider { KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings") })
+                            freeCompilerArgs.add("-Xexpect-actual-classes")
+                        }
                     }
                 }
             }

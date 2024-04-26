@@ -7,17 +7,17 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 public class KodeinJvmPlugin : KtPlugin<Project> {
 
     internal companion object {
 
-        fun configureJvmTarget(project: Project) = with(project) {
+        fun configureJvmTarget(project: Project, kotlin: KotlinTopLevelExtension) = with(project) {
+            kotlin.jvmToolchain(jvmTarget(project))
             tasks.withType<KotlinCompile>().configureEach {
-                compilerOptions.jvmTarget.set(jvmTarget(project))
                 if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
                     compilerOptions.allWarningsAsErrors.set(true)
                 }
@@ -45,9 +45,9 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
 
         fun jvmTarget(project: Project) =
             when (val version = project.properties["org.kodein.jvm-version"] ?: "1.8") {
-                "1.8" -> JvmTarget.JVM_1_8
-                "11" -> JvmTarget.JVM_11
-                "17" -> JvmTarget.JVM_17
+                "1.8" -> 8
+                "11" -> 11
+                "17" -> 17
                 else -> error("Unsupported JVM version $version")
             }
 
@@ -64,12 +64,13 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
             "testImplementation"("junit:junit:4.13.2")
         }
 
+        val kotlin = extensions.getByName<KotlinProjectExtension>("kotlin")
         afterEvaluate {
-            extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.all {
+            kotlin.sourceSets.all {
                 languageSettings.progressiveMode = true
             }
 
-            configureJvmTarget(project)
+            configureJvmTarget(project, kotlin)
         }
 
         configureTestLogsPrint()

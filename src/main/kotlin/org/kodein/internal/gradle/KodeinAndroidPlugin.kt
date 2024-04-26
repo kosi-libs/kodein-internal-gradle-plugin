@@ -8,7 +8,6 @@ import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-@Suppress("UnstableApiUsage")
 public class KodeinAndroidPlugin : KtPlugin<Project> {
 
     internal companion object {
@@ -46,13 +45,14 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
             "androidTestImplementation"("androidx.test.espresso:espresso-core:3.5.0")
         }
 
+        val kotlin = extensions.getByName<KotlinProjectExtension>("kotlin")
         afterEvaluate {
-            extensions.getByName<KotlinProjectExtension>("kotlin").sourceSets.all {
+            kotlin.sourceSets.all {
                 languageSettings.progressiveMode = true
             }
         }
 
-        KodeinJvmPlugin.configureJvmTarget(project)
+        KodeinJvmPlugin.configureJvmTarget(project, kotlin)
 
         configureTestLogsPrint()
     }

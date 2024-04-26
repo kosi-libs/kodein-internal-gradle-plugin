@@ -1,6 +1,7 @@
 package org.kodein.internal.gradle
 
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -10,7 +11,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 public typealias KodeinAndroidTarget = KodeinMppExtension.Target<KotlinAndroidTarget,  KotlinCompilationTask<KotlinJvmCompilerOptions>, KotlinJvmCompilerOptions, KodeinMppWithAndroidExtension.AndroidSources>
 public typealias KodeinAndroidTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinAndroidTarget, KotlinCompilationTask<KotlinJvmCompilerOptions>, KotlinJvmCompilerOptions, KodeinMppWithAndroidExtension.AndroidSources>
 
-public class KodeinMppWithAndroidExtension(kotlin: KotlinMultiplatformExtension) : KodeinMppExtension(kotlin) {
+public class KodeinMppWithAndroidExtension(project: Project, kotlin: KotlinMultiplatformExtension) : KodeinMppExtension(project, kotlin) {
 
     public open inner class AndroidSources(name: String) : KodeinMppExtension.Sources(name) {
         override val test: NamedDomainObjectProvider<KotlinSourceSet> get() = kotlin.sourceSets.named(name + "UnitTest")
@@ -19,7 +20,7 @@ public class KodeinMppWithAndroidExtension(kotlin: KotlinMultiplatformExtension)
 
     public inner class Targets : KodeinMppExtension.Targets() {
         public val android: KodeinAndroidTarget = Target("android", KotlinMultiplatformExtension::androidTarget, ::AndroidSources) {
-            commonJvmConfig { TODO() }
+            commonJvmConfig(kotlin)
             target.publishLibraryVariants("debug", "release")
             sources.testDependencies {
                 implementation("androidx.test.ext:junit:1.1.1")
