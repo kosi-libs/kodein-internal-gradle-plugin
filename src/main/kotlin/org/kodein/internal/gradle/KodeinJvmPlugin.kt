@@ -40,6 +40,7 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
                 "1.8" -> JavaVersion.VERSION_1_8
                 "11" -> JavaVersion.VERSION_11
                 "17" -> JavaVersion.VERSION_17
+                "21" -> JavaVersion.VERSION_21
                 else -> error("Unsupported JVM version $version")
             }
 
@@ -48,6 +49,7 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
                 "1.8" -> 8
                 "11" -> 11
                 "17" -> 17
+                "21" -> 21
                 else -> error("Unsupported JVM version $version")
             }
 
