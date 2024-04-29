@@ -1,0 +1,173 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-plugin",
+    "version": "8.7.0-kotlin-2-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "2.0.0-RC1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-serialization",
+          "version": {
+            "requires": "2.0.0-RC1"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "8.2.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.9.20"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-core",
+          "version": {
+            "requires": "1.9.20"
+          }
+        },
+        {
+          "group": "com.gradle.publish",
+          "module": "plugin-publish-plugin",
+          "version": {
+            "requires": "1.2.1"
+          }
+        },
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-plugin-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "size": 443820,
+          "sha512": "31298bf30c7a781bb829a7806528405a660139de3af7ac4826314731566a13d71f66988d475fcbe3cef8b7c622d74e67748dbf2153eb6b4bac4e07685626d129",
+          "sha256": "6081ecf3430a8bfafd0586d0f1c203cf5b5b2f7cc7c2f223484cbb3849c76da9",
+          "sha1": "6be3c9afd6df0e618fe2f2ed62adcfa82e7ea539",
+          "md5": "0b6d1a780e0171e7a17b45570ee5bb27"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-reflect",
+          "version": {
+            "requires": "2.0.0-RC1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-gradle-plugin",
+          "version": {
+            "requires": "2.0.0-RC1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-serialization",
+          "version": {
+            "requires": "2.0.0-RC1"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "8.2.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-gradle-plugin",
+          "version": {
+            "requires": "1.9.20"
+          }
+        },
+        {
+          "group": "org.jetbrains.dokka",
+          "module": "dokka-core",
+          "version": {
+            "requires": "1.9.20"
+          }
+        },
+        {
+          "group": "com.gradle.publish",
+          "module": "plugin-publish-plugin",
+          "version": {
+            "requires": "1.2.1"
+          }
+        },
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-plugin-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-plugin-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "size": 443820,
+          "sha512": "31298bf30c7a781bb829a7806528405a660139de3af7ac4826314731566a13d71f66988d475fcbe3cef8b7c622d74e67748dbf2153eb6b4bac4e07685626d129",
+          "sha256": "6081ecf3430a8bfafd0586d0f1c203cf5b5b2f7cc7c2f223484cbb3849c76da9",
+          "sha1": "6be3c9afd6df0e618fe2f2ed62adcfa82e7ea539",
+          "md5": "0b6d1a780e0171e7a17b45570ee5bb27"
+        }
+      ]
+    }
+  ]
+}

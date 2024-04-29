@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "8.7.0-kotlin-2-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-settings-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "size": 29913,
+          "sha512": "d6eb13330d1ea08f791a0990f04363d8b5c62c467f6dce5137e487bc47f151740d35a0a43c4ce091842fe69feaa07c19c435ee91411725c808deaef9f0cba235",
+          "sha256": "f56e62588c77e31c9de25f065ff7bf8a3dedf559c7bc9576aa9ee0cc430ded19",
+          "sha1": "048809463986be0a73f7f2c734f6d46e3b35dccb",
+          "md5": "25a7605831e238fdfad88e14fcf22bd7"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.enterprise",
+          "module": "com.gradle.enterprise.gradle.plugin",
+          "version": {
+            "requires": "3.15.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "url": "kodein-internal-gradle-settings-8.7.0-kotlin-2-SNAPSHOT.jar",
+          "size": 29913,
+          "sha512": "d6eb13330d1ea08f791a0990f04363d8b5c62c467f6dce5137e487bc47f151740d35a0a43c4ce091842fe69feaa07c19c435ee91411725c808deaef9f0cba235",
+          "sha256": "f56e62588c77e31c9de25f065ff7bf8a3dedf559c7bc9576aa9ee0cc430ded19",
+          "sha1": "048809463986be0a73f7f2c734f6d46e3b35dccb",
+          "md5": "25a7605831e238fdfad88e14fcf22bd7"
+        }
+      ]
+    }
+  ]
+}

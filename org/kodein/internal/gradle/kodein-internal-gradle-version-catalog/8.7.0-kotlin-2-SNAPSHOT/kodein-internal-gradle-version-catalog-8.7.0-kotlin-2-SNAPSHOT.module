@@ -1,0 +1,36 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-version-catalog",
+    "version": "8.7.0-kotlin-2-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "versionCatalogElements",
+      "attributes": {
+        "org.gradle.category": "platform",
+        "org.gradle.usage": "version-catalog"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-version-catalog-8.7.0-kotlin-2-SNAPSHOT.toml",
+          "url": "kodein-internal-gradle-version-catalog-8.7.0-kotlin-2-SNAPSHOT.toml",
+          "size": 1719,
+          "sha512": "3a0f0977d3a4a24e11e30b1ae6e618d262dde29cad3ccd95f331f1941683ebbafd7bf4c070fd40850c9973c0eaaef841fcd82f11e2d2933892fc38da15cd51e6",
+          "sha256": "da22aed142821811b4fc21214a112a1276cf8be325649f3518d606b216e54605",
+          "sha1": "6640fe832cda816ba7a3832ad1aafd04a2fa6598",
+          "md5": "6690cc7d20219bd2c50346266783542f"
+        }
+      ]
+    }
+  ]
+}
