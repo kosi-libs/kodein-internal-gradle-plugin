@@ -36,8 +36,7 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
         }
 
         fun javaVersion(project: Project) =
-            when (val version = project.properties["org.kodein.jvm-version"] ?: "1.8") {
-                "1.8" -> JavaVersion.VERSION_1_8
+            when (val version = project.properties["org.kodein.jvm-version"] ?: "11") {
                 "11" -> JavaVersion.VERSION_11
                 "17" -> JavaVersion.VERSION_17
                 "21" -> JavaVersion.VERSION_21
@@ -45,14 +44,12 @@ public class KodeinJvmPlugin : KtPlugin<Project> {
             }
 
         fun jvmTarget(project: Project) =
-            when (val version = project.properties["org.kodein.jvm-version"] ?: "1.8") {
-                "1.8" -> 8
+            when (val version = project.properties["org.kodein.jvm-version"] ?: "11") {
                 "11" -> 11
                 "17" -> 17
                 "21" -> 21
                 else -> error("Unsupported JVM version $version")
             }
-
     }
 
     override fun Project.applyPlugin() {
