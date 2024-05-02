@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.kodein.internal.gradle</groupId>
+  <artifactId>kodein-internal-gradle-version-catalog</artifactId>
+  <versioning>
+    <lastUpdated>20240502145324</lastUpdated>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>8.7.0-kotlin-2.0.0-RC2-SNAPSHOT</value>
+        <updated>20240502145324</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>module</extension>
+        <value>8.7.0-kotlin-2.0.0-RC2-SNAPSHOT</value>
+        <updated>20240502145324</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>toml</extension>
+        <value>8.7.0-kotlin-2.0.0-RC2-SNAPSHOT</value>
+        <updated>20240502145324</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+  <version>8.7.0-kotlin-2.0.0-RC2-SNAPSHOT</version>
+</metadata>
