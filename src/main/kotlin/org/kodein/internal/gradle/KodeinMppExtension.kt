@@ -4,48 +4,56 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-public typealias KodeinTarget = KodeinMppExtension.Target<out KotlinTarget, out KotlinCompilationTask<KotlinCommonCompilerOptions>, out KotlinCommonCompilerOptions, out KodeinMppExtension.Sources>
-public typealias KodeinTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinTarget, out KotlinCompilationTask<KotlinCommonCompilerOptions>, out KotlinCommonCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinTarget = KodeinMppExtension.Target<out KotlinTarget, out KotlinCompilation<*>, out KodeinMppExtension.Sources>
+public typealias KodeinTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinTarget, out KotlinCompilation<*>, out KodeinMppExtension.Sources>
 
-public typealias KodeinJvmTarget = KodeinMppExtension.Target<KotlinJvmTarget, KotlinCompilationTask<KotlinJvmCompilerOptions>, KotlinJvmCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinJvmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJvmTarget, out KotlinCompilationTask<KotlinJvmCompilerOptions>, out KotlinJvmCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinJvmTarget = KodeinMppExtension.Target<KotlinJvmTarget, KotlinJvmCompilation, KodeinMppExtension.Sources>
+public typealias KodeinJvmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJvmTarget, out KotlinJvmCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinJsTarget = KodeinMppExtension.Target<KotlinJsTargetDsl, KotlinCompilationTask<KotlinJsCompilerOptions>, KotlinJsCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJsTargetDsl, out KotlinCompilationTask<KotlinJsCompilerOptions>, out KotlinJsCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinJsTarget = KodeinMppExtension.Target<KotlinJsTargetDsl, KotlinJsCompilation, KodeinMppExtension.Sources>
+public typealias KodeinJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinJsTargetDsl, out KotlinJsCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinWasmTarget = KodeinMppExtension.Target<out KotlinWasmTargetDsl, KotlinCompilationTask<KotlinJsCompilerOptions>, KotlinJsCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinWasmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmTargetDsl, out KotlinCompilationTask<KotlinJsCompilerOptions>, out KotlinJsCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinWasmTarget = KodeinMppExtension.Target<out KotlinWasmTargetDsl, KotlinJsCompilation, KodeinMppExtension.Sources>
+public typealias KodeinWasmTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmTargetDsl, out KotlinJsCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinWasmJsTarget = KodeinMppExtension.Target<KotlinWasmJsTargetDsl, KotlinCompilationTask<KotlinJsCompilerOptions>, KotlinJsCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinWasmJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmJsTargetDsl, out KotlinCompilationTask<KotlinJsCompilerOptions>, out KotlinJsCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinWasmJsTarget = KodeinMppExtension.Target<KotlinWasmJsTargetDsl, KotlinJsCompilation, KodeinMppExtension.Sources>
+public typealias KodeinWasmJsTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmJsTargetDsl, out KotlinJsCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinWasmWasiTarget = KodeinMppExtension.Target<KotlinWasmWasiTargetDsl, KotlinCompilationTask<KotlinJsCompilerOptions>, KotlinJsCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinWasmWasiTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmWasiTargetDsl, out KotlinCompilationTask<KotlinJsCompilerOptions>, out KotlinJsCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinWasmWasiTarget = KodeinMppExtension.Target<KotlinWasmWasiTargetDsl, KotlinJsCompilation, KodeinMppExtension.Sources>
+public typealias KodeinWasmWasiTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmWasiTargetDsl, out KotlinJsCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinCompilationTask<KotlinNativeCompilerOptions>, KotlinNativeCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinNativeTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTarget, out KotlinCompilationTask<KotlinNativeCompilerOptions>, out KotlinNativeCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinNativeCompilation, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTarget, out KotlinNativeCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinNativeTargetWithHostTests = KodeinMppExtension.Target<out KotlinNativeTargetWithHostTests, KotlinCompilationTask<KotlinNativeCompilerOptions>, KotlinNativeCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinNativeTargetWithHostTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithHostTests, out KotlinCompilationTask<KotlinNativeCompilerOptions>, out KotlinNativeCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithHostTests = KodeinMppExtension.Target<KotlinNativeTargetWithHostTests, KotlinNativeCompilation, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithHostTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithHostTests, out KotlinNativeCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinNativeTargetWithSimulatorTests = KodeinMppExtension.Target<KotlinNativeTargetWithSimulatorTests, KotlinCompilationTask<KotlinNativeCompilerOptions>, KotlinNativeCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinNativeTargetWithSimulatorTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithSimulatorTests, out KotlinCompilationTask<KotlinNativeCompilerOptions>, out KotlinNativeCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithSimulatorTests = KodeinMppExtension.Target<KotlinNativeTargetWithSimulatorTests, KotlinNativeCompilation, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithSimulatorTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithSimulatorTests, out KotlinNativeCompilation, out KodeinMppExtension.Sources>
 
-public typealias KodeinNativeTargetWithTests = KodeinMppExtension.Target<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, KotlinCompilationTask<KotlinNativeCompilerOptions>, KotlinNativeCompilerOptions, KodeinMppExtension.Sources>
-public typealias KodeinNativeTargetWithTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, out KotlinCompilationTask<KotlinNativeCompilerOptions>, out KotlinNativeCompilerOptions, out KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithTests = KodeinMppExtension.Target<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, KotlinNativeCompilation, KodeinMppExtension.Sources>
+public typealias KodeinNativeTargetWithTestsBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTargetWithTests<out KotlinNativeBinaryTestRun>, out KotlinNativeCompilation, out KodeinMppExtension.Sources>
 
 public open class KodeinMppExtension(
     internal val project: Project,
@@ -75,9 +83,9 @@ public open class KodeinMppExtension(
     public val common: Sources get() = Sources("common")
     public fun common(configure: Sources.() -> Unit) { common.apply(configure) }
 
-    public inner class TargetBuilder<T : KotlinTarget, C : KotlinCompilationTask<O>, O : KotlinCommonCompilerOptions, S : Sources> internal constructor(
-            public val target: T,
-            public val sources: S
+    public inner class TargetBuilder<T : KotlinTarget, C : KotlinCompilation<*>, S : Sources> internal constructor(
+        public val target: T,
+        public val sources: S,
     ) {
         public fun target(block: T.() -> Unit) { target.block() }
 
@@ -98,25 +106,27 @@ public open class KodeinMppExtension(
         }
     }
 
-    public class Target<T : KotlinTarget, C : KotlinCompilationTask<O>, O : KotlinCommonCompilerOptions, S : Sources>(
-            internal val name: String,
-            internal val kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
-            internal val sourceBuilder: (String) -> S,
-            internal val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
-            internal val defaultConfig: TargetBuilder<T, C, O, S>.() -> Unit = {}
+    public class Target<T : KotlinTarget, C : KotlinCompilation<*>, S : Sources>(
+        internal val name: String,
+        internal val kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
+        internal val sourceBuilder: (String) -> S,
+        internal val nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
+        internal val defaultConfig: TargetBuilder<T, C, S>.() -> Unit = {},
     ) {
         internal fun access(kotlin: KotlinMultiplatformExtension) = kotlinAccess(kotlin, name)
     }
 
     public open inner class Targets {
-        public fun <T : KotlinTarget, C : KotlinCompilationTask<O>, O : KotlinCommonCompilerOptions> Target(
-                name: String,
-                kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
-                nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
-                defaultConfig: TargetBuilder<T, C, O, Sources>.() -> Unit = {}
-        ): Target<T, C, O, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
+        public fun <T : KotlinTarget, C : KotlinCompilation<*>> Target(
+            name: String,
+            kotlinAccess: KotlinMultiplatformExtension.(String) -> T,
+            nativeBuildOn: OperatingSystem.() -> Boolean? = { null },
+            defaultConfig: TargetBuilder<T, C, Sources>.() -> Unit = {},
+        ): Target<T, C, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
 
-        public fun <C : KotlinCompilationTask<O>, O : KotlinJvmCompilerOptions> TargetBuilder<*, C, O, out Sources>.commonJvmConfig(kotlin: KotlinTopLevelExtension) {
+        public fun <C : KotlinCompilation<*>> TargetBuilder<*, C, out Sources>.commonJvmConfig(
+            kotlin: KotlinTopLevelExtension,
+        ) {
             kotlin.jvmToolchain(KodeinJvmPlugin.jvmTarget(project))
 
             if (target.project.properties["org.kodein.no-default-junit"] != "true") {
@@ -257,13 +267,16 @@ public open class KodeinMppExtension(
 
     private val created = HashSet<String>()
 
-    public fun <T : KotlinTarget, C : KotlinCompilationTask<O>, O : KotlinCommonCompilerOptions, S : Sources> add(target: Target<T, C, O, S>, configure: TargetBuilder<T, C, O, S>.() -> Unit) {
+    public fun <T : KotlinTarget, C : KotlinCompilation<*>, S : Sources> add(
+        target: Target<T, C, S>,
+        configure: TargetBuilder<T, C, S>.() -> Unit,
+    ) {
         if (target.name in excludedTargets) {
             project.logger.warn("Target ${target.name} excluded.")
             return
         }
 
-        val targetBuilder = TargetBuilder<T, C, O, S>(target.access(kotlin), target.sourceBuilder(target.name))
+        val targetBuilder = TargetBuilder<T, C, S>(target.access(kotlin), target.sourceBuilder(target.name))
 
         if (target.name !in created) {
             created += target.name
@@ -279,7 +292,10 @@ public open class KodeinMppExtension(
         targetBuilder.apply(configure)
     }
 
-    public fun <T : KotlinTarget, C : KotlinCompilationTask<O>, O : KotlinCommonCompilerOptions, S : Sources> addAll(targets: List<Target<out T, out C, out O, out S>>, configure: TargetBuilder<out T, out C, out O, out S>.() -> Unit) {
+    public fun <T : KotlinTarget, C : KotlinCompilation<*>, S : Sources> addAll(
+        targets: List<Target<out T, out C, out S>>,
+        configure: TargetBuilder<out T, out C, out S>.() -> Unit,
+    ) {
         targets.forEach { add(it, configure) }
     }
 

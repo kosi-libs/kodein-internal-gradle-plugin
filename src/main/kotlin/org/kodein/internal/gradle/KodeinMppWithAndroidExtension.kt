@@ -2,14 +2,13 @@ package org.kodein.internal.gradle
 
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 
-public typealias KodeinAndroidTarget = KodeinMppExtension.Target<KotlinAndroidTarget,  KotlinCompilationTask<KotlinJvmCompilerOptions>, KotlinJvmCompilerOptions, KodeinMppWithAndroidExtension.AndroidSources>
-public typealias KodeinAndroidTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinAndroidTarget, KotlinCompilationTask<KotlinJvmCompilerOptions>, KotlinJvmCompilerOptions, KodeinMppWithAndroidExtension.AndroidSources>
+public typealias KodeinAndroidTarget = KodeinMppExtension.Target<KotlinAndroidTarget, KotlinJvmAndroidCompilation, KodeinMppWithAndroidExtension.AndroidSources>
+public typealias KodeinAndroidTargetBuilder = KodeinMppExtension.TargetBuilder<KotlinAndroidTarget, KotlinJvmAndroidCompilation, KodeinMppWithAndroidExtension.AndroidSources>
 
 public class KodeinMppWithAndroidExtension(project: Project, kotlin: KotlinMultiplatformExtension) : KodeinMppExtension(project, kotlin) {
 
