@@ -22,7 +22,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.7.0-kotlin-2.0.0-RC2-SNAPSHOT"
+    version = "8.7.0-kotlin-2.0.0-RC3-SNAPSHOT"
 }
 
 repositories {
