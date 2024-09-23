@@ -91,7 +91,7 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                                     }
                                     tasks.named(processResourcesTaskName).configure { enabled = false }
                                 }
-                                binaries.configureEach { linkTask.enabled = false }
+                                binaries.configureEach { linkTaskProvider.configure { enabled = false } }
                             }
                         }
                 }

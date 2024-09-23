@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     `kotlin-dsl`
     `maven-publish`
-    id("org.ajoberstar.git-publish") version "4.1.1"
-    id("org.ajoberstar.grgit") version "5.0.0"
+    alias(libs.plugins.git.gradle)
+    alias(libs.plugins.git.publish)
 }
 
 buildscript {
@@ -16,13 +16,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.squareup.okhttp3:okhttp:4.9.0")
+        classpath(libs.okhttp)
     }
 }
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.7.1"
+    version = "8.8.0"
 }
 
 repositories {

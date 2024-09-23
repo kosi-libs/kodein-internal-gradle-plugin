@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm")
-    id("org.gradle.kotlin.kotlin-dsl")
+    alias(libs.plugins.kotlin.jvm)
+    `kotlin-dsl`
     `maven-publish`
-    id("com.github.gmazzo.buildconfig") version "3.1.0"
+    alias(libs.plugins.buildconfig)
 }
 
 repositories {
