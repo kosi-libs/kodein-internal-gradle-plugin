@@ -1,7 +1,7 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 dokka = "1.9.20"
-android-gradle-plugin = "8.2.2"
+android-gradle-plugin = "8.5.2"
 android-ndk = "25.2.9519653"
 
 [plugins]
@@ -10,6 +10,7 @@ android-application = { id = "com.android.application", version.ref = "android-g
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
