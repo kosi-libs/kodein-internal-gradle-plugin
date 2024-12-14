@@ -1,9 +1,10 @@
 package org.kodein.internal.gradle.settings
 
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import java.io.File
@@ -27,7 +28,7 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
         System.getenv("KODEIN_LOCAL_${key.uppercase(Locale.getDefault())}")
             ?: localProperties.getProperty(key)
             ?: DslObject(settings).asDynamicObject.tryGetProperty("org.kodein.local.$key")
-                .takeIf { it.isFound } ?.value as String?
+                .takeIf { it.isFound }?.value as String?
 
     private fun Settings.applyPlugin() {
         dependencyResolutionManagement {
@@ -80,15 +81,15 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
             extra.set("kotlin.mpp.androidSourceSetLayoutVersion", "2")
         }
 
-        plugins.apply("com.gradle.enterprise")
+        plugins.apply("com.gradle.develocity")
 
-        extensions.configure<GradleEnterpriseExtension>(GradleEnterpriseExtension.NAME) {
-            if (System.getenv("CI") != null) {
-                buildScan {
-                    publishAlways()
-                    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-                    termsOfServiceAgree = "yes"
-                }
+        val isCI = System.getenv("CI") != null
+        extensions.configure(DevelocityConfiguration::class.java) {
+            buildScan {
+                publishing.onlyIf { isCI }
+                uploadInBackground = isCI
+                termsOfUseUrl = "https://gradle.com/terms-of-service"
+                termsOfUseAgree = "yes"
             }
         }
     }

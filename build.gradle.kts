@@ -44,7 +44,7 @@ dependencies {
     api(kodeinGlobals.dokka.gradlePlugin)
     api(kodeinGlobals.dokka.core)
     api(libs.gradle.publishPlugin)
-    api(libs.gradle.enterprisePlugin)
+    api(libs.gradle.develocityPlugin)
 }
 
 kotlin {

@@ -13,7 +13,7 @@ repositories {
 dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
-    api(libs.gradle.enterprisePlugin)
+    api(libs.gradle.develocityPlugin)
 }
 
 kotlin {

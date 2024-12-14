@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradle.enterprise") version "3.18.1"
+    id("com.gradle.develocity") version "3.19"
 }
 
 rootProject.name = "kodein-internal-gradle-plugin"
@@ -19,12 +19,13 @@ dependencyResolutionManagement {
 
 System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
 
-gradleEnterprise {
-    if (System.getenv("CI") != null) {
-        buildScan {
-            publishAlways()
-            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-            termsOfServiceAgree = "yes"
-        }
+val isCI = System.getenv("CI") != null
+
+develocity {
+    buildScan {
+        publishing.onlyIf { isCI }
+        uploadInBackground = isCI
+        termsOfUseUrl = "https://gradle.com/terms-of-service"
+        termsOfUseAgree = "yes"
     }
 }
