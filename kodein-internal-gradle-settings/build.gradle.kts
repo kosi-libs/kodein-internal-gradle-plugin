@@ -18,9 +18,7 @@ dependencies {
 
 kotlin {
     explicitApi()
-    target.compilations.all {
-        kotlinOptions.jvmTarget = "17"
-    }
+    jvmToolchain(17)
 }
 
 buildConfig {

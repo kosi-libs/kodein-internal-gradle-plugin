@@ -1,6 +1,5 @@
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames.target
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -22,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.9.0"
+    version = "8.10.0"
 }
 
 repositories {
@@ -50,9 +49,7 @@ dependencies {
 kotlin {
     explicitApi()
 
-    target.compilations.all {
-        kotlinOptions.jvmTarget = "17"
-    }
+    jvmToolchain(17)
 
     sourceSets.all {
         languageSettings.progressiveMode = true

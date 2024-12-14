@@ -5,8 +5,8 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -125,7 +125,7 @@ public open class KodeinMppExtension(
         ): Target<T, C, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
 
         public fun <C : KotlinCompilation<*>> TargetBuilder<*, C, out Sources>.commonJvmConfig(
-            kotlin: KotlinTopLevelExtension,
+            kotlin: KotlinBaseExtension,
         ) {
             kotlin.jvmToolchain(KodeinJvmPlugin.jvmTarget(project))
 
@@ -161,13 +161,13 @@ public open class KodeinMppExtension(
                 // TODO: Try again with Kotlin 2.0.0
                 // Because Chrome 11* on CI is not compatible
                 // https://youtrack.jetbrains.com/issue/KT-63014
-                testTask { enabled = false }
+                testTask { enabled = true }
             }
             if (jsEnvNodejs) target.nodejs {
                 // TODO: Try again with Kotlin 2.0.0
                 // Because Chrome 11* on CI is not compatible
                 // https://youtrack.jetbrains.com/issue/KT-63014
-                testTask { enabled = false }
+                testTask { enabled = true }
             }
             if (jsEnvD8) target.d8()
         }

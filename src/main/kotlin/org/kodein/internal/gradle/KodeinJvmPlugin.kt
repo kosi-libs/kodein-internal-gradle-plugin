@@ -7,15 +7,15 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 public class KodeinJvmPlugin : KtPlugin<Project> {
 
     internal companion object {
 
-        fun configureJvmTarget(project: Project, kotlin: KotlinTopLevelExtension) = with(project) {
+        fun configureJvmTarget(project: Project, kotlin: KotlinBaseExtension) = with(project) {
             kotlin.jvmToolchain(jvmTarget(project))
             tasks.withType<KotlinCompile>().configureEach {
                 if (KodeinLocalPropertiesPlugin.on(project).isNotTrue("allowWarnings")) {
