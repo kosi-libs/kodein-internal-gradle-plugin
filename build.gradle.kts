@@ -29,7 +29,6 @@ repositories {
     mavenCentral()
     google()
     gradlePluginPortal()
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     maven(url = "https://ajoberstar.github.io/bintray-backup/")
     mavenLocal()
 }

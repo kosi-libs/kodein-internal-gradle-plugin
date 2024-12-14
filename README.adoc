@@ -98,14 +98,14 @@ plugins {
 
 MavenCentral publishing and configuration is automatically disabled if the configuration values are not set.
 
-You can set the bintray configuration values:
+You can set the sonatype configuration values:
 
 * In your global **`~/.gradle/gradle.properties`**:
 +
 [source,properties]
 ----
-org.kodein.sonatype.username = bintray-username
-org.kodein.sonatype.password = bintray-api-key
+org.kodein.sonatype.username = sonatype-username
+org.kodein.sonatype.password = sonatype-api-key
 ----
 * In environment variables `SONATYPE_USERNAME` and `SONATYPE_PASSWORD`.
 
