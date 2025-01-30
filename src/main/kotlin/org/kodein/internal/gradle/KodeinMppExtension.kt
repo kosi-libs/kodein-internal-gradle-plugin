@@ -5,12 +5,12 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -124,11 +124,39 @@ public open class KodeinMppExtension(
             defaultConfig: TargetBuilder<T, C, Sources>.() -> Unit = {},
         ): Target<T, C, Sources> = Target(name, kotlinAccess, ::Sources, nativeBuildOn, defaultConfig)
 
-        public fun <C : KotlinCompilation<*>> TargetBuilder<*, C, out Sources>.commonJvmConfig(
-            kotlin: KotlinBaseExtension,
-        ) {
-            kotlin.jvmToolchain(KodeinJvmPlugin.jvmTarget(project))
+        public fun <C : KotlinCompilation<*>> TargetBuilder<KotlinJvmTarget, C, out Sources>.jvmConfig() {
+            target.compilations.configureEach {
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        val jvmTargetVersion = KodeinJvmPlugin.jvmTarget(project)
+                        jvmTarget.set(jvmTargetVersion)
+                        freeCompilerArgs.addAll(
+                            // In order to target a specific JDK to build onto
+                            // https://jakewharton.com/kotlins-jdk-release-compatibility-flag/
+                            // https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/
+                            "-Xjdk-release=${jvmTargetVersion.target}"
+                        )
+                    }
+                }
+            }
 
+            commonJvmConfig()
+        }
+
+        public fun <C : KotlinCompilation<*>> TargetBuilder<KotlinAndroidTarget, C, out Sources>.androidJvmConfig(): Unit {
+            target.compilations.configureEach {
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        val jvmTargetVersion = KodeinJvmPlugin.jvmTarget(project)
+                        jvmTarget.set(jvmTargetVersion)
+                    }
+                }
+            }
+
+            commonJvmConfig()
+        }
+
+        private fun <C : KotlinCompilation<*>> TargetBuilder<*, C, out Sources>.commonJvmConfig() {
             if (target.project.properties["org.kodein.no-default-junit"] != "true") {
                 sources.testDependencies {
                     implementation("org.jetbrains.kotlin:kotlin-test-junit")
@@ -137,7 +165,7 @@ public open class KodeinMppExtension(
         }
 
         public val jvm: KodeinJvmTarget = Target("jvm", KotlinMultiplatformExtension::jvm) {
-            commonJvmConfig(kotlin)
+            jvmConfig()
         }
 
         internal var jsEnvBrowser = true

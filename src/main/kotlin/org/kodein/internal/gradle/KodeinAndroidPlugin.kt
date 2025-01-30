@@ -52,7 +52,7 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
             }
         }
 
-        KodeinJvmPlugin.configureJvmTarget(project, kotlin)
+        KodeinJvmPlugin.configureAndroidJvmTarget(project)
 
         configureTestLogsPrint()
     }

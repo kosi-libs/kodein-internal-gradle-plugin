@@ -19,7 +19,8 @@ public class KodeinMppWithAndroidExtension(project: Project, kotlin: KotlinMulti
 
     public inner class Targets : KodeinMppExtension.Targets() {
         public val android: KodeinAndroidTarget = Target("android", KotlinMultiplatformExtension::androidTarget, ::AndroidSources) {
-            commonJvmConfig(kotlin)
+            androidJvmConfig()
+
             target.publishLibraryVariants("debug", "release")
             sources.testDependencies {
                 implementation("androidx.test.ext:junit:1.1.1")
