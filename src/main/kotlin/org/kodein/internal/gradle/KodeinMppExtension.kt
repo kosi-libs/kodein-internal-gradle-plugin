@@ -197,10 +197,7 @@ public open class KodeinMppExtension(
         public val wasmWasi: KodeinWasmWasiTarget = Target("wasmWasi", { wasmWasi(it) }) {
             jsConfigured = true
             target.nodejs {
-                // TODO: Try again with Kotlin 2.0.0
-                // Because Chrome 11* on CI is not compatible
-                // https://youtrack.jetbrains.com/issue/KT-63014
-                testTask { enabled = false }
+                testTask { enabled = true }
             }
         }
 
