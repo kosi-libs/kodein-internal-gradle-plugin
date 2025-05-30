@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.13.1"
+    version = "8.14.0-alpha01"
 }
 
 repositories {

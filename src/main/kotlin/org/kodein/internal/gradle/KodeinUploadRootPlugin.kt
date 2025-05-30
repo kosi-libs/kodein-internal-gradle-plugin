@@ -15,7 +15,7 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
         public val repositoryUrl: String by lazy {
             when {
                 snapshot -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                repositoryId != null -> "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
+                repositoryId != null -> "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deployByRepositoryId/$repositoryId/"
                 else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
             }
         }
