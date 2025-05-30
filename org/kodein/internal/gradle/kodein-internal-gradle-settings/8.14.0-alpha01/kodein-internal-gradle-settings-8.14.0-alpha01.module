@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "8.14.0-alpha01",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.develocity",
+          "module": "com.gradle.develocity.gradle.plugin",
+          "version": {
+            "requires": "3.19"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.14.0-alpha01.jar",
+          "url": "kodein-internal-gradle-settings-8.14.0-alpha01.jar",
+          "size": 30761,
+          "sha512": "0233d14ba4948577e4a15b0fa01ce8d11177eb0813724d10a82ce6055de88ef9a96972c05b0b8c42681ca9be684f544654ffccd0ab612a5717f4c218b4436097",
+          "sha256": "6de6ebe40d955817e58bbbd8433ea49c2e29eca7234fef8df9efc801876b7f50",
+          "sha1": "3d3f59c61cf405140662e4b76e724e275a34bce5",
+          "md5": "8d5d97541e7629e58c91cbba8c9921ed"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.develocity",
+          "module": "com.gradle.develocity.gradle.plugin",
+          "version": {
+            "requires": "3.19"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-8.14.0-alpha01.jar",
+          "url": "kodein-internal-gradle-settings-8.14.0-alpha01.jar",
+          "size": 30761,
+          "sha512": "0233d14ba4948577e4a15b0fa01ce8d11177eb0813724d10a82ce6055de88ef9a96972c05b0b8c42681ca9be684f544654ffccd0ab612a5717f4c218b4436097",
+          "sha256": "6de6ebe40d955817e58bbbd8433ea49c2e29eca7234fef8df9efc801876b7f50",
+          "sha1": "3d3f59c61cf405140662e4b76e724e275a34bce5",
+          "md5": "8d5d97541e7629e58c91cbba8c9921ed"
+        }
+      ]
+    }
+  ]
+}
