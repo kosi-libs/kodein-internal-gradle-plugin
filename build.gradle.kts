@@ -59,7 +59,7 @@ kotlin {
 allprojects {
     afterEvaluate {
         if (name != "kodein-internal-gradle-version-catalog") {
-            val sourcesJar = task<Jar>("sourcesJar") {
+            val sourcesJar = tasks.register<Jar>("sourcesJar") {
                 archiveClassifier.set("sources")
                 duplicatesStrategy = DuplicatesStrategy.EXCLUDE
                 from(sourceSets["main"].allSource)
