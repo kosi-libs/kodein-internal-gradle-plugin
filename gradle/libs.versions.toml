@@ -5,7 +5,7 @@ git-publish = "4.2.2"
 gradle-develocityPlugin = "3.19"
 gradle-publishPlugin = "1.3.0"
 # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-kotlin = "2.0.21"
+kotlin = "2.1.21"
 okhttp = "4.12.0"
 
 [plugins]
