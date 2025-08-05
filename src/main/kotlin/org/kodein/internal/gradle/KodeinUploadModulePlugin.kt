@@ -108,44 +108,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 }
             }
 
-            val dokkaOutputDir = layout.buildDirectory.dir("dokka")
-            tasks.withType<DokkaTask>().configureEach {
-                outputDirectory.set(file(dokkaOutputDir))
-                dokkaSourceSets {
-                    configureEach {
-                        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-                        val platformName = when(platform.get()) {
-                            Platform.jvm -> "jvm"
-                            Platform.js -> "js"
-                            Platform.native -> "native"
-                            Platform.common -> "common"
-                            Platform.wasm -> "wasm"
-                        }
-                        displayName.set(platformName)
-
-                        perPackageOption {
-                            matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
-                            suppress.set(true)
-                        }
-                    }
-                }
-            }
-
-            if (ext.addJavadoc) {
-                // Workaround from https://youtrack.jetbrains.com/issue/KT-46466 & https://github.com/gradle/gradle/issues/26091
-                publishing.publications.withType<MavenPublication>().configureEach {
-                    val publication = this
-                    val javadocJar = tasks.maybeCreate<Jar>("${publication.name}JavadocJar").apply {
-                        dependsOn("dokkaHtml")
-                        archiveClassifier.set("javadoc")
-                        from(dokkaOutputDir)
-                        // Each archive name should be distinct. Mirror the format for the sources Jar tasks.
-                        archiveBaseName.set("${archiveBaseName.get()}-${publication.name}")
-                    }
-                    artifact(javadocJar)
-                }
-            }
-
             publishing.publications.withType<MavenPublication>().configureEach {
                 pom {
                     name.set(ext.name)
