@@ -21,7 +21,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.14.0"
+    version = "8.14.1"
 }
 
 repositories {
@@ -42,6 +42,7 @@ dependencies {
     api(kodeinGlobals.android.gradlePlugin)
     api(kodeinGlobals.dokka.gradlePlugin)
     api(kodeinGlobals.dokka.core)
+    api(libs.nmcp.gradlePlugin)
     api(libs.gradle.publishPlugin)
     api(libs.gradle.develocityPlugin)
 }

@@ -1,15 +1,22 @@
 package org.kodein.internal.gradle
 
+import nmcp.NmcpAggregationExtension
+import nmcp.NmcpExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.withType
 
 public class KodeinUploadRootPlugin : Plugin<Project> {
 
     private lateinit var project: Project
 
     public inner class PublicationConfig {
-        private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv("SONATYPE_REPOSITORY_ID")
+        private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv(
+            "SONATYPE_REPOSITORY_ID"
+        )
         internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
 
         public val repositoryUrl: String by lazy {
@@ -30,35 +37,41 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
 
     public val publication: PublicationConfig by lazy { PublicationConfig() }
 
-    public inner class SonatypeConfig(
-            public val username: String,
-            public val password: String,
-            public val dryRun: Boolean
+    public class SonatypeConfig(
+        public val username: String,
+        public val password: String,
+        public val dryRun: Boolean
     )
+
     public val sonatypeConfig: SonatypeConfig? by lazy {
-        val username: String? = (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
-        val password: String? = (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
-        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as String?)?.toBooleanStrict() ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
+        val username: String? =
+            (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
+        val password: String? =
+            (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
+        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as String?)?.toBooleanStrict()
+            ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
 
         when {
             username == null || password == null -> {
                 project.logger.warn("$project: Skipping maven publication configuration as the `org.kodein.sonatype.username` or `org.kodein.sonatype.password` property is not defined.")
                 null
             }
+
             else -> {
                 SonatypeConfig(
-                        username = username,
-                        password = password,
-                        dryRun = dryRun
+                    username = username,
+                    password = password,
+                    dryRun = dryRun
                 )
             }
         }
     }
 
-    public inner class SigningConfig(public val signingKey: String, public val signingPassword: String)
+    public class SigningConfig(public val signingKey: String, public val signingPassword: String)
+
     public val signingConfig: SigningConfig? by lazy {
         val localProps = KodeinLocalPropertiesPlugin.on(project)
-        val signingKey: String? =  localProps.get("signing.key") ?: System.getenv("GPG_PRIVATE_KEY")
+        val signingKey: String? = localProps.get("signing.key") ?: System.getenv("GPG_PRIVATE_KEY")
         val signingPassword: String? = localProps.get("signing.password") ?: System.getenv("GPG_PRIVATE_PASSWORD")
         val skipSigning: Boolean = localProps.isTrue("signing.skip")
 
@@ -75,6 +88,7 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
                 )
                 null
             }
+
             else -> {
                 SigningConfig(
                     signingKey = signingKey,
@@ -84,8 +98,21 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
         }
     }
 
-    override fun apply(project: Project) {
-        this.project = project
+    override fun apply(target: Project) {
+        this.project = target
+        target.applyPlugin()
     }
 
+    private fun Project.applyPlugin() {
+        apply {
+            plugin("com.gradleup.nmcp.aggregation")
+        }
+
+        val nmcp = extensions.getByType<NmcpAggregationExtension>()
+        nmcp.centralPortal {
+            username.set(provider { sonatypeConfig?.username })
+            password.set(provider { sonatypeConfig?.password })
+        }
+        nmcp.publishAllProjectsProbablyBreakingProjectIsolation()
+    }
 }

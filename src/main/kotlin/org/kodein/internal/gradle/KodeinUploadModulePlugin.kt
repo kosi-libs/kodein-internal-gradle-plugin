@@ -74,34 +74,27 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             if (sonatypeConfig != null) {
-                publishing.repositories {
-                    maven {
-                        name = "ossrhStaging"
-                        setUrl(provider { root.publication.repositoryUrl })
-                        credentials {
-                            username = sonatypeConfig.username
-                            password = sonatypeConfig.password
-                        }
-                    }
-                }
-
                 afterEvaluate {
                     tasks.withType<PublishToMavenRepository>().configureEach {
-                        if (repository.name == "ossrhStaging") {
-                            onlyIf {
-                                logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                                val maxSize = inputs.files.maxOf { it.name.length }
-                                inputs.files.forEach {
-                                    logger.warn("    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${it.relativeTo(rootDir).path})")
-                                }
-                                !sonatypeConfig.dryRun
+                        onlyIf {
+                            logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                            val maxSize = inputs.files.maxOf { it.name.length }
+                            inputs.files.forEach {
+                                logger.warn(
+                                    "    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${
+                                        it.relativeTo(
+                                            rootDir
+                                        ).path
+                                    })"
+                                )
                             }
+                            !sonatypeConfig.dryRun
+                        }
 
-                            doFirst {
-                                val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-                                if (excludeTargets.isNotEmpty()) {
-                                    logger.warn("Uploading to OSSRH with excluded targets {}", excludeTargets)
-                                }
+                        doFirst {
+                            val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                            if (excludeTargets.isNotEmpty()) {
+                                logger.warn("Uploading to OSSRH with excluded targets {}", excludeTargets)
                             }
                         }
                     }

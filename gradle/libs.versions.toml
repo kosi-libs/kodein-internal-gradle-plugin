@@ -7,6 +7,7 @@ gradle-publishPlugin = "1.3.0"
 # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
 kotlin = "2.1.21"
 okhttp = "4.12.0"
+nmcp="1.0.2"
 
 [plugins]
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
@@ -18,4 +19,5 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 [libraries]
 gradle-develocityPlugin = { module = "com.gradle.develocity:com.gradle.develocity.gradle.plugin", version.ref = "gradle-develocityPlugin" }
 gradle-publishPlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-publishPlugin" }
+nmcp-gradlePlugin = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "nmcp" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
