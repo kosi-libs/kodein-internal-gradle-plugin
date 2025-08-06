@@ -76,25 +76,27 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             if (sonatypeConfig != null) {
                 afterEvaluate {
                     tasks.withType<PublishToMavenRepository>().configureEach {
-                        onlyIf {
-                            logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Uploading '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
-                            val maxSize = inputs.files.maxOf { it.name.length }
-                            inputs.files.forEach {
-                                logger.warn(
-                                    "    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${
-                                        it.relativeTo(
-                                            rootDir
-                                        ).path
-                                    })"
-                                )
+                        if (repository.name == "nmcp") {
+                            onlyIf {
+                                logger.warn("${if (sonatypeConfig.dryRun) "DRY RUN " else ""}Packaging '${publication.groupId}:${publication.artifactId}:${publication.version}' from publication '${publication.name}':")
+                                val maxSize = inputs.files.maxOf { it.name.length }
+                                inputs.files.forEach {
+                                    logger.warn(
+                                        "    - ${it.name} ${" ".repeat(maxSize - it.name.length)} (${
+                                            it.relativeTo(
+                                                rootDir
+                                            ).path
+                                        })"
+                                    )
+                                }
+                                !sonatypeConfig.dryRun
                             }
-                            !sonatypeConfig.dryRun
-                        }
 
-                        doFirst {
-                            val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
-                            if (excludeTargets.isNotEmpty()) {
-                                logger.warn("Uploading to OSSRH with excluded targets {}", excludeTargets)
+                            doFirst {
+                                val excludeTargets = KodeinLocalPropertiesPlugin.on(project).getAsList("excludeTargets")
+                                if (excludeTargets.isNotEmpty()) {
+                                    logger.warn("Uploading to OSSRH with excluded targets {}", excludeTargets)
+                                }
                             }
                         }
                     }
@@ -106,16 +108,6 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 outputDirectory.set(file(dokkaOutputDir))
                 dokkaSourceSets {
                     configureEach {
-                        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-                        val platformName = when(platform.get()) {
-                            Platform.jvm -> "jvm"
-                            Platform.js -> "js"
-                            Platform.native -> "native"
-                            Platform.common -> "common"
-                            Platform.wasm -> "wasm"
-                        }
-                        displayName.set(platformName)
-
                         perPackageOption {
                             matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
                             suppress.set(true)
@@ -129,7 +121,7 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                 publishing.publications.withType<MavenPublication>().configureEach {
                     val publication = this
                     val javadocJar = tasks.maybeCreate<Jar>("${publication.name}JavadocJar").apply {
-                        dependsOn("dokkaHtml")
+                        dependsOn("dokkaGenerate")
                         archiveClassifier.set("javadoc")
                         from(dokkaOutputDir)
                         // Each archive name should be distinct. Mirror the format for the sources Jar tasks.
