@@ -14,18 +14,7 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
     private lateinit var project: Project
 
     public inner class PublicationConfig {
-        private val repositoryId = (project.properties["org.kodein.sonatype.repositoryId"] as String?) ?: System.getenv(
-            "SONATYPE_REPOSITORY_ID"
-        )
         internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
-
-        public val repositoryUrl: String by lazy {
-            when {
-                snapshot -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                repositoryId != null -> "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deployByRepositoryId/$repositoryId/"
-                else -> error("Cannot publish to OSSRH as the default url would end up creating a lot of staging repositories.")
-            }
-        }
 
         public val version: String = run {
             val eapBranch = (project.properties["gitRef"] as? String)?.split("/")?.last() ?: "dev"
@@ -45,15 +34,15 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
 
     public val sonatypeConfig: SonatypeConfig? by lazy {
         val username: String? =
-            (project.properties["org.kodein.sonatype.username"] as String?) ?: System.getenv("SONATYPE_USERNAME")
+            (project.properties["org.kodein.central.portal.username"] as String?) ?: System.getenv("CENTRAL_PORTAL_TOKEN_USERNAME")
         val password: String? =
-            (project.properties["org.kodein.sonatype.password"] as String?) ?: System.getenv("SONATYPE_PASSWORD")
-        val dryRun: Boolean = (project.properties["org.kodein.sonatype.dryRun"] as String?)?.toBooleanStrict()
-            ?: KodeinLocalPropertiesPlugin.on(project).isTrue("ossrh.dryRun")
+            (project.properties["org.kodein.central.portal.password"] as String?) ?: System.getenv("CENTRAL_PORTAL_TOKEN_PASSWORD")
+        val dryRun: Boolean = (project.properties["org.kodein.central.portal.dryRun"] as String?)?.toBooleanStrict()
+            ?: KodeinLocalPropertiesPlugin.on(project).isTrue("central.dryRun")
 
         when {
             username == null || password == null -> {
-                project.logger.warn("$project: Skipping maven publication configuration as the `org.kodein.sonatype.username` or `org.kodein.sonatype.password` property is not defined.")
+                project.logger.warn("$project: Skipping maven publication configuration as the `org.kodein.central.portal.username` or `org.kodein.central.portal.password` property is not defined.")
                 null
             }
 
