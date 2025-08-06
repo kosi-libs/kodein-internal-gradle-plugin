@@ -1,0 +1,36 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-version-catalog",
+    "version": "8.14.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "versionCatalogElements",
+      "attributes": {
+        "org.gradle.category": "platform",
+        "org.gradle.usage": "version-catalog"
+      },
+      "files": [
+        {
+          "name": "kodein-internal-gradle-version-catalog-8.14.1.toml",
+          "url": "kodein-internal-gradle-version-catalog-8.14.1.toml",
+          "size": 1888,
+          "sha512": "f124b30d262e57facdb61bfd4eb9654752cb7e7f8f32bf03fa4af8909a6a7456c48662c46f900f0a3872b2a83c6e6b6089e5d90f54011b212a991724badbe935",
+          "sha256": "53dfb897cc7467a073fc7ccf5b02f4231d030929ff2eac200a6c6bae6a8957a8",
+          "sha1": "750aa1fb6be962216a3d7d04c29fc6a180d65a82",
+          "md5": "c53829218d8404a3bccded117f21f85b"
+        }
+      ]
+    }
+  ]
+}
