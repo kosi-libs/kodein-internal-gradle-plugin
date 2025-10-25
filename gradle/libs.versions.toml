@@ -1,19 +1,17 @@
 [versions]
-buildconfig = "5.5.0"
-git-gradle = "5.2.2"
-git-publish = "4.2.2"
-gradle-develocityPlugin = "3.19"
-gradle-publishPlugin = "1.3.0"
-# https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-kotlin = "2.2.0"
-okhttp = "4.12.0"
-nmcp="1.0.2"
+buildconfig = "5.7.0"               # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
+git-gradle = "5.2.2"                # https://git.sr.ht/~ajoberstar/grgit/refs
+git-publish = "4.2.2"               # https://git.sr.ht/~ajoberstar/gradle-git-publish/refs
+gradle-develocityPlugin = "4.2.2"   # https://plugins.gradle.org/plugin/com.gradle.develocity
+gradle-publishPlugin = "1.3.0"      # https://plugins.gradle.org/plugin/com.gradle.plugin-publish
+kotlin = "2.2.0"                    # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+okhttp = "5.2.1"                    # https://square.github.io/okhttp/changelogs/changelog/
+nmcp="1.2.0"                        # https://github.com/GradleUp/nmcp/releases
 
 [plugins]
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 git-gradle = { id = "org.ajoberstar.grgit", version.ref = "git-gradle" }
 git-publish = { id = "org.ajoberstar.git-publish", version.ref = "git-publish" }
-gradle-develocity = { id = "com.gradle.develocity", version.ref = "gradle-develocityPlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [libraries]

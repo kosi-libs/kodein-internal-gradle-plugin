@@ -1,7 +1,6 @@
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.kotlin.jvm)
     `kotlin-dsl`
@@ -21,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "org.kodein.internal.gradle"
-    version = "8.16.0"
+    version = "8.17.0"
 }
 
 repositories {

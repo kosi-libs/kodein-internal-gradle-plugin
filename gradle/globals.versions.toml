@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.2.20"
-dokka = "2.0.0"
+kotlin = "2.2.21"
+dokka = "2.1.0"
 android-gradle-plugin = "8.10.0"
 android-ndk = "25.2.9519653"
 

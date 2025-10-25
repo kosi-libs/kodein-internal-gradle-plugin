@@ -10,12 +10,9 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.findPlugin
 import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.maybeCreate
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.gradle.DokkaTask
 
 
 public class KodeinUploadModulePlugin : KtPlugin<Project> {
@@ -104,14 +101,14 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
             }
 
             val dokkaOutputDir = layout.buildDirectory.dir("dokka")
-            tasks.withType<DokkaTask>().configureEach {
-                outputDirectory.set(file(dokkaOutputDir))
-                dokkaSourceSets {
-                    configureEach {
-                        perPackageOption {
-                            matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
-                            suppress.set(true)
-                        }
+            extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension>("dokka") {
+                dokkaPublications.configureEach {
+                    outputDirectory.set(file(dokkaOutputDir))
+                }
+                dokkaSourceSets.configureEach {
+                    perPackageOption {
+                        matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
+                        suppress.set(true)
                     }
                 }
             }
