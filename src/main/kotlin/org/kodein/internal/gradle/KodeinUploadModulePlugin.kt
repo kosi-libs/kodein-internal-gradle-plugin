@@ -139,13 +139,14 @@ public class KodeinUploadModulePlugin : KtPlugin<Project> {
                         }
                     }
                     url.set("http://kodein.org")
+                    val githubProjectName = root.publication.githubProjectName.get()
                     issueManagement {
                         system.set("Github")
-                        url.set("https://github.com/kosi-libs/${root.publication.projectName}/issues")
+                        url.set("https://github.com/kosi-libs/$githubProjectName/issues")
                     }
                     scm {
-                        connection.set("https://github.com/kosi-libs/${root.publication.projectName}.git")
-                        url.set("https://github.com/kosi-libs/${root.publication.projectName}")
+                        connection.set("https://github.com/kosi-libs/$githubProjectName.git")
+                        url.set("https://github.com/kosi-libs/$githubProjectName")
                     }
                     developers {
                         developer {

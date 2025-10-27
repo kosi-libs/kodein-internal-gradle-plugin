@@ -1,30 +1,37 @@
 package org.kodein.internal.gradle
 
 import nmcp.NmcpAggregationExtension
-import nmcp.NmcpExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.withType
+import javax.inject.Inject
 
-public class KodeinUploadRootPlugin : Plugin<Project> {
+public class KodeinUploadRootPlugin @Inject constructor(
+    private val factory: ObjectFactory
+) : Plugin<Project> {
 
     private lateinit var project: Project
 
     public inner class PublicationConfig {
-        internal val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
+        public val snapshot: Boolean = (project.properties["snapshot"] as? String) == "true"
 
         public val version: String = run {
             val eapBranch = (project.properties["gitRef"] as? String)?.split("/")?.last() ?: "dev"
             if (snapshot) "${project.version}-$eapBranch-SNAPSHOT" else project.version.toString()
         }
 
-        public val projectName: String = project.name.ifEmpty { "UNDEFINED" }
+        public val githubProjectName: Property<String> = factory.property<String>().convention(project.provider { project.name.ifEmpty { "UNDEFINED" } })
     }
 
     public val publication: PublicationConfig by lazy { PublicationConfig() }
+
+    public inner class Extension {
+        public val githubProjectName: Property<String> get() = publication.githubProjectName
+    }
 
     public class SonatypeConfig(
         public val username: String,
@@ -96,6 +103,8 @@ public class KodeinUploadRootPlugin : Plugin<Project> {
         apply {
             plugin("com.gradleup.nmcp.aggregation")
         }
+
+        extensions.add("kodeinUploadRoot", Extension())
 
         val nmcp = extensions.getByType<NmcpAggregationExtension>()
         nmcp.centralPortal {
