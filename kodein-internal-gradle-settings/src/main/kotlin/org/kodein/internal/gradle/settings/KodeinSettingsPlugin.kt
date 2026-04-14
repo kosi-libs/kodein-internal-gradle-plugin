@@ -77,8 +77,6 @@ public class KodeinSettingsPlugin : Plugin<Settings> {
 
         this.gradle.allprojects {
             extra.set("kotlin.native.ignoreDisabledTargets", "true")
-            extra.set("kotlin.mpp.stability.nowarn", "true")
-            extra.set("kotlin.mpp.androidSourceSetLayoutVersion", "2")
         }
 
         plugins.apply("com.gradle.develocity")

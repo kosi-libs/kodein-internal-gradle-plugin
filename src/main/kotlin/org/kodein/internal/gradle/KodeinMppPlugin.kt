@@ -84,14 +84,14 @@ public class KodeinMppPlugin : KtPlugin<Project> {
 
                             target.mavenPublication { upload?.disabledPublications?.add(this) }
 
-                            if (this is KotlinNativeTarget) {
-                                compilations.configureEach {
+                            if (target is KotlinNativeTarget) {
+                                target.compilations.configureEach {
                                     cinterops.configureEach {
-                                        tasks.named(interopProcessingTaskName).configure { enabled = false }
+                                        project.tasks.named(interopProcessingTaskName).configure { enabled = false }
                                     }
-                                    tasks.named(processResourcesTaskName).configure { enabled = false }
+                                    project.tasks.named(processResourcesTaskName).configure { enabled = false }
                                 }
-                                binaries.configureEach { linkTaskProvider.configure { enabled = false } }
+                                target.binaries.configureEach { linkTaskProvider.configure { enabled = false } }
                             }
                         }
                 }

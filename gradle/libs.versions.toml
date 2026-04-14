@@ -4,7 +4,7 @@ git-gradle = "5.2.2"                # https://git.sr.ht/~ajoberstar/grgit/refs
 git-publish = "4.2.2"               # https://git.sr.ht/~ajoberstar/gradle-git-publish/refs
 gradle-develocityPlugin = "4.2.2"   # https://plugins.gradle.org/plugin/com.gradle.develocity
 gradle-publishPlugin = "1.3.0"      # https://plugins.gradle.org/plugin/com.gradle.plugin-publish
-kotlin = "2.2.0"                    # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+kotlin = "2.3.0"                    # https://docs.gradle.org/current/userguide/compatibility.html#kotlin
 okhttp = "5.2.1"                    # https://square.github.io/okhttp/changelogs/changelog/
 nmcp="1.2.0"                        # https://github.com/GradleUp/nmcp/releases
 
