@@ -14,7 +14,7 @@ public class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
     internal companion object {
         fun configureMPPAndroid(project: Project, excludeAndroid: Boolean) {
             if (!excludeAndroid) {
-                project.apply { plugin("com.android.library") }
+                project.apply { plugin("com.android.kotlin.multiplatform.library") }
                 val android = project.extensions["android"] as LibraryExtension
                 KodeinAndroidPlugin.configureAndroid(project, android)
                 project.extensions.add("kodeinAndroid", KodeinMppAndroidExtension(android))
