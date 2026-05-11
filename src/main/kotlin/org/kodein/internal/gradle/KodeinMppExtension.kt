@@ -43,6 +43,9 @@ public typealias KodeinWasmJsTargetBuilder = KodeinMppExtension.TargetBuilder<ou
 public typealias KodeinWasmWasiTarget = KodeinMppExtension.Target<KotlinWasmWasiTargetDsl, KotlinJsCompilation, KodeinMppExtension.Sources>
 public typealias KodeinWasmWasiTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinWasmWasiTargetDsl, out KotlinJsCompilation, out KodeinMppExtension.Sources>
 
+public typealias KodeinWebTarget = KodeinMppExtension.Target<out KotlinTarget, KotlinJsCompilation, KodeinMppExtension.Sources>
+public typealias KodeinWebTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinTarget, out KotlinJsCompilation, out KodeinMppExtension.Sources>
+
 public typealias KodeinNativeTarget = KodeinMppExtension.Target<out KotlinNativeTarget, KotlinNativeCompilation, KodeinMppExtension.Sources>
 public typealias KodeinNativeTargetBuilder = KodeinMppExtension.TargetBuilder<out KotlinNativeTarget, out KotlinNativeCompilation, out KodeinMppExtension.Sources>
 
@@ -202,6 +205,7 @@ public open class KodeinMppExtension(
         }
 
         public val allWasm: List<KodeinWasmTarget> get() = listOf(wasmJs, wasmWasi)
+        public val allWeb: List<KodeinWebTarget> get() = listOf(js, wasmJs)
 
         public val linuxX64: KodeinNativeTargetWithHostTests = Target("linuxX64", KotlinMultiplatformExtension::linuxX64, nativeBuildOn = { isLinux })
         public val linuxArm64: KodeinNativeTarget = Target("linuxArm64", KotlinMultiplatformExtension::linuxArm64, nativeBuildOn = { isLinux })
@@ -209,11 +213,9 @@ public open class KodeinMppExtension(
 
         public val mingwX64: KodeinNativeTargetWithHostTests = Target("mingwX64", KotlinMultiplatformExtension::mingwX64, nativeBuildOn = { isWindows })
 
-        public val macosX64: KodeinNativeTargetWithHostTests = Target("macosX64", KotlinMultiplatformExtension::macosX64, nativeBuildOn = { isMacOsX })
         public val macosArm64: KodeinNativeTargetWithHostTests = Target("macosArm64", KotlinMultiplatformExtension::macosArm64, nativeBuildOn = { isMacOsX })
-        public val allMacos: List<KodeinNativeTargetWithHostTests> get() = listOf(macosX64, macosArm64)
 
-        public val allDesktop: List<KodeinNativeTargetWithHostTests> get() = allMacos + listOf(linuxX64, mingwX64)
+        public val allDesktop: List<KodeinNativeTargetWithHostTests> get() = listOf(macosArm64, linuxX64, mingwX64)
 
         public val androidNativeX64: KodeinNativeTarget = Target("androidNativeX64", KotlinMultiplatformExtension::androidNativeX64, nativeBuildOn = { isLinux })
         public val androidNativeX86: KodeinNativeTarget = Target("androidNativeX86", KotlinMultiplatformExtension::androidNativeX86, nativeBuildOn = { isLinux })
@@ -226,37 +228,35 @@ public open class KodeinMppExtension(
         public val iosArm64: KodeinNativeTarget = Target("iosArm64", KotlinMultiplatformExtension::iosArm64, nativeBuildOn = { isMacOsX })
         public val allIos: List<KodeinNativeTarget> get() = listOf(iosX64, iosSimulatorArm64, iosArm64)
 
-        public val tvosX64: KodeinNativeTargetWithSimulatorTests = Target("tvosX64", KotlinMultiplatformExtension::tvosX64, nativeBuildOn = { isMacOsX })
         public val tvosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("tvosSimulatorArm64", KotlinMultiplatformExtension::tvosSimulatorArm64, nativeBuildOn = { isMacOsX })
         public val tvosArm64: KodeinNativeTarget = Target("tvosArm64", KotlinMultiplatformExtension::tvosArm64, nativeBuildOn = { isMacOsX })
-        public val allTvos: List<KodeinNativeTarget> get() = listOf(tvosX64, tvosSimulatorArm64, tvosArm64)
+        public val allTvos: List<KodeinNativeTarget> get() = listOf(tvosSimulatorArm64, tvosArm64)
 
-        public val watchosX64: KodeinNativeTargetWithSimulatorTests = Target("watchosX64", KotlinMultiplatformExtension::watchosX64, nativeBuildOn = { isMacOsX })
         public val watchosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("watchosSimulatorArm64", KotlinMultiplatformExtension::watchosSimulatorArm64, nativeBuildOn = { isMacOsX })
         public val watchosArm64: KodeinNativeTarget = Target("watchosArm64", KotlinMultiplatformExtension::watchosArm64, nativeBuildOn = { isMacOsX })
         public val watchosArm32: KodeinNativeTarget = Target("watchosArm32", KotlinMultiplatformExtension::watchosArm32, nativeBuildOn = { isMacOsX })
         public val watchosDeviceArm64: KodeinNativeTarget = Target("watchosDeviceArm64", KotlinMultiplatformExtension::watchosDeviceArm64, nativeBuildOn = { isMacOsX })
-        public val allWatchos: List<KodeinNativeTarget> get() = listOf(watchosX64, watchosSimulatorArm64, watchosArm64, watchosArm32, watchosDeviceArm64)
-        public val allWatchosNoDevice: List<KodeinNativeTarget> get() = listOf(watchosX64, watchosSimulatorArm64, watchosArm64, watchosArm32)
+        public val allWatchos: List<KodeinNativeTarget> get() = listOf(watchosSimulatorArm64, watchosArm64, watchosArm32, watchosDeviceArm64)
+        public val allWatchosNoDevice: List<KodeinNativeTarget> get() = listOf(watchosSimulatorArm64, watchosArm64, watchosArm32)
 
         public val allAppleMobile: List<KodeinNativeTarget> get() = allIos + allTvos + allWatchos
-        public val allApple: List<KodeinNativeTarget> get() = allMacos + allAppleMobile
+        public val allApple: List<KodeinNativeTarget> get() = allAppleMobile + macosArm64
 
         public val allEmbedded: List<KodeinNativeTarget> get() = allAndroidNative + linuxArm64
 
-        public val allNative: List<KodeinNativeTarget> get() = allMacos + allLinux + mingwX64 + allAndroidNative + allAppleMobile
+        public val allNative: List<KodeinNativeTarget> get() = allLinux + macosArm64 + mingwX64 + allAndroidNative + allAppleMobile
 
         public val allPosix: List<KodeinNativeTarget> get() = allNative - mingwX64
 
-        public val allNativeTier1: List<KodeinNativeTargetWithTests> get() = listOf(linuxX64, macosX64, macosArm64, iosSimulatorArm64, iosX64)
-        public val allNativeTier1And2: List<KodeinNativeTarget> get() = allNativeTier1 + listOf(linuxArm64, watchosSimulatorArm64, watchosX64, watchosArm32, watchosArm64, tvosSimulatorArm64, tvosX64, tvosArm64, iosArm64)
+        public val allNativeTier1: List<KodeinNativeTargetWithTests> get() = listOf(linuxX64, macosArm64, iosSimulatorArm64, iosX64)
+        public val allNativeTier1And2: List<KodeinNativeTarget> get() = allNativeTier1 + listOf(linuxArm64, watchosSimulatorArm64, watchosArm32, watchosArm64, tvosSimulatorArm64, tvosArm64, iosArm64)
 
         public open val all: List<KodeinTarget> get() = allNative + jvm + js + allWasm
 
-        public open val allComposeUi: List<KodeinTarget> get() = allIos + jvm + wasmJs
+        public open val allComposeUi: List<KodeinTarget> get() = allIos + jvm + allWeb
         public open val allComposeRuntime: List<KodeinTarget> get() = allComposeUi + js + allDesktop + allTvos + allWatchosNoDevice
 
-        public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosX64 + tvosSimulatorArm64 + watchosX64 + watchosSimulatorArm64 + jvm + js
+        public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosSimulatorArm64 + watchosSimulatorArm64 + jvm + js
     }
 
     public open val targets: Targets = Targets()
@@ -331,6 +331,7 @@ public open class KodeinMppExtension(
     public fun wasmJs(configure: KodeinWasmJsTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmJs) { configure() }
     public fun wasmWasi(configure: KodeinWasmWasiTargetBuilder.() -> Unit = {}): Unit = add(targets.wasmWasi) { configure() }
     public fun allWasm(configure: KodeinWasmTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allWasm) { configure() }
+    public fun allWeb(configure: KodeinWebTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allWeb) { configure() }
 
     public fun linuxX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.linuxX64) { configure() }
     public fun linuxArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.linuxArm64) { configure() }
@@ -338,9 +339,7 @@ public open class KodeinMppExtension(
 
     public fun mingwX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.mingwX64) { configure() }
 
-    public fun macosX64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.macosX64) { configure() }
     public fun macosArm64(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = add(targets.macosArm64) { configure() }
-    public fun allMacos(configure: KodeinNativeTargetWithHostTestsBuilder.() -> Unit = {}): Unit = addAll(targets.allMacos) { configure() }
 
     public fun allDesktop(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allDesktop) { configure() }
 
@@ -355,12 +354,10 @@ public open class KodeinMppExtension(
     public fun iosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.iosArm64) { configure() }
     public fun allIos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allIos) { configure() }
 
-    public fun tvosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.tvosX64) { configure() }
     public fun tvosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.tvosSimulatorArm64) { configure() }
     public fun tvosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.tvosArm64) { configure() }
     public fun allTvos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allTvos) { configure() }
 
-    public fun watchosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.watchosX64) { configure() }
     public fun watchosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.watchosSimulatorArm64) { configure() }
     public fun watchosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.watchosArm64) { configure() }
     public fun watchosArm32(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.watchosArm32) { configure() }
