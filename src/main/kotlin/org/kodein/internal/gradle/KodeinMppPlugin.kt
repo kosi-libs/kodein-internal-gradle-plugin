@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle
 
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.findByType
@@ -29,7 +30,7 @@ public class KodeinMppPlugin : KtPlugin<Project> {
                 common {
                     group("jvmBased") {
                         withJvm()
-                        withAndroidTarget()
+                        withCompilations { it.target is KotlinMultiplatformAndroidLibraryTarget }
                     }
                     group("jsBased") {
                         withJs()

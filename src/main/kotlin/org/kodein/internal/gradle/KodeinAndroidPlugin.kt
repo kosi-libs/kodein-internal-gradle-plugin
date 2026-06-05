@@ -1,6 +1,6 @@
 package org.kodein.internal.gradle
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 public class KodeinAndroidPlugin : KtPlugin<Project> {
 
     internal companion object {
-        fun configureAndroid(project: Project, android: LibraryExtension) = with(android) {
+        fun configurePureAndroidLibrary(project: Project, android: LibraryExtension) = with(android) {
             publishing {
                 singleVariant("release") {}
             }
-            compileSdk = 35
+            compileSdk = 36
             defaultConfig {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 minSdk = 21
@@ -32,11 +32,10 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
     override fun Project.applyPlugin() {
         apply {
             plugin("com.android.library")
-            plugin("kotlin-android")
             plugin<KodeinAndroidNdkPlugin>()
         }
 
-        configureAndroid(project, extensions["android"] as LibraryExtension)
+        configurePureAndroidLibrary(project, extensions["android"] as LibraryExtension)
 
         val kotlinVersion = kodeinGlobalVersion("kotlin")
         dependencies {
@@ -44,8 +43,8 @@ public class KodeinAndroidPlugin : KtPlugin<Project> {
             "testImplementation"("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
             "testImplementation"("junit:junit:4.13.2")
 
-            "androidTestImplementation"("androidx.test.ext:junit:1.1.4")
-            "androidTestImplementation"("androidx.test.espresso:espresso-core:3.5.0")
+            "androidTestImplementation"("androidx.test.ext:junit:1.2.1")
+            "androidTestImplementation"("androidx.test.espresso:espresso-core:3.6.1")
         }
 
         val kotlin = extensions.getByName<KotlinProjectExtension>("kotlin")

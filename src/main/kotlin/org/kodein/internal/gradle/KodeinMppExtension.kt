@@ -1,5 +1,6 @@
 package org.kodein.internal.gradle
 
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
@@ -10,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -146,7 +146,7 @@ public open class KodeinMppExtension(
             commonJvmConfig()
         }
 
-        public fun <C : KotlinCompilation<*>> TargetBuilder<KotlinAndroidTarget, C, out Sources>.androidJvmConfig(): Unit {
+        public fun <C : KotlinCompilation<*>> TargetBuilder<KotlinMultiplatformAndroidLibraryTarget, C, out Sources>.androidJvmConfig(): Unit {
             target.compilations.configureEach {
                 compileTaskProvider.configure {
                     compilerOptions {
@@ -223,10 +223,9 @@ public open class KodeinMppExtension(
         public val androidNativeArm32: KodeinNativeTarget = Target("androidNativeArm32", KotlinMultiplatformExtension::androidNativeArm32, nativeBuildOn = { isLinux })
         public val allAndroidNative: List<KodeinNativeTarget> get() = listOf(androidNativeX64, androidNativeX86, androidNativeArm64, androidNativeArm32)
 
-        public val iosX64: KodeinNativeTargetWithSimulatorTests = Target("iosX64", KotlinMultiplatformExtension::iosX64, nativeBuildOn = { isMacOsX })
         public val iosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("iosSimulatorArm64", KotlinMultiplatformExtension::iosSimulatorArm64, nativeBuildOn = { isMacOsX })
         public val iosArm64: KodeinNativeTarget = Target("iosArm64", KotlinMultiplatformExtension::iosArm64, nativeBuildOn = { isMacOsX })
-        public val allIos: List<KodeinNativeTarget> get() = listOf(iosX64, iosSimulatorArm64, iosArm64)
+        public val allIos: List<KodeinNativeTarget> get() = listOf(iosSimulatorArm64, iosArm64)
 
         public val tvosSimulatorArm64: KodeinNativeTargetWithSimulatorTests = Target("tvosSimulatorArm64", KotlinMultiplatformExtension::tvosSimulatorArm64, nativeBuildOn = { isMacOsX })
         public val tvosArm64: KodeinNativeTarget = Target("tvosArm64", KotlinMultiplatformExtension::tvosArm64, nativeBuildOn = { isMacOsX })
@@ -248,7 +247,7 @@ public open class KodeinMppExtension(
 
         public val allPosix: List<KodeinNativeTarget> get() = allNative - mingwX64
 
-        public val allNativeTier1: List<KodeinNativeTargetWithTests> get() = listOf(linuxX64, macosArm64, iosSimulatorArm64, iosX64)
+        public val allNativeTier1: List<KodeinNativeTargetWithTests> get() = listOf(linuxX64, macosArm64, iosSimulatorArm64)
         public val allNativeTier1And2: List<KodeinNativeTarget> get() = allNativeTier1 + listOf(linuxArm64, watchosSimulatorArm64, watchosArm32, watchosArm64, tvosSimulatorArm64, tvosArm64, iosArm64)
 
         public open val all: List<KodeinTarget> get() = allNative + jvm + js + allWasm
@@ -256,7 +255,7 @@ public open class KodeinMppExtension(
         public open val allComposeUi: List<KodeinTarget> get() = allIos + jvm + allWeb
         public open val allComposeRuntime: List<KodeinTarget> get() = allComposeUi + js + allDesktop + allTvos + allWatchosNoDevice
 
-        public open val allTestable: List<KodeinTarget> get() = allDesktop + iosX64 + iosSimulatorArm64 + tvosSimulatorArm64 + watchosSimulatorArm64 + jvm + js
+        public open val allTestable: List<KodeinTarget> get() = allDesktop + iosSimulatorArm64 + tvosSimulatorArm64 + watchosSimulatorArm64 + jvm + js
     }
 
     public open val targets: Targets = Targets()
@@ -349,7 +348,6 @@ public open class KodeinMppExtension(
     public fun androidNativeArm32(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.androidNativeArm32) { configure() }
     public fun allAndroidNative(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allAndroidNative) { configure() }
 
-    public fun iosX64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.iosX64) { configure() }
     public fun iosSimulatorArm64(configure: KodeinNativeTargetWithSimulatorTestsBuilder.() -> Unit = {}): Unit = add(targets.iosSimulatorArm64) { configure() }
     public fun iosArm64(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = add(targets.iosArm64) { configure() }
     public fun allIos(configure: KodeinNativeTargetBuilder.() -> Unit = {}): Unit = addAll(targets.allIos) { configure() }

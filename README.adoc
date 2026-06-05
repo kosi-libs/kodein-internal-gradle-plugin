@@ -229,18 +229,22 @@ Note that you should *NOT* use `kotlin.*` to add a new target.
 
 === Android configuration
 
+Since KIGP 9.0.0, the KMP Android target is a `KotlinMultiplatformAndroidLibraryTarget` that implements both `KotlinTarget` and `KotlinMultiplatformAndroidLibraryExtension`. Android-specific configuration (namespace, optimization, device tests, etc.) is done directly on the target:
+
 [source,kotlin]
 ----
-kodeinAndroid.android {
-    /* standard android configuration */
-}
-
-if (kodeinAndroid.isIncluded) {
-    /* Whatever gradle conf only enabled if Android is enabled */
+kotlin.kodein {
+    android {
+        target.namespace = "org.example"
+        target.optimization {
+            consumerKeepRules.files("proguard-rules.pro")
+            consumerKeepRules.publish = true
+        }
+    }
 }
 ----
 
-The `kodeinAndroid` helper is needed to disable Android configuration if Android is an excluded target.
+When Android is an excluded target (`excludeTargets = android`), the `android { }` block is simply skipped.
 
 === Target exclusion
 
@@ -271,6 +275,67 @@ You can enable it in **`gradle.properties`**:
 ----
 org.kodein.native.enableCrossCompilation = true
 ----
+
+
+== Migration to 9.0
+
+KIGP 9.0.0 brings the Kodein build to **Android Gradle Plugin 9**.
+This section describes what changes for consumer modules.
+
+=== Requirements
+
+* Android Gradle Plugin *9.1+*
+* Gradle *9.1+*
+* Android Studio *Otter 3 Feature Drop 2025.2.3* or later
+
+=== Pure Android libraries (`org.kodein.android` / `org.kodein.library.android`)
+
+Unchanged. These plugins still apply `com.android.library` and the legacy `android { }` DSL (`LibraryExtension`). Consumers only need to pick up the new `compileSdk = 36` default that KIGP now sets.
+
+=== KMP + Android libraries (`org.kodein.mpp-with-android` / `org.kodein.library.mpp-with-android`)
+
+KIGP now applies the new `com.android.kotlin.multiplatform.library` AGP plugin instead of `com.android.library` + `kotlin-android`. The Kotlin Multiplatform plugin is no longer compatible with `com.android.library`, so this migration is mandatory.
+
+The separate `kodeinAndroid` extension has been removed. Android-specific configuration is now done directly on the target inside `kotlin.kodein { android { target.* } }`. The target implements `KotlinMultiplatformAndroidLibraryExtension`.
+
+==== Members that moved
+
+[cols="1,1"]
+|===
+|Before (`LibraryExtension`) |After (`KotlinMultiplatformAndroidLibraryExtension`)
+
+|`consumerProguardFiles("consumer-rules.pro")`
+|`optimization { consumerKeepRules.files("consumer-rules.pro"); consumerKeepRules.publish = true }`
+
+|`defaultConfig.testInstrumentationRunner = "..."`
+|`withDeviceTestBuilder { }.configure { instrumentationRunner = "..." }` (KIGP already configures the default AndroidJUnitRunner)
+
+|`unitTests.isIncludeAndroidResources = true`
+|`withHostTestBuilder { }.configure { isIncludeAndroidResources = true }`
+
+|`compileOptions { sourceCompatibility / targetCompatibility }`
+|Handled by KIGP via the KMP compilation's `compilerOptions.jvmTarget`. Nothing to do on the consumer side.
+|===
+
+==== Members that are removed with no direct replacement
+
+* `defaultConfig { }` and `buildTypes { }` — the new plugin does not support Android build variants.
+* `singleVariant(...)` / `multipleVariants(...)` — publishing is implicit; only a `release` artifact is produced.
+* `publishLibraryVariants("debug", "release")` — removed. KIGP no longer calls it.
+* `ndkVersion` — not on the new extension. If you need NDK on a KMP module, open an issue.
+
+==== Source set renames
+
+The instrumented and unit test source sets follow the AGP 9 naming convention:
+
+* `androidUnitTest` → `androidHostTest`
+* `androidInstrumentedTest` → `androidDeviceTest`
+
+`KodeinMppWithAndroidExtension.AndroidSources.test` and `instrumentedTest` are wired to the new names.
+
+=== compileSdk
+
+`compileSdk` is bumped from *35* to *36* on both the pure Android and the KMP+Android paths.
 
 
 == Gradle plugin module plugin

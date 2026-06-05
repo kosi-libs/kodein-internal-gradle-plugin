@@ -1,26 +1,29 @@
 package org.kodein.internal.gradle
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 public class KodeinMppWithAndroidPlugin : KtPlugin<Project> {
 
     internal companion object {
         fun configureMPPAndroid(project: Project, excludeAndroid: Boolean) {
-            if (!excludeAndroid) {
-                project.apply { plugin("com.android.library") }
-                val android = project.extensions["android"] as LibraryExtension
-                KodeinAndroidPlugin.configureAndroid(project, android)
-                project.extensions.add("kodeinAndroid", KodeinMppAndroidExtension(android))
-            } else {
-                project.extensions.add("kodeinAndroid", KodeinMppAndroidExtension(null))
-            }
+            if (excludeAndroid) return
+
+            project.apply { plugin("com.android.kotlin.multiplatform.library") }
+
+            val kotlin = project.extensions.getByType<KotlinMultiplatformExtension>()
+            val androidTarget = kotlin.targets.getByName("android") as KotlinMultiplatformAndroidLibraryTarget
+
+            configureKmpAndroidLibrary(androidTarget)
+        }
+
+        private fun configureKmpAndroidLibrary(android: KotlinMultiplatformAndroidLibraryTarget) {
+            android.compileSdk = 36
+            android.minSdk = 21
+            android.withHostTest {}
         }
     }
 
