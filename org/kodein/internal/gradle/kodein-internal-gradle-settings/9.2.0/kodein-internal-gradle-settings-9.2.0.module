@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.kodein.internal.gradle",
+    "module": "kodein-internal-gradle-settings",
+    "version": "9.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.5.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.develocity",
+          "module": "com.gradle.develocity.gradle.plugin",
+          "version": {
+            "requires": "4.2.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-9.2.0.jar",
+          "url": "kodein-internal-gradle-settings-9.2.0.jar",
+          "size": 28395,
+          "sha512": "36cadb33186b87d50e94300ada9d6345d163aba86d47d18ac91d9d096f5f23b3dca44fd5f0971fc5f915d23cc3c1e7cf96c367e65ff6b24fcfd9f484d6632774",
+          "sha256": "ad8eb05677358c55ef23e90e2232e6c2f302f780d2c237f4597d98ba055ad8eb",
+          "sha1": "8173fa0731d53fc3f02c8242ba451857ec86f06d",
+          "md5": "3c773be03860126e37942421f87548cc"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.gradle.develocity",
+          "module": "com.gradle.develocity.gradle.plugin",
+          "version": {
+            "requires": "4.2.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kodein-internal-gradle-settings-9.2.0.jar",
+          "url": "kodein-internal-gradle-settings-9.2.0.jar",
+          "size": 28395,
+          "sha512": "36cadb33186b87d50e94300ada9d6345d163aba86d47d18ac91d9d096f5f23b3dca44fd5f0971fc5f915d23cc3c1e7cf96c367e65ff6b24fcfd9f484d6632774",
+          "sha256": "ad8eb05677358c55ef23e90e2232e6c2f302f780d2c237f4597d98ba055ad8eb",
+          "sha1": "8173fa0731d53fc3f02c8242ba451857ec86f06d",
+          "md5": "3c773be03860126e37942421f87548cc"
+        }
+      ]
+    }
+  ]
+}
